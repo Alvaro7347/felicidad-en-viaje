@@ -5,14 +5,15 @@ import { Card } from "../components/Card";
 import { Tag } from "../components/Tag";
 import { BackBtn } from "../components/BackBtn";
 
-export function MissionScreen({ onBack, onComplete, emotion, setEmotion }: {
+export function MissionScreen({ onBack, onComplete, emotion, setEmotion, userName }: {
   onBack: () => void;
   onComplete: () => void;
   emotion: string | null;
   setEmotion: (id: string) => void;
+  userName: string;
 }) {
-  const userName = 'Navegante';
   const firstName = userName.split(' ')[0];
+  const canComplete = emotion !== null;
   return (
     <div style={{ display: 'flex', flexDirection: 'column', gap: 16 }}>
       <BackBtn label="Ruta Isla del Silencio" onClick={onBack} />
