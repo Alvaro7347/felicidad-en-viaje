@@ -100,6 +100,7 @@ export function ArchipelagoApp() {
 
         {screen === "route" && (
           <RouteScreen
+            userName={userName}
             onBack={goToRoute}
             onStartMission={() => setScreen("mission")}
             onReviewMission={(id) => setScreen(REVIEW_MISSION_BY_NODE[id] ?? "mission-two")}
@@ -108,6 +109,7 @@ export function ArchipelagoApp() {
 
         {screen === "mission" && (
           <MissionScreen
+            userName={userName}
             onBack={() => setScreen("route")}
             onComplete={() => setScreen("celebration")}
             emotion={emotion}
