@@ -25,7 +25,7 @@ export const DIAG_QUESTIONS: DiagQuestion[] = [
   {
     id: 3,
     question: '¿Qué emoción aparece cuando piensas en aprender música?',
-    options: ['Ilusión ✨', 'Frustración 😤', 'Vergüenza 😳', 'Curiosidad 🔍', 'Miedo 😨', 'Felicidad 😊'],
+    options: ['Ilusión ✨', 'Frustración 😤', 'Vergüenza 😳', 'Miedo 😨', 'Felicidad 😊'],
   },
   {
     id: 4,
