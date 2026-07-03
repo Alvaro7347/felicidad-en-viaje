@@ -45,6 +45,7 @@ export function WelcomeScreen({ onStart }: { onStart: () => void }) {
           paddingTop: 56,
           paddingBottom: 24,
           width: '100%',
+          transform: 'translateY(-45px)',
         }}>
           <img
             src="/logo-calipso-cropped.png"
