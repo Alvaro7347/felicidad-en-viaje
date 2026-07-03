@@ -85,7 +85,9 @@ export function MissionScreen({ onBack, onComplete, emotion, setEmotion, userNam
         </div>
       </Card>
 
-      <Btn variant="pink" onClick={onComplete} fullWidth>¡Lo logré! Completar misión 🎵</Btn>
+      <Btn variant="pink" onClick={onComplete} fullWidth disabled={!canComplete}>
+        {canComplete ? '¡Lo logré! Completar misión 🎵' : 'Elige cómo te sentiste para completar'}
+      </Btn>
       <p style={{ textAlign: 'center', fontSize: 12, color: '#bbb', margin: '-6px 0 0', fontStyle: 'italic' }}>
         Cada acorde es una pequeña victoria.
       </p>
