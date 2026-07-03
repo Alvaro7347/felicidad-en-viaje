@@ -34,7 +34,7 @@ export function WelcomeScreen({ onStart }: { onStart: () => void }) {
         boxSizing: 'border-box',
       }}>
 
-        {/* ── Logo + claim — centrado, con aire intencional ── */}
+        {/* ── Logo + claim — una sola unidad de marca ── */}
         <div style={{
           flex: 1,
           display: 'flex',
@@ -47,10 +47,11 @@ export function WelcomeScreen({ onStart }: { onStart: () => void }) {
           width: '100%',
         }}>
           <img
-            src="/logo-calipso.png"
+            src="/logo-calipso-cropped.png"
             alt="SoundKeleles"
             style={{
-              width: 'min(200px, 52vw)',
+              width: 'min(210px, 56vw)',
+              height: 'auto',
               display: 'block',
               animation: 'sk-float 3.6s ease-in-out infinite',
             }}
@@ -58,10 +59,10 @@ export function WelcomeScreen({ onStart }: { onStart: () => void }) {
 
           <p style={{
             fontFamily: 'Space Grotesk, sans-serif',
-            fontSize: 'clamp(17px, 4.2vw, 22px)',
+            fontSize: 'clamp(15px, 3.8vw, 19px)',
             fontWeight: 500,
-            color: B.dark,
-            margin: '4px 0 0 0',
+            color: '#2A2F3A',
+            margin: 0,
             lineHeight: 1.2,
             letterSpacing: '0.01em',
           }}>
@@ -72,15 +73,15 @@ export function WelcomeScreen({ onStart }: { onStart: () => void }) {
         {/* ── Botones — anclados al fondo, siempre visibles ── */}
         <div style={{
           width: '100%',
-          maxWidth: 380,
+          maxWidth: 360,
           display: 'flex',
           flexDirection: 'column',
-          gap: 12,
-          paddingBottom: 52,
+          gap: 10,
+          paddingBottom: 56,
           flexShrink: 0,
         }}>
 
-          {/* Botón principal */}
+          {/* Botón principal — refinado, más fino y premium */}
           <div
             onMouseEnter={() => setHovBtn1(true)}
             onMouseLeave={() => { setHovBtn1(false); setPressBtn1(false); }}
@@ -92,20 +93,21 @@ export function WelcomeScreen({ onStart }: { onStart: () => void }) {
             onClick={onStart}
             style={{
               background: '#1BCA98',
-              borderRadius: 18,
-              padding: '18px 28px',
+              borderRadius: 14,
+              padding: '14px 24px',
               textAlign: 'center',
               cursor: 'pointer',
               fontFamily: 'Space Grotesk, sans-serif',
-              fontWeight: 800,
-              fontSize: 17,
-              color: B.dark,
+              fontWeight: 700,
+              fontSize: 16,
+              letterSpacing: '0.01em',
+              color: B.white,
               boxShadow: pressBtn1
-                ? '0 2px 8px rgba(27,202,152,0.22)'
+                ? '0 1px 4px rgba(27,202,152,0.18)'
                 : hovBtn1
-                ? '0 8px 28px rgba(27,202,152,0.40)'
-                : '0 4px 18px rgba(27,202,152,0.28)',
-              transform: pressBtn1 ? 'scale(0.98)' : hovBtn1 ? 'scale(1.02)' : 'scale(1)',
+                ? '0 6px 18px rgba(27,202,152,0.28)'
+                : '0 3px 10px rgba(27,202,152,0.18)',
+              transform: pressBtn1 ? 'scale(0.985)' : hovBtn1 ? 'scale(1.01)' : 'scale(1)',
               transition: 'transform 0.16s ease, box-shadow 0.16s ease',
               userSelect: 'none',
               WebkitUserSelect: 'none',
@@ -114,7 +116,7 @@ export function WelcomeScreen({ onStart }: { onStart: () => void }) {
             No tengo cuenta
           </div>
 
-          {/* Botón secundario — visible, deshabilitado elegantemente */}
+          {/* Botón secundario — acompaña, no compite */}
           <div
             onMouseEnter={() => setHovBtn2(true)}
             onMouseLeave={() => { setHovBtn2(false); setPressBtn2(false); }}
@@ -124,19 +126,19 @@ export function WelcomeScreen({ onStart }: { onStart: () => void }) {
             onTouchEnd={() => setPressBtn2(false)}
             onTouchCancel={() => setPressBtn2(false)}
             style={{
-              background: B.white,
-              border: `1.5px solid ${B.greenDark}`,
-              borderRadius: 18,
-              padding: '16px 24px',
+              background: 'transparent',
+              border: `1px solid rgba(27,202,152,0.35)`,
+              borderRadius: 14,
+              padding: '12px 22px',
               textAlign: 'center',
               cursor: 'default',
               fontFamily: 'Space Grotesk, sans-serif',
-              fontWeight: 700,
-              fontSize: 16,
-              color: B.greenDark,
-              opacity: 0.45,
+              fontWeight: 500,
+              fontSize: 14.5,
+              color: '#6B7280',
+              opacity: hovBtn2 ? 0.85 : 0.7,
               transform: pressBtn2 ? 'scale(0.99)' : 'scale(1)',
-              transition: 'transform 0.16s ease',
+              transition: 'transform 0.16s ease, opacity 0.16s ease',
               userSelect: 'none',
               WebkitUserSelect: 'none',
             }}
@@ -144,6 +146,7 @@ export function WelcomeScreen({ onStart }: { onStart: () => void }) {
             Ya tengo cuenta
           </div>
         </div>
+
 
       </div>
     </>
