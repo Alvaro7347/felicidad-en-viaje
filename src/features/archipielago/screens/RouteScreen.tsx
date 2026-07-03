@@ -7,14 +7,12 @@ import { Btn } from "../components/Btn";
 import { Card } from "../components/Card";
 import { BackBtn } from "../components/BackBtn";
 
-export function RouteScreen({ onBack, onStartMission, onReviewMission }: { onBack: () => void; onStartMission: () => void; onReviewMission: (id: string) => void }) {
+export function RouteScreen({ onBack, onStartMission, onReviewMission, userName: _userName }: { onBack: () => void; onStartMission: () => void; onReviewMission: (id: string) => void; userName: string }) {
   const [exploringNode, setExploringNode] = useState<string | null>(null);
   const [hoveredNode, setHoveredNode] = useState<string | null>(null);
   const [pressedNode, setPressedNode] = useState<string | null>(null);
   const [hoveredIsland, setHoveredIsland] = useState<string | null>(null);
   const [pressedIsland, setPressedIsland] = useState<string | null>(null);
-  const userName = 'Navegante';
-  const firstName = userName.split(' ')[0];
   const nodeColors: Record<NodeStatus, { bg: string; border: string; icon: string; text: string }> = {
     done: { bg: B.green, border: B.greenDark, icon: B.dark, text: B.dark },
     current: { bg: B.green, border: B.pink, icon: B.dark, text: B.dark },

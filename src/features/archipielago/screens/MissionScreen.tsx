@@ -5,14 +5,15 @@ import { Card } from "../components/Card";
 import { Tag } from "../components/Tag";
 import { BackBtn } from "../components/BackBtn";
 
-export function MissionScreen({ onBack, onComplete, emotion, setEmotion }: {
+export function MissionScreen({ onBack, onComplete, emotion, setEmotion, userName }: {
   onBack: () => void;
   onComplete: () => void;
   emotion: string | null;
   setEmotion: (id: string) => void;
+  userName: string;
 }) {
-  const userName = 'Navegante';
   const firstName = userName.split(' ')[0];
+  const canComplete = emotion !== null;
   return (
     <div style={{ display: 'flex', flexDirection: 'column', gap: 16 }}>
       <BackBtn label="Ruta Isla del Silencio" onClick={onBack} />
@@ -84,7 +85,9 @@ export function MissionScreen({ onBack, onComplete, emotion, setEmotion }: {
         </div>
       </Card>
 
-      <Btn variant="pink" onClick={onComplete} fullWidth>¡Lo logré! Completar misión 🎵</Btn>
+      <Btn variant="pink" onClick={onComplete} fullWidth disabled={!canComplete}>
+        {canComplete ? '¡Lo logré! Completar misión 🎵' : 'Elige cómo te sentiste para completar'}
+      </Btn>
       <p style={{ textAlign: 'center', fontSize: 12, color: '#bbb', margin: '-6px 0 0', fontStyle: 'italic' }}>
         Cada acorde es una pequeña victoria.
       </p>
