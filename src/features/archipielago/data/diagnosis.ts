@@ -20,7 +20,6 @@ export const DIAG_QUESTIONS: DiagQuestion[] = [
       'Porque quiero demostrarme que sí puedo',
       'Porque quiero un momento de felicidad para mí',
       'Porque quiero compartir música con alguien',
-      'Porque necesito reconectar conmigo',
     ],
   },
   {
