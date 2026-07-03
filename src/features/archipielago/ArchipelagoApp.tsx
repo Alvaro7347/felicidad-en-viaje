@@ -28,8 +28,8 @@ const REVIEW_MISSION_BY_NODE: Record<string, Screen> = {
   n4: "mission-four",
 };
 
-const SPLASH_FADE_MS = 1500;
-const SPLASH_HIDE_MS = 2000;
+const SPLASH_FADE_MS = 1050;
+const SPLASH_HIDE_MS = 1350;
 
 export function ArchipelagoApp() {
   // ── Splash inicial ─────────────────────────────────────────────
