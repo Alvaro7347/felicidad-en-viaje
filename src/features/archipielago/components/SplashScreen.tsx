@@ -2,13 +2,20 @@ export function SplashScreen({ fading }: { fading: boolean }) {
   return (
     <>
       <style>{`
-        @keyframes sk-breathe {
-          0%, 100% {
-            transform: scale(1);
+        @keyframes sk-logo-reveal {
+          0% {
+            opacity: 0;
+            transform: scale(0.86);
             filter: drop-shadow(0 0 4px rgba(255,255,255,0.1));
           }
-          50% {
+          45% {
+            opacity: 1;
             transform: scale(1.08);
+            filter: drop-shadow(0 0 36px rgba(255,255,255,0.55));
+          }
+          100% {
+            opacity: 1;
+            transform: scale(1);
             filter: drop-shadow(0 0 36px rgba(255,255,255,0.55));
           }
         }
@@ -27,7 +34,7 @@ export function SplashScreen({ fading }: { fading: boolean }) {
         zIndex: 9999,
         animation: 'sk-fadein 0.35s ease forwards',
         opacity: fading ? 0 : 1,
-        transition: fading ? 'opacity 0.5s ease' : 'none',
+        transition: fading ? 'opacity 0.4s ease' : 'none',
         pointerEvents: 'none',
       }}>
         <img
@@ -36,7 +43,7 @@ export function SplashScreen({ fading }: { fading: boolean }) {
           style={{
             width: 'min(240px, 60vw)',
             display: 'block',
-            animation: 'sk-breathe 2.8s ease-in-out infinite',
+            animation: 'sk-logo-reveal 950ms cubic-bezier(0.16, 1, 0.3, 1) forwards',
           }}
         />
       </div>
