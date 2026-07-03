@@ -1,4 +1,5 @@
 import type { RouteNode } from "../types";
+import { PHOTOS } from "./brand";
 
 export const SILENCE_NODES: RouteNode[] = [
   { id: 'n1', title: 'Conoce a tu guía', subtitle: 'Una bienvenida de SoundKeleles', icon: '👋', status: 'done', type: 'Video', time: '2 min' },

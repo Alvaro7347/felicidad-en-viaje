@@ -1,5 +1,4 @@
 import { B } from "../data/brand";
-import { Btn } from "../components/Btn";
 
 export function Btn({
   children,
