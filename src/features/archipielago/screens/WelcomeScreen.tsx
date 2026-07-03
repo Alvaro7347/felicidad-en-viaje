@@ -34,50 +34,39 @@ export function WelcomeScreen({ onStart }: { onStart: () => void }) {
         boxSizing: 'border-box',
       }}>
 
-        {/* ── Logo + copy — ocupa todo el espacio disponible, centrado ── */}
+        {/* ── Logo + claim — centrado, con aire intencional ── */}
         <div style={{
           flex: 1,
           display: 'flex',
           flexDirection: 'column',
           alignItems: 'center',
           justifyContent: 'center',
-          gap: 28,
-          paddingTop: 48,
-          paddingBottom: 16,
+          gap: 10,
+          paddingTop: 56,
+          paddingBottom: 24,
           width: '100%',
         }}>
           <img
             src="/logo-calipso.png"
             alt="SoundKeleles"
             style={{
-              width: 'min(220px, 58vw)',
+              width: 'min(200px, 52vw)',
               display: 'block',
               animation: 'sk-float 3.6s ease-in-out infinite',
             }}
           />
 
-          <div style={{ textAlign: 'center' }}>
-            <h1 style={{
-              fontFamily: 'Space Grotesk, sans-serif',
-              fontSize: 'clamp(28px, 7vw, 40px)',
-              fontWeight: 800,
-              color: B.dark,
-              margin: '0 0 12px 0',
-              lineHeight: 1.1,
-              letterSpacing: '-0.03em',
-            }}>
-              Toca la felicidad
-            </h1>
-            <p style={{
-              fontSize: 15,
-              color: B.grayText,
-              margin: 0,
-              lineHeight: 1.65,
-              maxWidth: 280,
-            }}>
-              Aprender música puede sentirse simple,<br />humano y emocionante.
-            </p>
-          </div>
+          <p style={{
+            fontFamily: 'Space Grotesk, sans-serif',
+            fontSize: 'clamp(17px, 4.2vw, 22px)',
+            fontWeight: 500,
+            color: B.dark,
+            margin: '4px 0 0 0',
+            lineHeight: 1.2,
+            letterSpacing: '0.01em',
+          }}>
+            Toca la felicidad
+          </p>
         </div>
 
         {/* ── Botones — anclados al fondo, siempre visibles ── */}
@@ -102,9 +91,9 @@ export function WelcomeScreen({ onStart }: { onStart: () => void }) {
             onTouchCancel={() => setPressBtn1(false)}
             onClick={onStart}
             style={{
-              background: B.green,
+              background: '#1BCA98',
               borderRadius: 18,
-              padding: '17px 24px',
+              padding: '18px 28px',
               textAlign: 'center',
               cursor: 'pointer',
               fontFamily: 'Space Grotesk, sans-serif',
@@ -112,10 +101,10 @@ export function WelcomeScreen({ onStart }: { onStart: () => void }) {
               fontSize: 17,
               color: B.dark,
               boxShadow: pressBtn1
-                ? '0 2px 8px rgba(46,230,174,0.2)'
+                ? '0 2px 8px rgba(27,202,152,0.22)'
                 : hovBtn1
-                ? '0 8px 28px rgba(46,230,174,0.45)'
-                : '0 4px 18px rgba(46,230,174,0.32)',
+                ? '0 8px 28px rgba(27,202,152,0.40)'
+                : '0 4px 18px rgba(27,202,152,0.28)',
               transform: pressBtn1 ? 'scale(0.98)' : hovBtn1 ? 'scale(1.02)' : 'scale(1)',
               transition: 'transform 0.16s ease, box-shadow 0.16s ease',
               userSelect: 'none',
@@ -136,7 +125,7 @@ export function WelcomeScreen({ onStart }: { onStart: () => void }) {
             onTouchCancel={() => setPressBtn2(false)}
             style={{
               background: B.white,
-              border: `1.5px solid ${B.green}`,
+              border: `1.5px solid ${B.greenDark}`,
               borderRadius: 18,
               padding: '16px 24px',
               textAlign: 'center',
@@ -145,7 +134,7 @@ export function WelcomeScreen({ onStart }: { onStart: () => void }) {
               fontWeight: 700,
               fontSize: 16,
               color: B.greenDark,
-              opacity: 0.55,
+              opacity: 0.45,
               transform: pressBtn2 ? 'scale(0.99)' : 'scale(1)',
               transition: 'transform 0.16s ease',
               userSelect: 'none',
