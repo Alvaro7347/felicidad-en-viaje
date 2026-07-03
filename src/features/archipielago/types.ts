@@ -1,8 +1,8 @@
-type Screen = 'welcome' | 'onboarding' | 'diagnosis' | 'diagnosis-result' | 'entry-moment' | 'route' | 'mission' | 'mission-guide' | 'mission-two' | 'mission-three' | 'mission-four' | 'celebration';
+export type Screen = 'welcome' | 'onboarding' | 'diagnosis' | 'diagnosis-result' | 'entry-moment' | 'route' | 'mission' | 'mission-guide' | 'mission-two' | 'mission-three' | 'mission-four' | 'celebration';
 
-type NodeStatus = 'done' | 'current' | 'locked' | 'achievement';
+export type NodeStatus = 'done' | 'current' | 'locked' | 'achievement';
 
-interface RouteNode {
+export interface RouteNode {
   id: string;
   title: string;
   subtitle: string;
@@ -12,7 +12,7 @@ interface RouteNode {
   type?: string;
 }
 
-interface DiagQuestion {
+export interface DiagQuestion {
   id: number;
   question: string;
   subtitle?: string;
@@ -20,4 +20,4 @@ interface DiagQuestion {
   multi?: boolean;
 }
 
-type DiagAnswers = Record<number, string | string[]>;
+export type DiagAnswers = Record<number, string | string[]>;
