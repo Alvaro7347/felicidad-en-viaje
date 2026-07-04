@@ -2,8 +2,8 @@ import { useState } from "react";
 import { B } from "../data/brand";
 import { Btn } from "../components/Btn";
 import { Card } from "../components/Card";
-import { Tag } from "../components/Tag";
 import { BackBtn } from "../components/BackBtn";
+import { MissionIntroHeader } from "../components/MissionIntroHeader";
 import alvaroAsset from "../../../assets/alvaro-campos.jpeg.asset.json";
 import { supabase } from "@/integrations/supabase/client";
 
