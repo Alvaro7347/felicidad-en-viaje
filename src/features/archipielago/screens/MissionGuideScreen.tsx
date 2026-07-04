@@ -5,6 +5,7 @@ import { Card } from "../components/Card";
 import { Tag } from "../components/Tag";
 import { BackBtn } from "../components/BackBtn";
 import alvaroAsset from "../../../assets/alvaro-campos.jpeg.asset.json";
+import { supabase } from "@/integrations/supabase/client";
 
 const GUIDE_CONTACT_CONTEXT = {
   guideName: 'Álvaro Campos',
