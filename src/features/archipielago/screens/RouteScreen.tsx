@@ -1,6 +1,6 @@
 import { useState } from "react";
 import { B } from "../data/brand";
-import { SILENCE_NODES, ROUTE_STAGES } from "../data/islands";
+import { START_PORT_NODES, ROUTE_STAGES } from "../data/islands";
 
 import type { Screen, NodeStatus } from "../types";
 import { Btn } from "../components/Btn";
