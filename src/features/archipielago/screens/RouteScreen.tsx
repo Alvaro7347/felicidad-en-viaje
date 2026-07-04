@@ -198,7 +198,7 @@ export function RouteScreen({ onBack, onStartMission, onReviewMission, userName:
         }} />
 
         <div style={{ display: 'flex', flexDirection: 'column', gap: 8 }}>
-          {SILENCE_NODES.map((node) => {
+          {START_PORT_NODES.map((node) => {
             const s = node.status;
             const c = nodeColors[s];
             const isCurrent = s === 'current';
