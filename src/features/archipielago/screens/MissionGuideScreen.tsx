@@ -126,30 +126,127 @@ export function MissionGuideScreen({ onBack, userName }: { onBack: () => void; u
         <p style={{ margin: '0 0 12px', color: '#666', lineHeight: 1.7, fontSize: 13 }}>
           Si tienes una duda o necesitas acompañamiento, puedes escribirle a tu profesor guía.
         </p>
-        <Btn variant="ghost" onClick={() => setShowContactNotice(true)} fullWidth>
+        <Btn variant="ghost" onClick={openContactModal} fullWidth>
           Escríbele aquí
         </Btn>
-        {showContactNotice && (
-          <div
-            role="status"
-            style={{
-              marginTop: 12,
-              padding: '10px 12px',
-              borderRadius: 12,
-              background: B.pinkLight,
-              border: `1px solid ${B.pink}`,
-              color: B.dark,
-              fontSize: 12.5,
-              lineHeight: 1.5,
-            }}
-          >
-            Pronto podrás escribirle a tu guía desde aquí.
-          </div>
-        )}
       </Card>
       <Btn onClick={onBack} fullWidth>Volver a la ruta</Btn>
+
+      {showContactModal && (
+        <div
+          role="dialog"
+          aria-modal="true"
+          aria-labelledby="contact-modal-title"
+          onClick={closeContactModal}
+          style={{
+            position: 'fixed', inset: 0, background: 'rgba(15,25,35,0.55)',
+            display: 'flex', alignItems: 'center', justifyContent: 'center',
+            padding: 16, zIndex: 1000,
+          }}
+        >
+          <div
+            onClick={(e) => e.stopPropagation()}
+            style={{
+              background: B.white, borderRadius: 20, width: '100%', maxWidth: 440,
+              padding: 22, boxShadow: '0 20px 60px rgba(0,0,0,0.25)',
+              maxHeight: '90vh', overflowY: 'auto',
+              fontFamily: 'Quicksand, sans-serif',
+            }}
+          >
+            {!contactSent ? (
+              <>
+                <h3 id="contact-modal-title" style={{
+                  fontFamily: 'Space Grotesk, sans-serif', fontWeight: 800,
+                  fontSize: 20, margin: '0 0 6px', color: B.dark,
+                }}>
+                  Escríbele a tu guía
+                </h3>
+                <p style={{ fontSize: 13.5, color: '#666', margin: '0 0 14px', lineHeight: 1.55 }}>
+                  Cuéntale a Álvaro tu duda o qué necesitas para seguir avanzando.
+                </p>
+                <div style={{
+                  background: '#F5FBF8', border: `1px solid ${B.grayBorder}`,
+                  borderRadius: 12, padding: '10px 12px', marginBottom: 14,
+                  fontSize: 12.5, color: '#555', lineHeight: 1.7,
+                }}>
+                  <div><strong style={{ color: B.dark }}>Para:</strong> Álvaro Campos</div>
+                  <div><strong style={{ color: B.dark }}>Etapa:</strong> Puerto de Inicio</div>
+                  <div><strong style={{ color: B.dark }}>Misión:</strong> Conoce a tu guía</div>
+                </div>
+                <label style={{ display: 'block', fontSize: 12, fontWeight: 800, color: B.dark, marginBottom: 6 }}>
+                  Tu correo
+                </label>
+                <input
+                  type="email"
+                  value={contactEmail}
+                  onChange={(e) => setContactEmail(e.target.value)}
+                  placeholder="ejemplo@correo.com"
+                  maxLength={255}
+                  style={{
+                    width: '100%', boxSizing: 'border-box',
+                    border: `2px solid ${B.grayBorder}`, borderRadius: 12,
+                    padding: '11px 14px', fontFamily: 'Quicksand, sans-serif',
+                    fontSize: 14, color: B.dark, outline: 'none', marginBottom: 12,
+                  }}
+                />
+                <label style={{ display: 'block', fontSize: 12, fontWeight: 800, color: B.dark, marginBottom: 6 }}>
+                  Tu mensaje
+                </label>
+                <textarea
+                  value={contactMessage}
+                  onChange={(e) => setContactMessage(e.target.value)}
+                  placeholder="Escribe aquí tu duda, comentario o lo que necesitas para seguir avanzando."
+                  maxLength={1000}
+                  rows={4}
+                  style={{
+                    width: '100%', boxSizing: 'border-box',
+                    border: `2px solid ${B.grayBorder}`, borderRadius: 12,
+                    padding: '11px 14px', fontFamily: 'Quicksand, sans-serif',
+                    fontSize: 14, color: B.dark, outline: 'none', resize: 'vertical',
+                    minHeight: 100,
+                  }}
+                />
+                {contactError && (
+                  <div role="alert" style={{
+                    marginTop: 10, padding: '9px 12px', borderRadius: 10,
+                    background: B.pinkLight, border: `1px solid ${B.pink}`,
+                    color: B.dark, fontSize: 12.5, lineHeight: 1.5,
+                  }}>
+                    {contactError}
+                  </div>
+                )}
+                <div style={{ display: 'flex', gap: 10, marginTop: 16 }}>
+                  <Btn variant="ghost" onClick={closeContactModal} fullWidth>
+                    Cancelar
+                  </Btn>
+                  <Btn onClick={handleSendGuideMessage} fullWidth>
+                    Enviar mensaje
+                  </Btn>
+                </div>
+              </>
+            ) : (
+              <>
+                <div style={{ fontSize: 32, textAlign: 'center', marginBottom: 8 }}>💌</div>
+                <h3 style={{
+                  fontFamily: 'Space Grotesk, sans-serif', fontWeight: 800,
+                  fontSize: 20, margin: '0 0 8px', color: B.dark, textAlign: 'center',
+                }}>
+                  Mensaje preparado
+                </h3>
+                <p style={{ fontSize: 13.5, color: '#666', margin: '0 0 18px', lineHeight: 1.6, textAlign: 'center' }}>
+                  Tu guía recibirá tu duda y podrá responderte por correo cuando activemos esta función.
+                </p>
+                <Btn onClick={closeContactModal} fullWidth>
+                  Entendido
+                </Btn>
+              </>
+            )}
+          </div>
+        </div>
+      )}
     </div>
   );
 }
+
 
 // ─── Screen: Celebration ──────────────────────────────────────────────────────
