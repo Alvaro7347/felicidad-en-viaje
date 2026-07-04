@@ -16,7 +16,7 @@ export function MissionScreen({ onBack, onComplete, emotion, setEmotion, userNam
   const canComplete = emotion !== null;
   return (
     <div style={{ display: 'flex', flexDirection: 'column', gap: 16 }}>
-      <BackBtn label="Ruta Isla del Silencio" onClick={onBack} />
+      <BackBtn label="Puerto de Inicio" onClick={onBack} />
 
       {/* Mission title – solid green bar, no gradient */}
       <div style={{ background: B.green, borderRadius: 20, padding: '18px 22px' }}>

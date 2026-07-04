@@ -7,7 +7,7 @@ import { BackBtn } from "../components/BackBtn";
 export function MissionFourScreen({ onBack }: { onBack: () => void }) {
   return (
     <div style={{ display: 'flex', flexDirection: 'column', gap: 16 }}>
-      <BackBtn label="Ruta Isla del Silencio" onClick={onBack} />
+      <BackBtn label="Puerto de Inicio" onClick={onBack} />
       <Card style={{ background: B.green, padding: '18px 22px' }}>
         <Tag color="pink">Misión completada · Nodo 4 de 8</Tag>
         <h2 style={{ fontFamily: 'Space Grotesk, sans-serif', fontWeight: 800, fontSize: 'clamp(20px,4vw,26px)', margin: '10px 0 6px 0', color: B.dark }}>
