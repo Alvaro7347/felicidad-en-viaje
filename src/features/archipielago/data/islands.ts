@@ -13,10 +13,10 @@ export const SILENCE_NODES: RouteNode[] = [
 ];
 
 export const ROUTE_STAGES = [
-  { id: 'puerto-inicio', title: 'Puerto de Inicio', status: 'active' as const, progress: 50 },
-  { id: 'primeras-melodias', title: 'Isla de Primeras Melodías', status: 'locked' as const, progress: 0 },
-  { id: 'pulso', title: 'Isla del Pulso', status: 'locked' as const, progress: 0 },
-  { id: 'ritmo', title: 'Isla del Ritmo', status: 'locked' as const, progress: 0 },
+  { id: 'puerto-inicio', title: 'Puerto de Inicio', status: 'active' as const, progress: 50, completionText: 'completado' },
+  { id: 'primeras-melodias', title: 'Isla de Primeras Melodías', status: 'locked' as const, progress: 0, completionText: 'completada' },
+  { id: 'pulso', title: 'Isla del Pulso', status: 'locked' as const, progress: 0, completionText: 'completada' },
+  { id: 'ritmo', title: 'Isla del Ritmo', status: 'locked' as const, progress: 0, completionText: 'completada' },
 ];
 
 export const ISLANDS = [
