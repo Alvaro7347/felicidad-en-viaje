@@ -32,14 +32,40 @@ export function MissionGuideScreen({ onBack }: { onBack: () => void }) {
             style={{ width: '100%', height: '100%', objectFit: 'cover', objectPosition: 'center top', display: 'block' }}
           />
           <div style={{ position: 'absolute', inset: 0, background: 'linear-gradient(180deg, rgba(0,0,0,0) 55%, rgba(0,0,0,0.65) 100%)' }} />
-          <div style={{ position: 'absolute', right: 14, bottom: 14, color: B.white, display: 'flex', alignItems: 'center', gap: 10 }}>
-            <div style={{ textAlign: 'right' }}>
-              <div style={{ fontWeight: 800, fontSize: 14, textShadow: '0 1px 4px rgba(0,0,0,0.5)' }}>Video de bienvenida · 2 min</div>
-              <div style={{ fontSize: 12, opacity: 0.92, marginTop: 2, textShadow: '0 1px 4px rgba(0,0,0,0.5)' }}>
-                Álvaro te cuenta cómo será este viaje.
-              </div>
+          <button
+            type="button"
+            aria-label="Reproducir video de bienvenida"
+            style={{
+              position: 'absolute',
+              left: '50%',
+              top: '68%',
+              transform: 'translate(-50%, -50%)',
+              width: 56,
+              height: 56,
+              borderRadius: 999,
+              background: 'rgba(255,255,255,0.28)',
+              backdropFilter: 'blur(14px) saturate(140%)',
+              border: '1px solid rgba(255,255,255,0.35)',
+              boxShadow: '0 6px 20px rgba(0,0,0,0.18)',
+              display: 'flex',
+              alignItems: 'center',
+              justifyContent: 'center',
+              cursor: 'pointer',
+              padding: 0,
+              transition: 'transform 0.18s ease, background 0.18s ease',
+            }}
+            onMouseEnter={(e) => { e.currentTarget.style.transform = 'translate(-50%, -50%) scale(1.06)'; e.currentTarget.style.background = 'rgba(255,255,255,0.38)'; }}
+            onMouseLeave={(e) => { e.currentTarget.style.transform = 'translate(-50%, -50%) scale(1)'; e.currentTarget.style.background = 'rgba(255,255,255,0.28)'; }}
+          >
+            <svg width="16" height="16" viewBox="0 0 24 24" fill="white" aria-hidden="true" style={{ marginLeft: 2, filter: 'drop-shadow(0 1px 2px rgba(0,0,0,0.35))' }}>
+              <path d="M8 5v14l11-7z" />
+            </svg>
+          </button>
+          <div style={{ position: 'absolute', left: 14, right: 14, bottom: 14, color: B.white }}>
+            <div style={{ fontWeight: 800, fontSize: 14, textShadow: '0 1px 4px rgba(0,0,0,0.5)' }}>Video de bienvenida · 2 min</div>
+            <div style={{ fontSize: 12, opacity: 0.92, marginTop: 2, textShadow: '0 1px 4px rgba(0,0,0,0.5)' }}>
+              Álvaro te cuenta cómo será este viaje.
             </div>
-            <div style={{ width: 52, height: 52, borderRadius: 999, background: 'rgba(255,255,255,0.95)', display: 'flex', alignItems: 'center', justifyContent: 'center', fontSize: 20, paddingLeft: 3, boxShadow: '0 4px 18px rgba(0,0,0,0.3)', flexShrink: 0 }}>▶</div>
           </div>
         </div>
       </Card>
