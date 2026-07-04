@@ -29,6 +29,7 @@ const REVIEW_MISSION_BY_NODE: Record<string, Screen> = {
   n2: "mission-two",
   n3: "mission-three",
   n4: "mission-four",
+  n5: "mission",
   n7: "mission-seven",
   n8: "mission-eight",
 };
