@@ -6,6 +6,51 @@ import { Tag } from "../components/Tag";
 import { BackBtn } from "../components/BackBtn";
 import alvaroAsset from "../../../assets/alvaro-campos.jpeg.asset.json";
 
+const GUIDE_CONTACT_CONTEXT = {
+  guideName: 'Álvaro Campos',
+  guideRole: 'Fundador y profesor guía de SoundKeleles',
+  // TODO: definir email real del guía cuando se active el envío por Supabase Edge Function.
+  stageId: 'puerto-inicio',
+  stageTitle: 'Puerto de Inicio',
+  missionId: 'n1',
+  missionTitle: 'Conoce a tu guía',
+  source: 'mission-guide',
+} as const;
+
+type GuideMessagePayload = {
+  studentName: string;
+  studentEmail: string;
+  guideName: string;
+  guideRole: string;
+  stageId: string;
+  stageTitle: string;
+  missionId: string;
+  missionTitle: string;
+  source: string;
+  message: string;
+  createdAt: string;
+};
+
+function buildGuideMessagePayload(params: {
+  studentName: string;
+  studentEmail: string;
+  message: string;
+}): GuideMessagePayload {
+  return {
+    studentName: params.studentName,
+    studentEmail: params.studentEmail,
+    guideName: GUIDE_CONTACT_CONTEXT.guideName,
+    guideRole: GUIDE_CONTACT_CONTEXT.guideRole,
+    stageId: GUIDE_CONTACT_CONTEXT.stageId,
+    stageTitle: GUIDE_CONTACT_CONTEXT.stageTitle,
+    missionId: GUIDE_CONTACT_CONTEXT.missionId,
+    missionTitle: GUIDE_CONTACT_CONTEXT.missionTitle,
+    source: GUIDE_CONTACT_CONTEXT.source,
+    message: params.message,
+    createdAt: new Date().toISOString(),
+  };
+}
+
 export function MissionGuideScreen({ onBack, userName }: { onBack: () => void; userName?: string }) {
   const safeName = userName?.trim();
   const firstName = safeName ? safeName.split(' ')[0] : 'Navegante';
@@ -14,11 +59,13 @@ export function MissionGuideScreen({ onBack, userName }: { onBack: () => void; u
   const [contactMessage, setContactMessage] = useState('');
   const [contactError, setContactError] = useState<string | null>(null);
   const [contactSent, setContactSent] = useState(false);
+  const [preparedGuideMessage, setPreparedGuideMessage] = useState<GuideMessagePayload | null>(null);
   const guidePhoto = alvaroAsset.url;
 
   function openContactModal() {
     setContactError(null);
     setContactSent(false);
+    setPreparedGuideMessage(null);
     setShowContactModal(true);
   }
 
@@ -28,6 +75,7 @@ export function MissionGuideScreen({ onBack, userName }: { onBack: () => void; u
     setContactSent(false);
     setContactEmail('');
     setContactMessage('');
+    setPreparedGuideMessage(null);
   }
 
   function handleSendGuideMessage() {
@@ -42,10 +90,17 @@ export function MissionGuideScreen({ onBack, userName }: { onBack: () => void; u
       setContactError('Ingresa un correo válido para que podamos responderte.');
       return;
     }
-    // TODO: conectar con Supabase Edge Function para envío real de correo.
+    const payload = buildGuideMessagePayload({
+      studentName: safeName || 'Navegante',
+      studentEmail: email,
+      message,
+    });
+    // TODO: enviar prepared payload a Supabase Edge Function cuando activemos backend real.
+    setPreparedGuideMessage(payload);
     setContactError(null);
     setContactSent(true);
   }
+
 
 
   return (
