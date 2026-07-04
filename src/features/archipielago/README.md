@@ -35,7 +35,7 @@ El estado del flujo vive en `ArchipelagoApp.tsx` (state machine con `screen`).
 - `DiagnosisScreen` — 6 preguntas del perfil musical + nombre.
 - `DiagnosisResultScreen` — devolución personalizada con el nombre.
 - `EntryMomentScreen` — micro-transición emocional.
-- `RouteScreen` — mapa de islas + nodos de la Isla del Silencio.
+- `RouteScreen` — mapa de etapas + nodos del Puerto de Inicio.
 - `MissionScreen` — misión "Toca tu primer DO" + check-in emocional.
 - `MissionGuide/Two/Three/FourScreen` — misiones adyacentes (revisión).
 - `CelebrationScreen` — sello desbloqueado + próxima isla.

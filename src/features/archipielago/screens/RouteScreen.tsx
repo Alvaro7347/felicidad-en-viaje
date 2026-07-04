@@ -1,6 +1,6 @@
 import { useState } from "react";
 import { B } from "../data/brand";
-import { SILENCE_NODES, ROUTE_STAGES } from "../data/islands";
+import { START_PORT_NODES, ROUTE_STAGES } from "../data/islands";
 
 import type { Screen, NodeStatus } from "../types";
 import { Btn } from "../components/Btn";
@@ -198,7 +198,7 @@ export function RouteScreen({ onBack, onStartMission, onReviewMission, userName:
         }} />
 
         <div style={{ display: 'flex', flexDirection: 'column', gap: 8 }}>
-          {SILENCE_NODES.map((node) => {
+          {START_PORT_NODES.map((node) => {
             const s = node.status;
             const c = nodeColors[s];
             const isCurrent = s === 'current';
