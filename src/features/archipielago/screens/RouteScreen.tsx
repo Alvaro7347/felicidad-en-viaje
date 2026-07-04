@@ -1,4 +1,4 @@
-import { useState } from "react";
+import { useState, useRef, useEffect, useCallback } from "react";
 import { B } from "../data/brand";
 import { START_PORT_NODES, ROUTE_STAGES } from "../data/islands";
 
@@ -11,8 +11,35 @@ export function RouteScreen({ onBack, onStartMission, onReviewMission, userName:
   const [exploringNode, setExploringNode] = useState<string | null>(null);
   const [hoveredNode, setHoveredNode] = useState<string | null>(null);
   const [pressedNode, setPressedNode] = useState<string | null>(null);
-  const [hoveredIsland, setHoveredIsland] = useState<string | null>(null);
   const [pressedIsland, setPressedIsland] = useState<string | null>(null);
+  const [focusedStageId, setFocusedStageId] = useState<string>(ROUTE_STAGES[0].id);
+  const stripRef = useRef<HTMLDivElement | null>(null);
+  const stageRefs = useRef<Record<string, HTMLDivElement | null>>({});
+
+  const recomputeFocus = useCallback(() => {
+    const container = stripRef.current;
+    if (!container) return;
+    const cRect = container.getBoundingClientRect();
+    const cCenter = cRect.left + cRect.width / 2;
+    let bestId = ROUTE_STAGES[0].id;
+    let bestDist = Infinity;
+    for (const stage of ROUTE_STAGES) {
+      const el = stageRefs.current[stage.id];
+      if (!el) continue;
+      const r = el.getBoundingClientRect();
+      const center = r.left + r.width / 2;
+      const dist = Math.abs(center - cCenter);
+      if (dist < bestDist) { bestDist = dist; bestId = stage.id; }
+    }
+    setFocusedStageId((prev) => (prev === bestId ? prev : bestId));
+  }, []);
+
+  useEffect(() => {
+    recomputeFocus();
+    const onResize = () => recomputeFocus();
+    window.addEventListener('resize', onResize);
+    return () => window.removeEventListener('resize', onResize);
+  }, [recomputeFocus]);
   const nodeColors: Record<NodeStatus, { bg: string; border: string; icon: string; text: string }> = {
     done: { bg: B.green, border: B.greenDark, icon: B.dark, text: B.dark },
     current: { bg: B.green, border: B.pink, icon: B.dark, text: B.dark },
