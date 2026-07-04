@@ -15,13 +15,10 @@ export function DiagnosisScreen({ onComplete }: { onComplete: (answers: DiagAnsw
   const [animating, setAnimating] = useState(false);
 
   const totalSteps = DIAG_QUESTIONS.length;
-  // step -1 = 0%, step 0 = first question, etc.
+  // For the reusable header: on the name step show step 1 with 0% by clamping,
+  // then step 0 → question 1, etc.
+  const headerStep = step < 0 ? 1 : step + 1;
   const progressPct = step < 0 ? 0 : Math.round(((step + 1) / totalSteps) * 100);
-
-  const progressLabel =
-    step < 0 ? 'Cuéntanos quién eres…'
-    : progressPct < 100 ? `Perfil musical: ${progressPct}%`
-    : 'Perfil musical completo ✓';
 
   const q = step >= 0 ? DIAG_QUESTIONS[step] : null;
   const isMulti = q?.multi ?? false;
