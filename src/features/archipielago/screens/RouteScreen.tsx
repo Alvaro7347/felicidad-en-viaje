@@ -7,7 +7,9 @@ import { Btn } from "../components/Btn";
 import { Card } from "../components/Card";
 import { BackBtn } from "../components/BackBtn";
 
-export function RouteScreen({ onBack, onStartMission, onReviewMission, userName: _userName }: { onBack: () => void; onStartMission: () => void; onReviewMission: (id: string) => void; userName: string }) {
+export function RouteScreen({ onBack, onStartMission, onReviewMission, userName }: { onBack: () => void; onStartMission: () => void; onReviewMission: (id: string) => void; userName: string }) {
+  const firstName = (userName ?? '').trim().split(/\s+/)[0] ?? '';
+  const routeTitle = firstName ? `${firstName}, esta es tu ruta` : 'Esta es tu ruta';
   const [exploringNode, setExploringNode] = useState<string | null>(null);
   const [hoveredNode, setHoveredNode] = useState<string | null>(null);
   const [pressedNode, setPressedNode] = useState<string | null>(null);
@@ -238,7 +240,7 @@ export function RouteScreen({ onBack, onStartMission, onReviewMission, userName:
       <div style={{ display: 'flex', alignItems: 'center', gap: 8, marginBottom: 14 }}>
         <span style={{ fontSize: 15 }}>✨</span>
         <span style={{ fontFamily: 'Space Grotesk, sans-serif', fontWeight: 800, fontSize: 15, color: B.dark, letterSpacing: '-0.01em' }}>
-          Misiones de hoy
+          {routeTitle}
         </span>
       </div>
 
