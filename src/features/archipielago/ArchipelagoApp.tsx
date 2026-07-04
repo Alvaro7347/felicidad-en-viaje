@@ -70,7 +70,7 @@ export function ArchipelagoApp() {
       {showSplash && <SplashScreen fading={splashFading} />}
 
       {/* Panel de navegación interna — solo visible en desarrollo */}
-      {import.meta.env.DEV && <DevNav current={screen} onGo={setScreen} />}
+      {SHOW_DEV_NAV && <DevNav current={screen} onGo={setScreen} />}
 
       <div style={{ maxWidth: 640, margin: "0 auto" }}>
         <AppHeader screen={screen} onHome={isOnboarding ? undefined : goToRoute} />
