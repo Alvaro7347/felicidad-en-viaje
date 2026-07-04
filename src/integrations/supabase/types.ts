@@ -14,7 +14,57 @@ export type Database = {
   }
   public: {
     Tables: {
-      [_ in never]: never
+      support_messages: {
+        Row: {
+          created_at: string
+          guide_name: string
+          guide_role: string | null
+          id: string
+          message: string
+          mission_id: string
+          mission_title: string
+          source: string
+          stage_id: string
+          stage_title: string
+          status: string
+          student_email: string
+          student_name: string
+          updated_at: string | null
+        }
+        Insert: {
+          created_at?: string
+          guide_name: string
+          guide_role?: string | null
+          id?: string
+          message: string
+          mission_id: string
+          mission_title: string
+          source: string
+          stage_id: string
+          stage_title: string
+          status?: string
+          student_email: string
+          student_name: string
+          updated_at?: string | null
+        }
+        Update: {
+          created_at?: string
+          guide_name?: string
+          guide_role?: string | null
+          id?: string
+          message?: string
+          mission_id?: string
+          mission_title?: string
+          source?: string
+          stage_id?: string
+          stage_title?: string
+          status?: string
+          student_email?: string
+          student_name?: string
+          updated_at?: string | null
+        }
+        Relationships: []
+      }
     }
     Views: {
       [_ in never]: never
