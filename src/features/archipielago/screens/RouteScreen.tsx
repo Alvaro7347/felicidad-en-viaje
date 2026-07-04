@@ -231,7 +231,7 @@ export function RouteScreen({ onBack, onStartMission, onReviewMission, userName 
             </div>
             <div style={{ display: 'flex', flexDirection: 'column', gap: 10 }}>
               <Btn onClick={() => setExploringNode(null)} fullWidth>
-                Explorar misión
+                Entendido
               </Btn>
               <Btn variant="ghost" onClick={() => setExploringNode(null)} fullWidth>
                 Volver a la ruta

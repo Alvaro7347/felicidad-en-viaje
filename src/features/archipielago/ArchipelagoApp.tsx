@@ -125,12 +125,12 @@ export function ArchipelagoApp() {
           <MissionTwoScreen
             userName={userName}
             onBack={() => setScreen("route")}
-            onNext={() => setScreen("mission")}
+            onNext={() => setScreen("mission-three")}
           />
         )}
 
-        {screen === "mission-three" && <MissionThreeScreen onBack={() => setScreen("route")} />}
-        {screen === "mission-four" && <MissionFourScreen onBack={() => setScreen("route")} />}
+        {screen === "mission-three" && <MissionThreeScreen onBack={() => setScreen("route")} onNext={() => setScreen("mission-four")} />}
+        {screen === "mission-four" && <MissionFourScreen onBack={() => setScreen("route")} onNext={() => setScreen("mission")} />}
         {screen === "mission-guide" && <MissionGuideScreen userName={userName} onBack={() => setScreen("route")} onNext={() => setScreen("mission-two")} />}
 
         {screen === "celebration" && <CelebrationScreen onHome={goToRoute} />}

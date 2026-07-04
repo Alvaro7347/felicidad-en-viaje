@@ -36,7 +36,7 @@ export function CelebrationScreen({ onHome }: { onHome: () => void }) {
           <div style={{ fontFamily: 'Space Grotesk, sans-serif', fontWeight: 800, fontSize: 18, color: B.dark, margin: '6px 0 3px 0' }}>
             Guardián del Silencio
           </div>
-          <div style={{ fontSize: 13, color: B.grayText }}>Completaste la Isla del Silencio</div>
+          <div style={{ fontSize: 13, color: B.grayText }}>Completaste tu primer hito del Puerto de Inicio</div>
         </div>
       </Card>
 
@@ -55,11 +55,11 @@ export function CelebrationScreen({ onHome }: { onHome: () => void }) {
       {/* Next island preview */}
       <Card style={{ display: 'flex', alignItems: 'center', gap: 14, opacity: 0.7 }}>
         <div style={{ width: 48, height: 48, borderRadius: 14, overflow: 'hidden', flexShrink: 0 }}>
-          <img src={PHOTOS.workshop} alt="Isla del Pulso" style={{ width: '100%', height: '100%', objectFit: 'cover' }} />
+          <img src={PHOTOS.workshop} alt="Isla de Primeras Melodías" style={{ width: '100%', height: '100%', objectFit: 'cover' }} />
         </div>
         <div style={{ flex: 1 }}>
           <div style={{ fontSize: 11, fontWeight: 800, color: B.grayText, letterSpacing: '1px', textTransform: 'uppercase' }}>Próxima isla</div>
-          <div style={{ fontWeight: 800, fontSize: 15, color: B.dark }}>Isla del Pulso</div>
+          <div style={{ fontWeight: 800, fontSize: 15, color: B.dark }}>Isla de Primeras Melodías</div>
           <div style={{ fontSize: 12, color: B.grayText }}>Desbloqueada al completar este sello</div>
         </div>
         <span style={{ fontSize: 18 }}>🔒</span>

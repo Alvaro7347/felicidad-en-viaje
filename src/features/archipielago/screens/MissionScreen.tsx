@@ -2,35 +2,25 @@ import { B, PHOTOS } from "../data/brand";
 import { EMOTIONS } from "../data/emotions";
 import { Btn } from "../components/Btn";
 import { Card } from "../components/Card";
-import { Tag } from "../components/Tag";
 import { BackBtn } from "../components/BackBtn";
+import { MissionIntroHeader } from "../components/MissionIntroHeader";
 
-export function MissionScreen({ onBack, onComplete, emotion, setEmotion, userName }: {
+export function MissionScreen({ onBack, onComplete, emotion, setEmotion, userName: _userName }: {
   onBack: () => void;
   onComplete: () => void;
   emotion: string | null;
   setEmotion: (id: string) => void;
   userName: string;
 }) {
-  const firstName = userName.split(' ')[0];
   const canComplete = emotion !== null;
   return (
     <div style={{ display: 'flex', flexDirection: 'column', gap: 16 }}>
       <BackBtn label="Puerto de Inicio" onClick={onBack} />
 
-      {/* Mission title – solid green bar, no gradient */}
-      <div style={{ background: B.green, borderRadius: 20, padding: '18px 22px' }}>
-        <Tag color="pink">Misión activa · Nodo 5 de 8</Tag>
-        <div style={{ marginTop: 10, marginBottom: 6, fontSize: 13, fontWeight: 700, color: B.dark, overflowWrap: 'anywhere' }}>
-          {firstName}, hoy abriste tu primera puerta musical.
-        </div>
-        <h2 style={{ fontFamily: 'Space Grotesk, sans-serif', fontWeight: 800, fontSize: 'clamp(20px,4vw,26px)', margin: '10px 0 6px 0', color: B.dark }}>
-          Toca tu primer DO
-        </h2>
-        <p style={{ fontSize: 14, color: '#555', margin: 0, lineHeight: 1.55 }}>
-          Hoy no buscamos perfección. Buscamos abrir tu primera puerta musical.
-        </p>
-      </div>
+      <MissionIntroHeader
+        title="Toca tu primer DO"
+        subtitle="Hoy no buscamos perfección. Buscamos abrir tu primera puerta musical."
+      />
 
       {/* Video placeholder */}
       <div style={{ position: 'relative', height: 210, borderRadius: 18, overflow: 'hidden', boxShadow: '0 4px 20px rgba(0,0,0,0.12)' }}>

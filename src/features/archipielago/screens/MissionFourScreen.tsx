@@ -4,13 +4,11 @@ import { Card } from "../components/Card";
 import { BackBtn } from "../components/BackBtn";
 import { MissionIntroHeader } from "../components/MissionIntroHeader";
 
-export function MissionFourScreen({ onBack }: { onBack: () => void }) {
+export function MissionFourScreen({ onBack, onNext }: { onBack: () => void; onNext?: () => void }) {
   return (
     <div style={{ display: 'flex', flexDirection: 'column', gap: 16 }}>
       <BackBtn label="Puerto de Inicio" onClick={onBack} />
       <MissionIntroHeader
-        eyebrow="Nodo 4 de 8 · Puerto de Inicio"
-        status="Misión completada"
         title="Afina tu primer sonido"
         subtitle="Antes de tocar música, tu ukelele también necesita encontrar su voz."
       />
@@ -48,22 +46,19 @@ export function MissionFourScreen({ onBack }: { onBack: () => void }) {
           Afinador recomendado
         </div>
         <p style={{ margin: '0 0 12px', color: '#666', lineHeight: 1.7, fontSize: 13 }}>
-          Para esta misión te recomendamos descargar la aplicación GuitarTuna. Es simple, amigable para principiantes y te ayudará a afinar tu ukelele fácilmente.
+          Para esta misión te recomendamos la aplicación <strong>GuitarTuna</strong>. Es simple, amigable para principiantes y te ayudará a afinar tu ukelele fácilmente.
         </p>
-        <Card style={{ background: B.pinkLight, margin: '0 0 12px', padding: '14px 16px', border: `1px solid ${B.pink}` }}>
+        <Card style={{ background: B.pinkLight, margin: 0, padding: '14px 16px', border: `1px solid ${B.pink}` }}>
           <div style={{ fontWeight: 800, color: B.dark, marginBottom: 4 }}>GuitarTuna</div>
-          <div style={{ fontSize: 13, color: '#666' }}>Afinador recomendado para principiantes</div>
+          <div style={{ fontSize: 13, color: '#666' }}>Búscala en tu tienda de apps favorita.</div>
         </Card>
-        <Btn variant="ghost" onClick={() => {}} fullWidth>
-          Descargar App
-        </Btn>
       </Card>
       <Card style={{ background: B.pinkLight }}>
         <p style={{ margin: 0, color: B.dark, lineHeight: 1.7, fontSize: 13 }}>
           Afinar también es aprender a escuchar. No te preocupes si al principio parece difícil: tu oído también irá despertando.
         </p>
       </Card>
-      <Btn onClick={onBack} fullWidth>Volver a la ruta</Btn>
+      {onNext && <Btn onClick={onNext} fullWidth>Continuar a Toca tu primer DO</Btn>}
     </div>
   );
 }
