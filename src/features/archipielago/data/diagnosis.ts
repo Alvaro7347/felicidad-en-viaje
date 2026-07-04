@@ -36,7 +36,6 @@ export const DIAG_QUESTIONS: DiagQuestion[] = [
       'En dos semanas',
       'En un mes',
       'A mi propio ritmo',
-      'No quiero apurarme',
     ],
   },
   {
