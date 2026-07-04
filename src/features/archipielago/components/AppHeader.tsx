@@ -1,10 +1,69 @@
 import { B } from "../data/brand";
 import type { Screen } from "../types";
 import { ONBOARDING_SCREENS } from "../data/screens";
+import { ISLANDS } from "../data/islands";
 
 export function AppHeader({ screen, onHome }: { screen: Screen; onHome?: () => void }) {
   const isOnboarding = ONBOARDING_SCREENS.includes(screen);
   if (screen === 'onboarding' || screen === 'welcome' || screen === 'diagnosis' || screen === 'diagnosis-result') return null;
+
+  if (screen === 'route') {
+    const active = ISLANDS.find(i => i.status === 'active') ?? ISLANDS[0];
+    const pct = active.progress;
+    return (
+      <header style={{
+        background: '#FFFFFF',
+        border: `1px solid ${B.grayBorder}`,
+        borderRadius: 20,
+        padding: '12px 16px',
+        display: 'flex',
+        alignItems: 'center',
+        gap: 14,
+        marginBottom: 20,
+        boxShadow: '0 2px 12px rgba(46,230,174,0.08)',
+      }}>
+        <button
+          onClick={onHome}
+          aria-label="Inicio"
+          style={{
+            border: 'none',
+            background: '#F0FBF6',
+            cursor: onHome ? 'pointer' : 'default',
+            padding: 0,
+            width: 58,
+            height: 58,
+            borderRadius: 999,
+            display: 'flex',
+            alignItems: 'center',
+            justifyContent: 'center',
+            flexShrink: 0,
+            overflow: 'hidden',
+          }}
+        >
+          <img src="/isologo-soundkeleles.jpg" alt="SoundKeleles" style={{ width: 54, height: 54, borderRadius: 999, objectFit: 'cover', display: 'block' }} />
+        </button>
+        <div style={{ flex: 1, minWidth: 0 }}>
+          <div style={{
+            fontFamily: 'Space Grotesk, sans-serif',
+            fontWeight: 800,
+            fontSize: 18,
+            color: B.dark,
+            letterSpacing: '-0.01em',
+            lineHeight: 1.15,
+          }}>
+            Tu viaje musical
+          </div>
+          <div style={{ fontSize: 12, color: B.grayText, marginTop: 3, lineHeight: 1.3 }}>
+            {active.title} · <span style={{ color: B.greenDark, fontWeight: 700 }}>{pct}% completada</span>
+          </div>
+          <div style={{ marginTop: 8, height: 4, background: '#EAF6F0', borderRadius: 999, overflow: 'hidden' }}>
+            <div style={{ width: `${pct}%`, height: '100%', background: B.green, borderRadius: 999, transition: 'width 0.4s ease' }} />
+          </div>
+        </div>
+      </header>
+    );
+  }
+
   return (
     <header style={{
       background: B.green,
@@ -26,4 +85,3 @@ export function AppHeader({ screen, onHome }: { screen: Screen; onHome?: () => v
     </header>
   );
 }
-
