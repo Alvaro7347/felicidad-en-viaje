@@ -6,8 +6,7 @@ export const START_PORT_NODES: RouteNode[] = [
   { id: 'n3', title: 'Qué es el Archipiélago', subtitle: 'Aprende cómo navegar tu viaje musical.', icon: '🗺️', status: 'done', type: 'Orientación', time: '3 min' },
   { id: 'n4', title: 'Historia del Ukelele', subtitle: 'Conoce el viaje de este pequeño instrumento.', icon: '🌺', status: 'done', type: 'Video', time: '3 min' },
   { id: 'n5', title: 'Partes del Ukelele', subtitle: 'Conoce las partes de tu compañero musical.', icon: '🎸', status: 'current', type: 'Video', time: '3 min' },
-  { id: 'n6', title: 'Sube tu evidencia', subtitle: 'Un audio o video de tu acorde', icon: '📤', status: 'locked', type: 'Logro', time: '2 min' },
-  // Nota: "¿Cómo te sentiste?" queda pendiente de reubicación futura.
+  { id: 'n6', title: 'Quiz Partes del Ukelele', subtitle: 'Reconoce las partes principales de tu instrumento.', icon: '🧩', status: 'locked', type: 'Quiz', time: '3 min' },
   { id: 'n7', title: 'Toma tu ukelele sin tensión', subtitle: 'Postura, agarre y respiración', icon: '🎸', status: 'locked', type: 'Microclase', time: '4 min' },
   // Nota: "Sello desbloqueado / Guardián del Silencio" queda pendiente de reubicación futura.
   { id: 'n8', title: 'Afina tu primer sonido', subtitle: 'Aprende a usar el afinador', icon: '🎵', status: 'locked', type: 'Práctica', time: '5 min' },
