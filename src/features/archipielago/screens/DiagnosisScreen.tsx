@@ -15,9 +15,9 @@ export function DiagnosisScreen({ onComplete }: { onComplete: (answers: DiagAnsw
   const [animating, setAnimating] = useState(false);
 
   const totalSteps = DIAG_QUESTIONS.length;
-  // For the reusable header: on the name step show step 1 with 0% by clamping,
-  // then step 0 → question 1, etc.
-  const headerStep = step < 0 ? 1 : step + 1;
+  // 0 = initial "preparing" state on the name step; 1..N = questions
+  const headerStep = step < 0 ? 0 : step + 1;
+
 
   const q = step >= 0 ? DIAG_QUESTIONS[step] : null;
   const isMulti = q?.multi ?? false;

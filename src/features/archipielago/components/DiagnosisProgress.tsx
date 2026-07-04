@@ -1,10 +1,12 @@
 import { B } from "../data/brand";
 
 interface DiagnosisProgressProps {
-  /** 1-based current step. Use `totalSteps` to render the completed state. */
+  /** 1-based current step. Use 0 for the initial "preparing" state, or `totalSteps` + `completed` for done. */
   currentStep: number;
   totalSteps?: number;
   completed?: boolean;
+  /** Optional override for the status label (used for the initial state). */
+  label?: string;
 }
 
 /**
@@ -15,12 +17,20 @@ export function DiagnosisProgress({
   currentStep,
   totalSteps = 6,
   completed = false,
+  label: labelOverride,
 }: DiagnosisProgressProps) {
   const pct = completed
     ? 100
     : Math.max(0, Math.min(100, Math.round((currentStep / totalSteps) * 100)));
 
-  const label = completed ? "Perfil musical completo ✓" : `Perfil musical: ${pct}%`;
+  const label =
+    labelOverride ??
+    (completed
+      ? "Perfil musical completo ✓"
+      : currentStep <= 0
+        ? "Preparando tu perfil musical"
+        : `Perfil musical: ${pct}%`);
+
   const ringColor = completed ? B.greenDark : B.green;
   const size = 44;
   const stroke = 4;
