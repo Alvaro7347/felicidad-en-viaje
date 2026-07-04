@@ -116,12 +116,7 @@ export function ArchipelagoApp() {
         )}
 
         {screen === "mission" && (
-          <MissionScreen
-            onBack={() => setScreen("route")}
-            onComplete={() => setScreen("celebration")}
-            emotion={emotion}
-            setEmotion={setEmotion}
-          />
+          <MissionScreen onBack={() => setScreen("route")} />
         )}
 
         {screen === "mission-two" && (
