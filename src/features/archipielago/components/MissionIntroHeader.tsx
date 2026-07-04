@@ -3,12 +3,7 @@ import { B } from "../data/brand";
 export function MissionIntroHeader({
   title,
   subtitle,
-  // Props obsoletos mantenidos por compatibilidad; ya no se renderizan.
-  eyebrow: _eyebrow,
-  status: _status,
 }: {
-  eyebrow?: string;
-  status?: string;
   title: string;
   subtitle?: string;
 }) {
