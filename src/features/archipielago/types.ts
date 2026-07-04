@@ -1,4 +1,4 @@
-export type Screen = 'welcome' | 'onboarding' | 'diagnosis' | 'diagnosis-result' | 'entry-moment' | 'route' | 'mission' | 'mission-guide' | 'mission-two' | 'mission-three' | 'mission-four' | 'celebration';
+export type Screen = 'welcome' | 'onboarding' | 'diagnosis' | 'diagnosis-result' | 'route' | 'mission' | 'mission-guide' | 'mission-two' | 'mission-three' | 'mission-four' | 'celebration';
 
 export type NodeStatus = 'done' | 'current' | 'locked' | 'achievement';
 
