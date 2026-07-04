@@ -2,13 +2,12 @@ import { useState, useRef, useEffect, useCallback } from "react";
 import { B } from "../data/brand";
 import { START_PORT_NODES, ROUTE_STAGES } from "../data/islands";
 
-import type { Screen, NodeStatus } from "../types";
+import type { NodeStatus } from "../types";
 import { Btn } from "../components/Btn";
 import { Card } from "../components/Card";
-import { BackBtn } from "../components/BackBtn";
 import { touchLastVisit } from "../data/musicalFuel";
 
-export function RouteScreen({ onBack, onStartMission, onReviewMission, userName }: { onBack: () => void; onStartMission: () => void; onReviewMission: (id: string) => void; userName: string }) {
+export function RouteScreen({ onStartMission, onReviewMission, userName }: { onStartMission: () => void; onReviewMission: (id: string) => void; userName: string }) {
   const firstName = (userName ?? '').trim().split(/\s+/)[0] ?? '';
   const routeTitle = firstName ? `${firstName}, esta es tu ruta` : 'Esta es tu ruta';
   // Mantenemos el registro de última visita para futuros usos del combustible musical
@@ -56,7 +55,7 @@ export function RouteScreen({ onBack, onStartMission, onReviewMission, userName 
 
   return (
     <div>
-      <BackBtn label="Inicio" onClick={onBack} />
+
 
       {/* ── Island journey strip ── */}
       <div style={{

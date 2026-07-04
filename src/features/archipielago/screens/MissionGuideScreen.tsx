@@ -396,5 +396,3 @@ export function MissionGuideScreen({ onBack, userName }: { onBack: () => void; u
   );
 }
 
-
-// ─── Screen: Celebration ──────────────────────────────────────────────────────

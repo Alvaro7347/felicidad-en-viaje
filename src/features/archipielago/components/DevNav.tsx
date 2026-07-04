@@ -3,10 +3,10 @@ import { B } from "../data/brand";
 import type { Screen } from "../types";
 import { DEV_SCREENS } from "../data/screens";
 
-// Siempre visible mientras el proyecto esté en fase de prototipo.
-// Cuando se lance a usuarios reales, cambiar a:
-//   import.meta.env.DEV || import.meta.env.VITE_SHOW_DEV_NAV === "true"
-export const SHOW_DEV_NAV = true;
+// Visible en desarrollo local, o en preview cuando se define VITE_SHOW_DEV_NAV="true".
+// En producción normal (sin la variable) permanece oculto.
+export const SHOW_DEV_NAV =
+  import.meta.env.DEV || import.meta.env.VITE_SHOW_DEV_NAV === "true";
 
 export function DevNav({ current, onGo }: { current: Screen; onGo: (s: Screen) => void }) {
   const [open, setOpen] = useState(false);
@@ -64,4 +64,3 @@ export function DevNav({ current, onGo }: { current: Screen; onGo: (s: Screen) =
   );
 }
 
-// ─── Root App ─────────────────────────────────────────────────────────────────
