@@ -6,9 +6,9 @@ import { Tag } from "../components/Tag";
 import { BackBtn } from "../components/BackBtn";
 import alvaroAsset from "../../../assets/alvaro-campos.jpeg.asset.json";
 
-export function MissionGuideScreen({ onBack }: { onBack: () => void }) {
-  const userName = 'Navegante';
-  const firstName = userName.split(' ')[0];
+export function MissionGuideScreen({ onBack, userName }: { onBack: () => void; userName?: string }) {
+  const safeName = userName?.trim();
+  const firstName = safeName ? safeName.split(' ')[0] : 'Navegante';
   const [showContactNotice, setShowContactNotice] = useState(false);
   const guidePhoto = alvaroAsset.url;
 
