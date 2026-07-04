@@ -7,7 +7,9 @@ import { Btn } from "../components/Btn";
 import { Card } from "../components/Card";
 import { BackBtn } from "../components/BackBtn";
 
-export function RouteScreen({ onBack, onStartMission, onReviewMission, userName: _userName }: { onBack: () => void; onStartMission: () => void; onReviewMission: (id: string) => void; userName: string }) {
+export function RouteScreen({ onBack, onStartMission, onReviewMission, userName }: { onBack: () => void; onStartMission: () => void; onReviewMission: (id: string) => void; userName: string }) {
+  const firstName = (userName ?? '').trim().split(/\s+/)[0] ?? '';
+  const routeTitle = firstName ? `${firstName}, esta es tu ruta` : 'Esta es tu ruta';
   const [exploringNode, setExploringNode] = useState<string | null>(null);
   const [hoveredNode, setHoveredNode] = useState<string | null>(null);
   const [pressedNode, setPressedNode] = useState<string | null>(null);
