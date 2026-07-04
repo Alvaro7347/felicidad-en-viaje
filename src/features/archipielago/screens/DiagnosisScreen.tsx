@@ -4,6 +4,7 @@ import { DIAG_QUESTIONS } from "../data/diagnosis";
 import type { Screen, DiagAnswers } from "../types";
 import { Btn } from "../components/Btn";
 import { Card } from "../components/Card";
+import { DiagnosisProgress } from "../components/DiagnosisProgress";
 
 export function DiagnosisScreen({ onComplete }: { onComplete: (answers: DiagAnswers, name: string) => void }) {
   // step -1 = name input; steps 0..N-1 = questions
@@ -14,13 +15,9 @@ export function DiagnosisScreen({ onComplete }: { onComplete: (answers: DiagAnsw
   const [animating, setAnimating] = useState(false);
 
   const totalSteps = DIAG_QUESTIONS.length;
-  // step -1 = 0%, step 0 = first question, etc.
-  const progressPct = step < 0 ? 0 : Math.round(((step + 1) / totalSteps) * 100);
-
-  const progressLabel =
-    step < 0 ? 'Cuéntanos quién eres…'
-    : progressPct < 100 ? `Perfil musical: ${progressPct}%`
-    : 'Perfil musical completo ✓';
+  // For the reusable header: on the name step show step 1 with 0% by clamping,
+  // then step 0 → question 1, etc.
+  const headerStep = step < 0 ? 1 : step + 1;
 
   const q = step >= 0 ? DIAG_QUESTIONS[step] : null;
   const isMulti = q?.multi ?? false;
@@ -67,49 +64,9 @@ export function DiagnosisScreen({ onComplete }: { onComplete: (answers: DiagAnsw
   return (
     <div style={{ display: 'flex', flexDirection: 'column', gap: 20, opacity: animating ? 0 : 1, transition: 'opacity 0.28s ease' }}>
 
-      {/* ── Progress header ── */}
-      <div style={{ display: 'flex', flexDirection: 'column', gap: 10 }}>
-        {/* Big percentage badge + label */}
-        <div style={{ display: 'flex', alignItems: 'center', gap: 14 }}>
-          <div style={{
-            width: 56, height: 56, borderRadius: 999, flexShrink: 0,
-            background: progressPct === 100 ? B.green : B.dark,
-            display: 'flex', alignItems: 'center', justifyContent: 'center',
-            flexDirection: 'column',
-            transition: 'background 0.4s',
-          }}>
-            <span style={{ fontFamily: 'Space Grotesk, sans-serif', fontWeight: 900, fontSize: 14, color: progressPct === 100 ? B.dark : B.green, lineHeight: 1 }}>
-              {progressPct}%
-            </span>
-          </div>
-          <div style={{ flex: 1 }}>
-            <div style={{ fontWeight: 800, fontSize: 13, color: B.dark, marginBottom: 4 }}>{progressLabel}</div>
-            <div style={{ height: 10, background: B.grayBorder, borderRadius: 999, overflow: 'hidden' }}>
-              <div style={{
-                width: `${progressPct}%`, height: '100%',
-                background: `linear-gradient(to right, ${B.greenDark}, ${B.green})`,
-                borderRadius: 999,
-                transition: 'width 0.55s cubic-bezier(0.4,0,0.2,1)',
-                boxShadow: progressPct > 0 ? `0 0 8px rgba(46,230,174,0.45)` : 'none',
-              }} />
-            </div>
-          </div>
-        </div>
+      {/* ── Unified diagnosis progress header ── */}
+      <DiagnosisProgress currentStep={headerStep} totalSteps={totalSteps} />
 
-        {/* Step pills */}
-        {step >= 0 && (
-          <div style={{ display: 'flex', gap: 5, justifyContent: 'center' }}>
-            {DIAG_QUESTIONS.map((_, i) => (
-              <div key={i} style={{
-                height: 6, borderRadius: 999,
-                width: i === step ? 24 : 8,
-                background: i < step ? B.greenDark : i === step ? B.green : B.grayBorder,
-                transition: 'all 0.35s ease',
-              }} />
-            ))}
-          </div>
-        )}
-      </div>
 
       {/* ── Step –1: Name input ── */}
       {step < 0 && (
