@@ -48,7 +48,10 @@ export function ArchipelagoApp() {
   // ── Estado del viaje ───────────────────────────────────────────
   const [screen, setScreen] = useState<Screen>("welcome");
   const [diagAnswers, setDiagAnswers] = useState<DiagAnswers>({});
-  const [userName, setUserName] = useState("Navegante");
+  const [userName, setUserName] = useState(() => {
+    if (typeof window === "undefined") return "Navegante";
+    return window.localStorage.getItem("archipielago_user_name") || "Navegante";
+  });
   const [emotion, setEmotion] = useState<string | null>(null);
 
   const goToRoute = () => setScreen("route");
