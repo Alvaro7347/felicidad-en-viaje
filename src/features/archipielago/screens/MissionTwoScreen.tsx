@@ -6,29 +6,33 @@ import { Tag } from "../components/Tag";
 import { BackBtn } from "../components/BackBtn";
 
 const LS = {
-  name: "archipielago_user_name",
   motivation: "archipielago_user_motivation",
-  emotion: "archipielago_user_emotion",
+  emotions: "archipielago_user_emotions",
   phrase: "archipielago_user_fuel_phrase",
 };
 
 const MOTIVATION_EXAMPLES = [
-  "Quiero cantar con mi familia.",
-  "Quiero regalarme un momento para mí.",
-  "Quiero sentir que puedo aprender algo nuevo.",
-  "Quiero acompañar mis canciones favoritas.",
-  "Quiero volver a conectar con la música.",
+  "me hace feliz.",
+  "quiero cantar con mi familia.",
+  "necesito un momento para mí.",
+  "quiero acompañar mis canciones favoritas.",
+  "quiero demostrarme que puedo aprender algo nuevo.",
+  "quiero volver a conectar con la música.",
 ];
 
 const EMOTIONS = [
+  "Felicidad",
   "Alegría",
+  "Paz",
   "Calma",
   "Ilusión",
   "Confianza",
-  "Familia",
-  "Superación",
-  "Libertad",
-  "Nostalgia",
+  "Gratitud",
+  "Esperanza",
+  "Entusiasmo",
+  "Amor",
+  "Serenidad",
+  "Orgullo",
   "Otra",
 ];
 
@@ -48,55 +52,96 @@ function writeLS(key: string, value: string) {
   } catch {}
 }
 
-export function MissionTwoScreen({ onBack, onNext }: { onBack: () => void; onNext: () => void }) {
-  const initialName = readLS(LS.name);
+function joinEmotions(list: string[]): string {
+  const items = list.map((e) => e.toLowerCase());
+  if (items.length === 0) return "";
+  if (items.length === 1) return capitalize(items[0]) + ".";
+  const head = items.slice(0, -1).map(capitalize).join(", ");
+  return `${head} e ${items[items.length - 1]}.`;
+}
+
+function capitalize(s: string) {
+  return s.charAt(0).toUpperCase() + s.slice(1);
+}
+
+export function MissionTwoScreen({
+  userName,
+  onBack,
+  onNext,
+}: {
+  userName: string;
+  onBack: () => void;
+  onNext: () => void;
+}) {
+  const firstName = useMemo(() => {
+    const n = (userName ?? "").trim().split(/\s+/)[0];
+    return n && n !== "Navegante" ? n : "Navegante";
+  }, [userName]);
+
   const initialMotivation = readLS(LS.motivation);
-  const initialEmotionRaw = readLS(LS.emotion);
-  const initialIsPreset = EMOTIONS.includes(initialEmotionRaw) && initialEmotionRaw !== "Otra";
+  const initialEmotionsRaw = readLS(LS.emotions);
+  const initialEmotions: string[] = (() => {
+    if (!initialEmotionsRaw) return [];
+    try {
+      const parsed = JSON.parse(initialEmotionsRaw);
+      return Array.isArray(parsed) ? parsed : [];
+    } catch {
+      return [];
+    }
+  })();
 
-  const [name, setName] = useState(initialName === "Navegante" ? "" : initialName);
+  const presetSelected = initialEmotions.filter((e) => EMOTIONS.includes(e) && e !== "Otra");
+  const customInitial = initialEmotions.find((e) => !EMOTIONS.includes(e)) ?? "";
+  const initialSelected = customInitial ? [...presetSelected, "Otra"] : presetSelected;
+
   const [motivation, setMotivation] = useState(initialMotivation);
-  const [emotion, setEmotion] = useState<string>(
-    initialEmotionRaw ? (initialIsPreset ? initialEmotionRaw : "Otra") : ""
-  );
-  const [otherEmotion, setOtherEmotion] = useState(initialIsPreset ? "" : initialEmotionRaw);
+  const [selected, setSelected] = useState<string[]>(initialSelected);
+  const [otherEmotion, setOtherEmotion] = useState(customInitial);
+  const [errors, setErrors] = useState<{ motivation?: string; emotion?: string; other?: string }>({});
+  const [saved, setSaved] = useState(Boolean(initialMotivation && initialEmotions.length > 0));
 
-  const hasSaved = Boolean(initialName && initialMotivation && initialEmotionRaw);
-  const [saved, setSaved] = useState(hasSaved);
-  const [errors, setErrors] = useState<{ name?: string; motivation?: string; emotion?: string; other?: string }>({});
+  function toggleEmotion(em: string) {
+    setSelected((prev) => (prev.includes(em) ? prev.filter((x) => x !== em) : [...prev, em]));
+  }
 
-  const finalEmotion = emotion === "Otra" ? otherEmotion.trim() : emotion;
+  const finalEmotions = useMemo(() => {
+    const base = selected.filter((e) => e !== "Otra");
+    if (selected.includes("Otra") && otherEmotion.trim()) base.push(otherEmotion.trim());
+    return base;
+  }, [selected, otherEmotion]);
+
   const fuelPhrase = useMemo(
-    () => `Soy ${name.trim()} y quiero aprender ukelele porque ${motivation.trim()}`,
-    [name, motivation]
+    () => `Hola, soy ${firstName} y quiero aprender ukelele porque ${motivation.trim()}`.replace(/\.?$/, ".") ,
+    [firstName, motivation]
   );
-
-  const savedName = readLS(LS.name);
-  const savedMotivation = readLS(LS.motivation);
-  const savedEmotion = readLS(LS.emotion);
-  const savedPhrase = readLS(LS.phrase) || `Soy ${savedName} y quiero aprender ukelele porque ${savedMotivation}`;
 
   function handleSave() {
     const e: typeof errors = {};
-    if (!name.trim()) e.name = "Escribe tu nombre para continuar.";
     if (!motivation.trim()) e.motivation = "Cuéntanos por qué quieres aprender ukelele.";
-    if (!emotion) e.emotion = "Elige una emoción para acompañar tu viaje.";
-    if (emotion === "Otra" && !otherEmotion.trim()) e.other = "Escribe la emoción que quieres guardar.";
+    if (selected.length === 0) e.emotion = "Elige al menos una emoción para acompañar tu viaje.";
+    if (selected.includes("Otra") && !otherEmotion.trim()) e.other = "Escribe la emoción que quieres guardar.";
     setErrors(e);
     if (Object.keys(e).length > 0) return;
 
-    writeLS(LS.name, name.trim());
     writeLS(LS.motivation, motivation.trim());
-    writeLS(LS.emotion, finalEmotion);
+    writeLS(LS.emotions, JSON.stringify(finalEmotions));
     writeLS(LS.phrase, fuelPhrase);
     setSaved(true);
   }
 
   useEffect(() => {
-    if (saved) window.scrollTo({ top: 0, behavior: "smooth" });
+    if (saved && typeof window !== "undefined") window.scrollTo({ top: 0, behavior: "smooth" });
   }, [saved]);
 
   if (saved) {
+    const savedMotivation = readLS(LS.motivation);
+    const savedPhrase = readLS(LS.phrase) || `Hola, soy ${firstName} y quiero aprender ukelele porque ${savedMotivation}.`;
+    let savedEmotions: string[] = [];
+    try {
+      const parsed = JSON.parse(readLS(LS.emotions) || "[]");
+      if (Array.isArray(parsed)) savedEmotions = parsed;
+    } catch {}
+
     return (
       <div style={{ display: "flex", flexDirection: "column", gap: 16 }}>
         <BackBtn label="Puerto de Inicio" onClick={onBack} />
@@ -119,9 +164,9 @@ export function MissionTwoScreen({ onBack, onNext }: { onBack: () => void; onNex
           </p>
           <div style={{ background: B.pinkLight, borderRadius: 14, padding: "12px 14px", marginBottom: 16 }}>
             <div style={{ fontSize: 11, fontWeight: 800, color: B.pink, letterSpacing: "1px", textTransform: "uppercase", marginBottom: 4 }}>
-              Emoción de viaje
+              Emociones de viaje
             </div>
-            <div style={{ fontSize: 16, fontWeight: 700, color: B.dark }}>{savedEmotion}</div>
+            <div style={{ fontSize: 16, fontWeight: 700, color: B.dark }}>{joinEmotions(savedEmotions)}</div>
           </div>
           <p style={{ fontSize: 13, color: "#666", lineHeight: 1.6, margin: "0 0 18px" }}>
             Guardaremos este motivo para recordártelo cuando avances, completes misiones o necesites volver a conectar con tu sonido.
@@ -178,23 +223,14 @@ export function MissionTwoScreen({ onBack, onNext }: { onBack: () => void; onNex
 
       <Card>
         <div style={{ marginBottom: 18 }}>
-          <label style={labelStyle}>¿Cómo te llamas?</label>
-          <input
-            type="text"
-            value={name}
-            onChange={(e) => setName(e.target.value)}
-            placeholder="Ej: Juanita Pérez"
-            style={inputStyle}
-          />
-          {errors.name && <div style={errStyle}>{errors.name}</div>}
-        </div>
-
-        <div style={{ marginBottom: 18 }}>
-          <label style={labelStyle}>¿Por qué quieres aprender a tocar ukelele?</label>
+          <p style={{ margin: "0 0 10px", fontSize: 16, lineHeight: 1.5, color: B.dark, fontWeight: 700 }}>
+            Hola, soy <span style={{ color: B.pink }}>{firstName}</span> y quiero aprender ukelele porque...
+          </p>
+          <label style={labelStyle}>Completa tu motivo</label>
           <textarea
             value={motivation}
             onChange={(e) => setMotivation(e.target.value)}
-            placeholder="Ej: Quiero aprender porque me hace feliz, porque quiero cantar con mi familia o porque necesito un momento para mí."
+            placeholder="Ej: me hace feliz, quiero cantar con mi familia o necesito regalarme un momento para mí."
             rows={4}
             style={{ ...inputStyle, resize: "vertical", minHeight: 96, fontFamily: "Quicksand, sans-serif" }}
           />
@@ -228,19 +264,20 @@ export function MissionTwoScreen({ onBack, onNext }: { onBack: () => void; onNex
         </div>
 
         <div style={{ marginBottom: 18 }}>
-          <label style={labelStyle}>¿Qué emoción hay detrás de ese motivo?</label>
+          <label style={labelStyle}>¿Qué emociones positivas acompañan este motivo?</label>
+          <div style={{ fontSize: 12, color: B.grayText, marginBottom: 8 }}>Puedes elegir más de una.</div>
           <div style={{ display: "flex", flexWrap: "wrap", gap: 8 }}>
             {EMOTIONS.map((em) => {
-              const selected = emotion === em;
+              const isSel = selected.includes(em);
               return (
                 <button
                   key={em}
                   type="button"
-                  onClick={() => setEmotion(em)}
+                  onClick={() => toggleEmotion(em)}
                   style={{
-                    background: selected ? B.pink : B.white,
-                    color: selected ? B.white : B.dark,
-                    border: `1.5px solid ${selected ? B.pink : B.grayBorder}`,
+                    background: isSel ? B.pink : B.white,
+                    color: isSel ? B.white : B.dark,
+                    border: `1.5px solid ${isSel ? B.pink : B.grayBorder}`,
                     borderRadius: 999,
                     padding: "8px 14px",
                     fontSize: 13,
@@ -255,12 +292,12 @@ export function MissionTwoScreen({ onBack, onNext }: { onBack: () => void; onNex
               );
             })}
           </div>
-          {emotion === "Otra" && (
+          {selected.includes("Otra") && (
             <input
               type="text"
               value={otherEmotion}
               onChange={(e) => setOtherEmotion(e.target.value)}
-              placeholder="Escribe tu emoción"
+              placeholder="Escribe otra emoción positiva"
               style={{ ...inputStyle, marginTop: 10 }}
             />
           )}
