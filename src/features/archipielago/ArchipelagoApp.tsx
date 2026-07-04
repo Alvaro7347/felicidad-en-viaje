@@ -17,6 +17,7 @@ import { MissionFourScreen } from "./screens/MissionFourScreen";
 import { MissionGuideScreen } from "./screens/MissionGuideScreen";
 import { MissionScreen } from "./screens/MissionScreen";
 import { MissionSevenScreen } from "./screens/MissionSevenScreen";
+import { MissionSixScreen } from "./screens/MissionSixScreen";
 import { MissionThreeScreen } from "./screens/MissionThreeScreen";
 import { MissionTwoScreen } from "./screens/MissionTwoScreen";
 import { OnboardingScreen } from "./screens/OnboardingScreen";
@@ -30,6 +31,7 @@ const REVIEW_MISSION_BY_NODE: Record<string, Screen> = {
   n3: "mission-three",
   n4: "mission-four",
   n5: "mission",
+  n6: "mission-six",
   n7: "mission-seven",
   n8: "mission-eight",
 };
@@ -130,6 +132,7 @@ export function ArchipelagoApp() {
 
         {screen === "mission-three" && <MissionThreeScreen onBack={() => setScreen("route")} />}
         {screen === "mission-four" && <MissionFourScreen onBack={() => setScreen("route")} />}
+        {screen === "mission-six" && <MissionSixScreen onBack={() => setScreen("route")} />}
         {screen === "mission-seven" && <MissionSevenScreen onBack={() => setScreen("route")} />}
         {screen === "mission-eight" && <MissionEightScreen onBack={() => setScreen("route")} />}
         {screen === "mission-guide" && <MissionGuideScreen userName={userName} onBack={() => setScreen("route")} />}
