@@ -1,14 +1,14 @@
 import { B } from "../data/brand";
 import type { Screen } from "../types";
 import { ONBOARDING_SCREENS } from "../data/screens";
-import { ISLANDS } from "../data/islands";
+import { ROUTE_STAGES } from "../data/islands";
 
 export function AppHeader({ screen, onHome }: { screen: Screen; onHome?: () => void }) {
   const isOnboarding = ONBOARDING_SCREENS.includes(screen);
   if (screen === 'onboarding' || screen === 'welcome' || screen === 'diagnosis' || screen === 'diagnosis-result') return null;
 
   if (screen === 'route') {
-    const active = ISLANDS.find(i => i.status === 'active') ?? ISLANDS[0];
+    const active = ROUTE_STAGES.find(s => s.status === 'active') ?? ROUTE_STAGES[0];
     const pct = active.progress;
     return (
       <header style={{
@@ -54,7 +54,7 @@ export function AppHeader({ screen, onHome }: { screen: Screen; onHome?: () => v
             Tu viaje musical
           </div>
           <div style={{ fontSize: 11.5, color: B.grayText, marginTop: 2, lineHeight: 1.3 }}>
-            {active.title} · <span style={{ color: B.greenDark, fontWeight: 700 }}>{pct}% completada</span>
+            {active.title} · <span style={{ color: B.greenDark, fontWeight: 700 }}>{pct}% {active.completionText}</span>
           </div>
           <div style={{ marginTop: 6, height: 3, background: '#EAF6F0', borderRadius: 999, overflow: 'hidden' }}>
             <div style={{ width: `${pct}%`, height: '100%', background: B.green, borderRadius: 999, transition: 'width 0.4s ease' }} />
