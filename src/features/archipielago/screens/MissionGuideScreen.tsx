@@ -2,8 +2,8 @@ import { useState } from "react";
 import { B } from "../data/brand";
 import { Btn } from "../components/Btn";
 import { Card } from "../components/Card";
-import { Tag } from "../components/Tag";
 import { BackBtn } from "../components/BackBtn";
+import { MissionIntroHeader } from "../components/MissionIntroHeader";
 import alvaroAsset from "../../../assets/alvaro-campos.jpeg.asset.json";
 import { supabase } from "@/integrations/supabase/client";
 
@@ -144,15 +144,13 @@ export function MissionGuideScreen({ onBack, userName }: { onBack: () => void; u
   return (
     <div style={{ display: 'flex', flexDirection: 'column', gap: 16 }}>
       <BackBtn label="Puerto de Inicio" onClick={onBack} />
-      <Card style={{ background: B.green, padding: '18px 22px' }}>
-        <Tag color="pink">Misión completada · Nodo 1 de 8</Tag>
-        <h2 style={{ fontFamily: 'Space Grotesk, sans-serif', fontWeight: 800, fontSize: 'clamp(20px,4vw,26px)', margin: '10px 0 6px 0', color: B.dark }}>
-          Conoce a tu guía
-        </h2>
-        <p style={{ fontSize: 14, color: '#555', margin: 0, lineHeight: 1.55 }}>
-          Antes de tocar tu primer acorde, queremos que sepas quién caminará contigo.
-        </p>
-      </Card>
+      <MissionIntroHeader
+        eyebrow="Nodo 1 de 8 · Puerto de Inicio"
+        status="Misión completada"
+        title="Conoce a tu guía"
+        subtitle="Antes de tocar tu primer acorde, queremos que sepas quién caminará contigo."
+      />
+
       <Card style={{ padding: 0, overflow: 'hidden' }}>
         <div style={{ position: 'relative', height: 280, background: '#111' }}>
           <img

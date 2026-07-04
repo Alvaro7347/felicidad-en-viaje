@@ -2,8 +2,8 @@ import { useEffect, useMemo, useState } from "react";
 import { B } from "../data/brand";
 import { Btn } from "../components/Btn";
 import { Card } from "../components/Card";
-import { Tag } from "../components/Tag";
 import { BackBtn } from "../components/BackBtn";
+import { MissionIntroHeader } from "../components/MissionIntroHeader";
 
 const LS = {
   motivation: "archipielago_user_motivation",
@@ -145,15 +145,12 @@ export function MissionTwoScreen({
     return (
       <div style={{ display: "flex", flexDirection: "column", gap: 16 }}>
         <BackBtn label="Puerto de Inicio" onClick={onBack} />
-        <Card style={{ background: B.green, padding: "18px 22px" }}>
-          <Tag color="pink">Tu combustible · guardado</Tag>
-          <h2 style={{ fontFamily: "Space Grotesk, sans-serif", fontWeight: 800, fontSize: "clamp(20px,4vw,26px)", margin: "10px 0 6px", color: B.dark }}>
-            Cuéntanos de ti
-          </h2>
-          <p style={{ fontSize: 14, color: "#555", margin: 0, lineHeight: 1.55 }}>
-            Este es el motivo que guiará tu viaje musical.
-          </p>
-        </Card>
+        <MissionIntroHeader
+          eyebrow="Nodo 2 de 8 · Puerto de Inicio"
+          status="Tu combustible guardado"
+          title="Cuéntanos de ti"
+          subtitle="Este es el motivo que guiará tu viaje musical."
+        />
 
         <Card>
           <div style={{ fontSize: 11, fontWeight: 800, color: B.pink, letterSpacing: "1.2px", textTransform: "uppercase", marginBottom: 8 }}>
@@ -205,15 +202,11 @@ export function MissionTwoScreen({
     <div style={{ display: "flex", flexDirection: "column", gap: 16 }}>
       <BackBtn label="Puerto de Inicio" onClick={onBack} />
 
-      <Card style={{ background: B.green, padding: "18px 22px" }}>
-        <Tag color="pink">Reflexión · 3 min</Tag>
-        <h2 style={{ fontFamily: "Space Grotesk, sans-serif", fontWeight: 800, fontSize: "clamp(20px,4vw,26px)", margin: "10px 0 6px", color: B.dark }}>
-          Cuéntanos de ti
-        </h2>
-        <p style={{ fontSize: 14, color: "#555", margin: 0, lineHeight: 1.55 }}>
-          Antes de seguir navegando, queremos saber qué te trae a este viaje musical.
-        </p>
-      </Card>
+      <MissionIntroHeader
+        eyebrow="Nodo 2 de 8 · Puerto de Inicio"
+        title="Cuéntanos de ti"
+        subtitle="Antes de seguir navegando, queremos saber qué te trae a este viaje musical."
+      />
 
       <Card style={{ background: B.pinkLight, borderColor: "transparent" }}>
         <p style={{ margin: 0, fontSize: 13, lineHeight: 1.6, color: B.dark }}>
