@@ -172,6 +172,7 @@ export function MissionGuideScreen({ onBack, userName }: { onBack: () => void; u
           <button
             type="button"
             aria-label="Reproducir video de bienvenida"
+            onClick={openVideoModal}
             style={{
               position: 'absolute',
               left: '50%',
@@ -182,12 +183,6 @@ export function MissionGuideScreen({ onBack, userName }: { onBack: () => void; u
               padding: 0,
               cursor: 'pointer',
               zIndex: 2,
-              top: '58%',
-              transform: 'translate(-50%, -50%)',
-              background: 'transparent',
-              border: 'none',
-              padding: 0,
-              cursor: 'pointer',
               display: 'flex',
               alignItems: 'center',
               justifyContent: 'center',
