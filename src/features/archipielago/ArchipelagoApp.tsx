@@ -123,6 +123,7 @@ export function ArchipelagoApp() {
 
         {screen === "mission-two" && (
           <MissionTwoScreen
+            userName={userName}
             onBack={() => setScreen("route")}
             onNext={() => setScreen("mission")}
           />
