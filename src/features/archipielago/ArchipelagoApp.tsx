@@ -48,7 +48,10 @@ export function ArchipelagoApp() {
   // ── Estado del viaje ───────────────────────────────────────────
   const [screen, setScreen] = useState<Screen>("welcome");
   const [diagAnswers, setDiagAnswers] = useState<DiagAnswers>({});
-  const [userName, setUserName] = useState("Navegante");
+  const [userName, setUserName] = useState(() => {
+    if (typeof window === "undefined") return "Navegante";
+    return window.localStorage.getItem("archipielago_user_name") || "Navegante";
+  });
   const [emotion, setEmotion] = useState<string | null>(null);
 
   const goToRoute = () => setScreen("route");
@@ -81,6 +84,9 @@ export function ArchipelagoApp() {
             onComplete={(answers, name) => {
               setDiagAnswers(answers);
               setUserName(name);
+              if (typeof window !== "undefined") {
+                try { window.localStorage.setItem("archipielago_user_name", name); } catch {}
+              }
               setScreen("diagnosis-result");
             }}
           />
@@ -124,7 +130,7 @@ export function ArchipelagoApp() {
 
         {screen === "mission-three" && <MissionThreeScreen onBack={() => setScreen("route")} />}
         {screen === "mission-four" && <MissionFourScreen onBack={() => setScreen("route")} />}
-        {screen === "mission-guide" && <MissionGuideScreen onBack={() => setScreen("route")} />}
+        {screen === "mission-guide" && <MissionGuideScreen userName={userName} onBack={() => setScreen("route")} />}
 
         {screen === "celebration" && <CelebrationScreen onHome={goToRoute} />}
       </div>
