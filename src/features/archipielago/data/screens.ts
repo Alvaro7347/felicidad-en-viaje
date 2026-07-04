@@ -12,7 +12,7 @@ export const DEV_SCREENS: { label: string; screen: Screen }[] = [
   { label: 'N2 · Cuéntanos',              screen: 'mission-two' },
   { label: 'N3 · Qué es el Archipiélago', screen: 'mission-three' },
   { label: 'N4 · Historia del Ukelele',   screen: 'mission-four' },
-  { label: 'N5 · Misión DO',              screen: 'mission' },
+  { label: 'N5 · Partes del Ukelele',     screen: 'mission' },
   { label: 'N7 · Toma ukelele',           screen: 'mission-seven' },
   { label: 'N8 · Afinación',              screen: 'mission-eight' },
   { label: '⑦ Celebración',               screen: 'celebration' },
