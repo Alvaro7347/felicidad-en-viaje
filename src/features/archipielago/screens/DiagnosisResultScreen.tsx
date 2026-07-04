@@ -29,27 +29,9 @@ export function DiagnosisResultScreen({ answers, userName, onEnter }: {
   return (
     <div style={{ display: 'flex', flexDirection: 'column', gap: 18 }}>
 
-      {/* Completed progress bar */}
-      <div style={{ display: 'flex', alignItems: 'center', gap: 14 }}>
-        <div style={{
-          width: 56, height: 56, borderRadius: 999, flexShrink: 0,
-          background: B.green,
-          display: 'flex', alignItems: 'center', justifyContent: 'center',
-        }}>
-          <span style={{ fontFamily: 'Space Grotesk, sans-serif', fontWeight: 900, fontSize: 11, color: B.dark }}>100%</span>
-        </div>
-        <div style={{ flex: 1 }}>
-          <div style={{ fontWeight: 800, fontSize: 13, color: B.greenDark, marginBottom: 4 }}>Perfil musical completo ✓</div>
-          <div style={{ height: 10, background: B.grayBorder, borderRadius: 999, overflow: 'hidden' }}>
-            <div style={{ width: '100%', height: '100%', background: `linear-gradient(to right, ${B.greenDark}, ${B.green})`, borderRadius: 999, boxShadow: '0 0 8px rgba(46,230,174,0.45)' }} />
-          </div>
-        </div>
-      </div>
-      <div style={{ display: 'flex', gap: 5, justifyContent: 'center' }}>
-        {DIAG_QUESTIONS.map((_, i) => (
-          <div key={i} style={{ width: 8, height: 6, borderRadius: 999, background: B.greenDark }} />
-        ))}
-      </div>
+      {/* Unified diagnosis progress header — completed state */}
+      <DiagnosisProgress currentStep={DIAG_QUESTIONS.length} totalSteps={DIAG_QUESTIONS.length} completed />
+
 
       {/* Header — personalized */}
       <div style={{ background: B.green, borderRadius: 22, padding: '24px 26px', textAlign: 'center' }}>
