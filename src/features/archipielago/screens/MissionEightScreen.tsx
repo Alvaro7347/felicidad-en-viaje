@@ -1,10 +1,16 @@
-import { B, PHOTOS } from "../data/brand";
+import { useState } from "react";
+import { B } from "../data/brand";
 import { Btn } from "../components/Btn";
 import { Card } from "../components/Card";
 import { BackBtn } from "../components/BackBtn";
 import { MissionIntroHeader } from "../components/MissionIntroHeader";
 
-export function MissionEightScreen({ onBack, onNext }: { onBack: () => void; onNext?: () => void }) {
+const VIDEO_ID = "QiqLfHRHmYw";
+const VIDEO_THUMB = `https://img.youtube.com/vi/${VIDEO_ID}/hqdefault.jpg`;
+
+export function MissionEightScreen({ onBack }: { onBack: () => void }) {
+  const [showVideoModal, setShowVideoModal] = useState(false);
+
   return (
     <div style={{ display: 'flex', flexDirection: 'column', gap: 16 }}>
       <BackBtn label="Puerto de Inicio" onClick={onBack} />
@@ -12,35 +18,74 @@ export function MissionEightScreen({ onBack, onNext }: { onBack: () => void; onN
         title="Afina tu primer sonido"
         subtitle="Antes de tocar música, tu ukelele también necesita encontrar su voz."
       />
+
       <Card style={{ padding: 0, overflow: 'hidden' }}>
-        <div style={{ position: 'relative', height: 210 }}>
-          <img src={PHOTOS.class} alt="Video de afinación" style={{ width: '100%', height: '100%', objectFit: 'cover' }} />
-          <div style={{ position: 'absolute', inset: 0, background: 'rgba(60,60,59,0.42)' }} />
-          <div style={{ position: 'absolute', inset: 0, display: 'flex', flexDirection: 'column', alignItems: 'center', justifyContent: 'center', gap: 10, padding: 16, textAlign: 'center' }}>
-            <div style={{ width: 64, height: 64, borderRadius: 999, background: 'rgba(255,255,255,0.93)', display: 'flex', alignItems: 'center', justifyContent: 'center', fontSize: 24, paddingLeft: 3, boxShadow: '0 4px 18px rgba(0,0,0,0.2)' }}>▶</div>
-            <span style={{ color: B.white, fontWeight: 800, fontSize: 14, textShadow: '0 1px 4px rgba(0,0,0,0.4)' }}>Práctica · 5 min</span>
-            <span style={{ color: 'rgba(255,255,255,0.88)', fontSize: 12, lineHeight: 1.5, maxWidth: 400 }}>
-              Cómo afinar tu ukelele paso a paso
-            </span>
+        <div style={{ position: 'relative', height: 220, background: '#111' }}>
+          <img
+            src={VIDEO_THUMB}
+            alt="Cómo afinar tu ukelele"
+            style={{ width: '100%', height: '100%', objectFit: 'cover', display: 'block' }}
+          />
+          <div style={{ position: 'absolute', inset: 0, background: 'linear-gradient(180deg, rgba(0,0,0,0.15) 0%, rgba(0,0,0,0.65) 100%)' }} />
+          <div style={{ position: 'absolute', left: 14, right: 14, bottom: 14, color: B.white }}>
+            <div style={{
+              display: 'inline-block',
+              background: 'rgba(46,230,174,0.95)',
+              color: B.dark,
+              fontWeight: 800, fontSize: 11,
+              padding: '4px 10px', borderRadius: 999,
+              letterSpacing: '0.6px', textTransform: 'uppercase',
+              marginBottom: 8,
+            }}>
+              Video · 5 min
+            </div>
+            <div style={{ fontWeight: 800, fontSize: 15, textShadow: '0 1px 4px rgba(0,0,0,0.5)' }}>
+              Cómo afinar tu ukelele
+            </div>
+            <div style={{ fontSize: 12, opacity: 0.92, marginTop: 2, textShadow: '0 1px 4px rgba(0,0,0,0.5)' }}>
+              Aprende a preparar tu sonido paso a paso.
+            </div>
           </div>
+          <button
+            type="button"
+            aria-label="Reproducir video de afinación"
+            onClick={() => setShowVideoModal(true)}
+            style={{
+              position: 'absolute', left: '50%', top: '46%',
+              transform: 'translate(-50%, -50%)',
+              background: 'transparent', border: 'none', padding: 0, cursor: 'pointer',
+              display: 'flex', alignItems: 'center', justifyContent: 'center',
+              opacity: 0.9, transition: 'transform 0.2s ease, opacity 0.2s ease',
+            }}
+            onMouseEnter={(e) => { e.currentTarget.style.transform = 'translate(-50%, -50%) scale(1.06)'; e.currentTarget.style.opacity = '1'; }}
+            onMouseLeave={(e) => { e.currentTarget.style.transform = 'translate(-50%, -50%) scale(1)'; e.currentTarget.style.opacity = '0.9'; }}
+          >
+            <svg width="76" height="54" viewBox="0 0 68 48" aria-hidden="true" style={{ filter: 'drop-shadow(0 2px 10px rgba(0,0,0,0.4))' }}>
+              <rect x="0" y="0" width="68" height="48" rx="14" fill="rgba(255,255,255,0.28)" stroke="rgba(255,255,255,0.4)" strokeWidth="1" />
+              <path d="M27 15 L47 24 L27 33 Z" fill="#FFFFFF" />
+            </svg>
+          </button>
         </div>
       </Card>
+
       <Card>
         <p style={{ margin: 0, color: '#666', lineHeight: 1.7, fontSize: 13 }}>
-          En este video aprenderás cómo afinar tu ukelele aunque nunca hayas afinado un instrumento antes.
+          En esta clase aprenderás cómo afinar tu ukelele aunque nunca hayas afinado un instrumento antes. La idea no es hacerlo perfecto de inmediato, sino comenzar a escuchar con calma.
         </p>
       </Card>
+
       <Card>
-        <div style={{ fontSize: 11, fontWeight: 800, color: B.pink, letterSpacing: '1.2px', textTransform: 'uppercase', marginBottom: 8 }}>
+        <div style={{ fontSize: 11, fontWeight: 800, color: B.greenDark, letterSpacing: '1.2px', textTransform: 'uppercase', marginBottom: 10 }}>
           Qué aprenderás
         </div>
         <div style={{ display: 'grid', gap: 10, fontSize: 13, lineHeight: 1.6, color: '#666' }}>
           <div>• Qué significa afinar.</div>
           <div>• Cómo reconocer si una cuerda está muy alta o muy baja.</div>
           <div>• Cómo usar un afinador digital.</div>
-          <div>• Cómo preparar tu ukelele para sonar bien.</div>
+          <div>• Cómo preparar tu ukelele para sonar mejor.</div>
         </div>
       </Card>
+
       <Card>
         <div style={{ fontSize: 11, fontWeight: 800, color: B.grayText, letterSpacing: '1.2px', textTransform: 'uppercase', marginBottom: 8 }}>
           Afinador recomendado
@@ -48,17 +93,78 @@ export function MissionEightScreen({ onBack, onNext }: { onBack: () => void; onN
         <p style={{ margin: '0 0 12px', color: '#666', lineHeight: 1.7, fontSize: 13 }}>
           Para esta misión te recomendamos la aplicación <strong>GuitarTuna</strong>. Es simple, amigable para principiantes y te ayudará a afinar tu ukelele fácilmente.
         </p>
-        <Card style={{ background: B.pinkLight, margin: 0, padding: '14px 16px', border: `1px solid ${B.pink}` }}>
+        <div style={{ background: B.gray, borderRadius: 14, padding: '14px 16px', border: `1px solid ${B.grayBorder}` }}>
           <div style={{ fontWeight: 800, color: B.dark, marginBottom: 4 }}>GuitarTuna</div>
           <div style={{ fontSize: 13, color: '#666' }}>Búscala en tu tienda de apps favorita.</div>
-        </Card>
+        </div>
       </Card>
-      <Card style={{ background: B.pinkLight }}>
+
+      <Card style={{ background: B.greenLight }}>
         <p style={{ margin: 0, color: B.dark, lineHeight: 1.7, fontSize: 13 }}>
           Afinar también es aprender a escuchar. No te preocupes si al principio parece difícil: tu oído también irá despertando.
         </p>
       </Card>
-      {onNext && <Btn onClick={onNext} fullWidth>Continuar a Toca tu primer DO</Btn>}
+
+      <Btn onClick={onBack} fullWidth>Volver al Puerto de Inicio</Btn>
+
+      {showVideoModal && (
+        <div
+          role="dialog"
+          aria-modal="true"
+          aria-label="Video: Cómo afinar tu ukelele"
+          onClick={() => setShowVideoModal(false)}
+          style={{
+            position: 'fixed', inset: 0, background: 'rgba(0,0,0,0.75)',
+            display: 'flex', alignItems: 'center', justifyContent: 'center',
+            padding: 12, zIndex: 1000, maxHeight: '100dvh', overflowY: 'auto',
+          }}
+        >
+          <div
+            onClick={(e) => e.stopPropagation()}
+            style={{
+              width: '100%', maxWidth: 900, background: B.white,
+              borderRadius: 16, overflow: 'hidden', boxShadow: '0 20px 60px rgba(0,0,0,0.4)',
+              display: 'flex', flexDirection: 'column',
+              maxHeight: 'calc(100dvh - 24px)',
+            }}
+          >
+            <div style={{ padding: '10px 14px', display: 'flex', alignItems: 'center', justifyContent: 'space-between', gap: 12, flexShrink: 0 }}>
+              <div style={{ minWidth: 0 }}>
+                <div style={{ fontWeight: 800, fontSize: 14, color: B.dark, lineHeight: 1.2 }}>Cómo afinar tu ukelele</div>
+                <div style={{ fontSize: 11, color: '#666', marginTop: 2, lineHeight: 1.2, overflow: 'hidden', textOverflow: 'ellipsis', whiteSpace: 'nowrap' }}>
+                  Aprende a preparar tu sonido paso a paso.
+                </div>
+              </div>
+              <button
+                type="button"
+                onClick={() => setShowVideoModal(false)}
+                aria-label="Cerrar video"
+                style={{
+                  background: 'transparent', border: '1px solid #ddd', borderRadius: 999,
+                  padding: '6px 12px', fontSize: 12, fontWeight: 700, color: B.dark, cursor: 'pointer',
+                  flexShrink: 0,
+                }}
+              >
+                Cerrar
+              </button>
+            </div>
+            <div style={{
+              flex: '1 1 auto', minHeight: 0, background: '#000',
+              display: 'flex', alignItems: 'center', justifyContent: 'center',
+            }}>
+              <div style={{ position: 'relative', width: '100%', maxWidth: '100%', maxHeight: '100%', aspectRatio: '16 / 9' }}>
+                <iframe
+                  src={`https://www.youtube-nocookie.com/embed/${VIDEO_ID}?rel=0&modestbranding=1&playsinline=1&autoplay=1`}
+                  title="Cómo afinar tu ukelele"
+                  allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture; web-share"
+                  allowFullScreen
+                  style={{ position: 'absolute', inset: 0, width: '100%', height: '100%', border: 0 }}
+                />
+              </div>
+            </div>
+          </div>
+        </div>
+      )}
     </div>
   );
 }
