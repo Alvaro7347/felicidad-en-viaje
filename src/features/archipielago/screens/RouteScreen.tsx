@@ -125,7 +125,7 @@ export function RouteScreen({ onBack, onStartMission, onReviewMission, userName:
                         <div style={{ width: `${isl.progress}%`, height: '100%', background: B.green, borderRadius: 999 }} />
                       </div>
                       <div style={{ fontSize: 9, fontWeight: 800, color: B.green, marginTop: 3, opacity: 0.85 }}>
-                        {isl.progress}% completada
+                        {isl.progress}% completado
                       </div>
                     </div>
                   )}
