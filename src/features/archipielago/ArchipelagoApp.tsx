@@ -11,7 +11,7 @@ import { SplashScreen } from "./components/SplashScreen";
 import { CelebrationScreen } from "./screens/CelebrationScreen";
 import { DiagnosisResultScreen } from "./screens/DiagnosisResultScreen";
 import { DiagnosisScreen } from "./screens/DiagnosisScreen";
-import { EntryMomentScreen } from "./screens/EntryMomentScreen";
+
 import { MissionFourScreen } from "./screens/MissionFourScreen";
 import { MissionGuideScreen } from "./screens/MissionGuideScreen";
 import { MissionScreen } from "./screens/MissionScreen";
