@@ -127,6 +127,12 @@ export function RouteScreen({ onBack, onStartMission, onReviewMission, userName:
                     border: islBorder,
                     borderRadius: 13,
                     padding: '8px 12px',
+                    minWidth: 168,
+                    minHeight: 62,
+                    boxSizing: 'border-box',
+                    display: 'flex',
+                    flexDirection: 'column',
+                    justifyContent: 'center',
                     transform: islScale,
                     transformOrigin: 'center center',
                     opacity: islOpacity,
@@ -162,18 +168,21 @@ export function RouteScreen({ onBack, onStartMission, onReviewMission, userName:
                       </div>
                     </div>
 
-                    {/* Progress strip — active only */}
-                    {isActive && (
-                      <div style={{ marginTop: 8 }}>
-                        <div style={{ height: 3, background: 'rgba(255,255,255,0.08)', borderRadius: 999, overflow: 'hidden', width: 120 }}>
-                          <div style={{ width: `${isl.progress}%`, height: '100%', background: B.green, borderRadius: 999 }} />
-                        </div>
-                        <div style={{ fontSize: 9, fontWeight: 800, color: B.green, marginTop: 3, opacity: 0.85 }}>
-                          {isl.progress}% completado
-                        </div>
-                      </div>
-                    )}
+                    {/* Reserved bottom area — keeps active and locked cards the same structural size */}
+                    <div style={{ marginTop: 8, minHeight: 18 }}>
+                      {isActive ? (
+                        <>
+                          <div style={{ height: 3, background: 'rgba(255,255,255,0.08)', borderRadius: 999, overflow: 'hidden', width: 120 }}>
+                            <div style={{ width: `${isl.progress}%`, height: '100%', background: B.green, borderRadius: 999 }} />
+                          </div>
+                          <div style={{ fontSize: 9, fontWeight: 800, color: B.green, marginTop: 3, opacity: 0.85 }}>
+                            {isl.progress}% completado
+                          </div>
+                        </>
+                      ) : null}
+                    </div>
                   </div>
+
                 </div>
 
 
