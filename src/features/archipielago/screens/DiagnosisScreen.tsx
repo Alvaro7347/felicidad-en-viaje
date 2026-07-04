@@ -4,6 +4,7 @@ import { DIAG_QUESTIONS } from "../data/diagnosis";
 import type { Screen, DiagAnswers } from "../types";
 import { Btn } from "../components/Btn";
 import { Card } from "../components/Card";
+import { DiagnosisProgress } from "../components/DiagnosisProgress";
 
 export function DiagnosisScreen({ onComplete }: { onComplete: (answers: DiagAnswers, name: string) => void }) {
   // step -1 = name input; steps 0..N-1 = questions
