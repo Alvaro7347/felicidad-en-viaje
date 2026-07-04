@@ -57,7 +57,7 @@ export function ArchipelagoApp() {
     if (typeof window === "undefined") return "Navegante";
     return window.localStorage.getItem("archipielago_user_name") || "Navegante";
   });
-  const [emotion, setEmotion] = useState<string | null>(null);
+  
 
   const goToRoute = () => setScreen("route");
   const isOnboarding = ONBOARDING_SCREENS.includes(screen);
