@@ -31,15 +31,15 @@ export function MissionGuideScreen({ onBack }: { onBack: () => void }) {
             alt="Álvaro Campos, fundador y profesor guía de SoundKeleles"
             style={{ width: '100%', height: '100%', objectFit: 'cover', objectPosition: 'center top', display: 'block' }}
           />
-          <div style={{ position: 'absolute', inset: 0, background: 'linear-gradient(180deg, rgba(0,0,0,0) 40%, rgba(0,0,0,0.55) 100%)' }} />
-          <div style={{ position: 'absolute', top: 14, left: 14, right: 14, display: 'flex', justifyContent: 'center' }}>
-            <div style={{ width: 60, height: 60, borderRadius: 999, background: 'rgba(255,255,255,0.93)', display: 'flex', alignItems: 'center', justifyContent: 'center', fontSize: 22, paddingLeft: 3, boxShadow: '0 4px 18px rgba(0,0,0,0.25)' }}>▶</div>
-          </div>
-          <div style={{ position: 'absolute', left: 14, right: 14, bottom: 14, color: B.white }}>
-            <div style={{ fontWeight: 800, fontSize: 14, textShadow: '0 1px 4px rgba(0,0,0,0.5)' }}>Video de bienvenida · 2 min</div>
-            <div style={{ fontSize: 12, opacity: 0.92, marginTop: 2, textShadow: '0 1px 4px rgba(0,0,0,0.5)' }}>
-              Álvaro te cuenta cómo será este viaje.
+          <div style={{ position: 'absolute', inset: 0, background: 'linear-gradient(180deg, rgba(0,0,0,0) 55%, rgba(0,0,0,0.65) 100%)' }} />
+          <div style={{ position: 'absolute', right: 14, bottom: 14, color: B.white, display: 'flex', alignItems: 'center', gap: 10 }}>
+            <div style={{ textAlign: 'right' }}>
+              <div style={{ fontWeight: 800, fontSize: 14, textShadow: '0 1px 4px rgba(0,0,0,0.5)' }}>Video de bienvenida · 2 min</div>
+              <div style={{ fontSize: 12, opacity: 0.92, marginTop: 2, textShadow: '0 1px 4px rgba(0,0,0,0.5)' }}>
+                Álvaro te cuenta cómo será este viaje.
+              </div>
             </div>
+            <div style={{ width: 52, height: 52, borderRadius: 999, background: 'rgba(255,255,255,0.95)', display: 'flex', alignItems: 'center', justifyContent: 'center', fontSize: 20, paddingLeft: 3, boxShadow: '0 4px 18px rgba(0,0,0,0.3)', flexShrink: 0 }}>▶</div>
           </div>
         </div>
       </Card>
