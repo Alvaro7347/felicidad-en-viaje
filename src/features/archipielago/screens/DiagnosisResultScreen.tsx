@@ -74,8 +74,7 @@ export function DiagnosisResultScreen({ answers, userName, onEnter }: {
   userName: string;
   onEnter: () => void;
 }) {
-  // userName kept for API compatibility (no longer rendered in this minimal version)
-  void userName;
+  const firstName = (userName || '').trim().split(/\s+/)[0] || '';
 
   const insights: Insight[] = [
     getStartingPoint(answers),
@@ -100,14 +99,15 @@ export function DiagnosisResultScreen({ answers, userName, onEnter }: {
         <h1 style={{
           fontFamily: 'Space Grotesk, sans-serif',
           fontWeight: 800,
-          fontSize: 'clamp(26px, 6vw, 32px)',
+          fontSize: 'clamp(24px, 5.6vw, 30px)',
           color: B.dark,
           margin: 0,
           lineHeight: 1.15,
           letterSpacing: '-0.02em',
         }}>
-          Tu perfil ya está listo
+          {firstName ? `${firstName}, tu perfil ya está listo` : 'Tu perfil ya está listo'}
         </h1>
+
         <p style={{
           fontFamily: 'Quicksand, sans-serif',
           fontSize: 14,
