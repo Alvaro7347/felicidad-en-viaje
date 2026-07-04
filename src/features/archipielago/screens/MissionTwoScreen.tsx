@@ -146,8 +146,6 @@ export function MissionTwoScreen({
       <div style={{ display: "flex", flexDirection: "column", gap: 16 }}>
         <BackBtn label="Puerto de Inicio" onClick={onBack} />
         <MissionIntroHeader
-          eyebrow="Nodo 2 de 8 · Puerto de Inicio"
-          status="Tu combustible guardado"
           title="Cuéntanos de ti"
           subtitle="Este es el motivo que guiará tu viaje musical."
         />
@@ -203,7 +201,6 @@ export function MissionTwoScreen({
       <BackBtn label="Puerto de Inicio" onClick={onBack} />
 
       <MissionIntroHeader
-        eyebrow="Nodo 2 de 8 · Puerto de Inicio"
         title="Cuéntanos de ti"
         subtitle="Antes de seguir navegando, queremos saber qué te trae a este viaje musical."
       />

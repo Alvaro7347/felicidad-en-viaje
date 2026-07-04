@@ -4,13 +4,11 @@ import { Card } from "../components/Card";
 import { BackBtn } from "../components/BackBtn";
 import { MissionIntroHeader } from "../components/MissionIntroHeader";
 
-export function MissionThreeScreen({ onBack }: { onBack: () => void }) {
+export function MissionThreeScreen({ onBack, onNext }: { onBack: () => void; onNext?: () => void }) {
   return (
     <div style={{ display: 'flex', flexDirection: 'column', gap: 16 }}>
       <BackBtn label="Puerto de Inicio" onClick={onBack} />
       <MissionIntroHeader
-        eyebrow="Nodo 3 de 8 · Puerto de Inicio"
-        status="Misión completada"
         title="Toma tu ukelele sin tensión"
         subtitle="Antes de tocar, tu cuerpo también necesita sentirse cómodo."
       />
@@ -47,7 +45,7 @@ export function MissionThreeScreen({ onBack }: { onBack: () => void }) {
           No necesitas apretar fuerte. Tu cuerpo también está aprendiendo a hacer música.
         </p>
       </Card>
-      <Btn onClick={onBack} fullWidth>Volver a la ruta</Btn>
+      {onNext && <Btn onClick={onNext} fullWidth>Continuar a Afina tu primer sonido</Btn>}
     </div>
   );
 }

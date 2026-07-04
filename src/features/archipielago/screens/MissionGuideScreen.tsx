@@ -77,7 +77,6 @@ export function MissionGuideScreen({ onBack, onNext, userName }: { onBack: () =>
   const [contactMessage, setContactMessage] = useState('');
   const [contactError, setContactError] = useState<string | null>(null);
   const [contactSent, setContactSent] = useState(false);
-  const [preparedGuideMessage, setPreparedGuideMessage] = useState<GuideMessagePayload | null>(null);
   const [isSendingContactMessage, setIsSendingContactMessage] = useState(false);
   const [showVideoModal, setShowVideoModal] = useState(false);
   const guidePhoto = alvaroAsset.url;
@@ -93,7 +92,6 @@ export function MissionGuideScreen({ onBack, onNext, userName }: { onBack: () =>
   function openContactModal() {
     setContactError(null);
     setContactSent(false);
-    setPreparedGuideMessage(null);
     setShowContactModal(true);
   }
 
@@ -104,7 +102,6 @@ export function MissionGuideScreen({ onBack, onNext, userName }: { onBack: () =>
     setContactSent(false);
     setContactEmail('');
     setContactMessage('');
-    setPreparedGuideMessage(null);
   }
 
   async function handleSendGuideMessage() {
@@ -129,7 +126,6 @@ export function MissionGuideScreen({ onBack, onNext, userName }: { onBack: () =>
     setIsSendingContactMessage(true);
     try {
       await saveGuideMessage(payload);
-      setPreparedGuideMessage(payload);
       setContactSent(true);
     } catch (err) {
       console.error('[MissionGuideScreen] Error guardando mensaje al guía:', err);
@@ -145,8 +141,6 @@ export function MissionGuideScreen({ onBack, onNext, userName }: { onBack: () =>
     <div style={{ display: 'flex', flexDirection: 'column', gap: 16 }}>
       <BackBtn label="Puerto de Inicio" onClick={onBack} />
       <MissionIntroHeader
-        eyebrow="Nodo 1 de 8 · Puerto de Inicio"
-        status="Misión completada"
         title="Conoce a tu guía"
         subtitle="Antes de tocar tu primer acorde, queremos que sepas quién caminará contigo."
       />
