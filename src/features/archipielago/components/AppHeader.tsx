@@ -19,16 +19,11 @@ export function AppHeader({ screen, onHome }: { screen: Screen; onHome?: () => v
         <img src="/logo-soundkeleles-nobg.png" alt="SoundKeleles" style={{ height: 72, width: 'auto', display: 'block' }} />
       </button>
       {isOnboarding && (
-        <div style={{
-          fontSize: 12,
-          fontWeight: screen === 'entry-moment' ? 500 : 700,
-          color: B.dark,
-          opacity: screen === 'entry-moment' ? 0.55 : 0.7,
-          letterSpacing: screen === 'entry-moment' ? '0.01em' : 'normal',
-        }}>
-          {screen === 'entry-moment' ? 'Tu viaje musical' : 'Diagnóstico musical inicial'}
+        <div style={{ fontSize: 12, fontWeight: 700, color: B.dark, opacity: 0.7 }}>
+          Diagnóstico musical inicial
         </div>
       )}
     </header>
   );
 }
+
