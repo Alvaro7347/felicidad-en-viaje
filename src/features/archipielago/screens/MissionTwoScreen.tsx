@@ -57,7 +57,9 @@ function joinEmotions(list: string[]): string {
   if (items.length === 0) return "";
   if (items.length === 1) return capitalize(items[0]) + ".";
   const head = items.slice(0, -1).map(capitalize).join(", ");
-  return `${head} e ${items[items.length - 1]}.`;
+  const last = items[items.length - 1];
+  const conjunction = last.startsWith("i") || last.startsWith("hi") ? "e" : "y";
+  return `${head} ${conjunction} ${last}.`;
 }
 
 function capitalize(s: string) {
