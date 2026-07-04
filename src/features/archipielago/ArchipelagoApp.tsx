@@ -5,7 +5,7 @@ import { ONBOARDING_SCREENS } from "./data/screens";
 import type { DiagAnswers, Screen } from "./types";
 
 import { AppHeader } from "./components/AppHeader";
-import { DevNav } from "./components/DevNav";
+import { DevNav, SHOW_DEV_NAV } from "./components/DevNav";
 import { SplashScreen } from "./components/SplashScreen";
 
 import { CelebrationScreen } from "./screens/CelebrationScreen";
