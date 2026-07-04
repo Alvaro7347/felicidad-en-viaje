@@ -5,7 +5,7 @@ export const START_PORT_NODES: RouteNode[] = [
   { id: 'n2', title: 'Cuéntanos de ti', subtitle: 'Tu motivo será el combustible de este viaje.', icon: '💗', status: 'done', type: 'Reflexión', time: '3 min' },
   { id: 'n3', title: 'Qué es el Archipiélago', subtitle: 'Aprende cómo navegar tu viaje musical.', icon: '🗺️', status: 'done', type: 'Orientación', time: '3 min' },
   { id: 'n4', title: 'Historia del Ukelele', subtitle: 'Conoce el viaje de este pequeño instrumento.', icon: '🌺', status: 'done', type: 'Video', time: '3 min' },
-  { id: 'n5', title: 'Toca tu primer DO', subtitle: 'Hoy abrís tu primera puerta musical', icon: '🎶', status: 'current', type: 'Misión', time: '3 min' },
+  { id: 'n5', title: 'Partes del Ukelele', subtitle: 'Conoce las partes de tu compañero musical.', icon: '🎸', status: 'current', type: 'Video', time: '3 min' },
   { id: 'n6', title: 'Sube tu evidencia', subtitle: 'Un audio o video de tu acorde', icon: '📤', status: 'locked', type: 'Logro', time: '2 min' },
   // Nota: "¿Cómo te sentiste?" queda pendiente de reubicación futura.
   { id: 'n7', title: 'Toma tu ukelele sin tensión', subtitle: 'Postura, agarre y respiración', icon: '🎸', status: 'locked', type: 'Microclase', time: '4 min' },
