@@ -69,7 +69,7 @@ async function saveGuideMessage(payload: GuideMessagePayload) {
   if (error) throw error;
 }
 
-export function MissionGuideScreen({ onBack, onNext, userName }: { onBack: () => void; onNext?: () => void; userName?: string }) {
+export function MissionGuideScreen({ onBack, userName }: { onBack: () => void; userName?: string }) {
   const safeName = userName?.trim();
   const firstName = safeName ? safeName.split(' ')[0] : 'Navegante';
   const [showContactModal, setShowContactModal] = useState(false);
@@ -206,39 +206,17 @@ export function MissionGuideScreen({ onBack, onNext, userName }: { onBack: () =>
           <div><strong style={{ color: B.dark }}>Frase del guía:</strong> “No estás aquí para demostrar talento. Estás aquí para descubrir tu sonido.”</div>
         </div>
       </Card>
-      <Card style={{ padding: '12px 14px' }}>
-        <div style={{ display: 'flex', alignItems: 'center', justifyContent: 'space-between', gap: 12, flexWrap: 'wrap' }}>
-          <div style={{ minWidth: 0, flex: '1 1 200px' }}>
-            <div style={{ fontSize: 13, fontWeight: 700, color: B.dark, marginBottom: 2 }}>
-              ¿Necesitas apoyo?
-            </div>
-            <div style={{ fontSize: 12, color: B.grayText, lineHeight: 1.5 }}>
-              Puedes escribirle a tu profesor guía.
-            </div>
-          </div>
-          <button
-            type="button"
-            onClick={openContactModal}
-            style={{
-              background: 'transparent',
-              border: 'none',
-              padding: 0,
-              color: B.pink,
-              fontFamily: 'Quicksand, sans-serif',
-              fontWeight: 700,
-              fontSize: 13,
-              cursor: 'pointer',
-              textDecoration: 'underline',
-              textUnderlineOffset: 3,
-            }}
-          >
-            Escríbele aquí →
-          </button>
+      <Card style={{ padding: '16px 18px' }}>
+        <div style={{ fontSize: 15, fontWeight: 800, color: B.dark, marginBottom: 4 }}>
+          ¿Necesitas apoyo?
         </div>
+        <div style={{ fontSize: 13, color: B.grayText, lineHeight: 1.55, marginBottom: 14 }}>
+          Puedes escribirle a tu profesor guía si tienes una duda o necesitas acompañamiento.
+        </div>
+        <Btn variant="ghost" onClick={openContactModal} fullWidth>
+          Escríbele al profe
+        </Btn>
       </Card>
-      {onNext && (
-        <Btn onClick={onNext} fullWidth>Continuar a Cuéntanos de ti</Btn>
-      )}
 
       {showContactModal && (
         <div
