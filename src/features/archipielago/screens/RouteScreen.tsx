@@ -1,4 +1,4 @@
-import { useState, useRef, useEffect, useCallback } from "react";
+import { useState, useRef, useEffect, useCallback, useMemo } from "react";
 import { B } from "../data/brand";
 import { START_PORT_NODES, ROUTE_STAGES } from "../data/islands";
 
@@ -6,10 +6,15 @@ import type { Screen, NodeStatus } from "../types";
 import { Btn } from "../components/Btn";
 import { Card } from "../components/Card";
 import { BackBtn } from "../components/BackBtn";
+import { MusicalFuelReminder } from "../components/MusicalFuelReminder";
+import { getMusicalFuel, touchLastVisit } from "../data/musicalFuel";
 
 export function RouteScreen({ onBack, onStartMission, onReviewMission, userName }: { onBack: () => void; onStartMission: () => void; onReviewMission: (id: string) => void; userName: string }) {
   const firstName = (userName ?? '').trim().split(/\s+/)[0] ?? '';
   const routeTitle = firstName ? `${firstName}, esta es tu ruta` : 'Esta es tu ruta';
+  const fuel = useMemo(() => getMusicalFuel(), []);
+  const daysSinceLastVisit = useMemo(() => touchLastVisit(), []);
+  const fuelVariant: "return" | "compact" = daysSinceLastVisit !== null && daysSinceLastVisit >= 3 ? "return" : "compact";
   const [exploringNode, setExploringNode] = useState<string | null>(null);
   const [hoveredNode, setHoveredNode] = useState<string | null>(null);
   const [pressedNode, setPressedNode] = useState<string | null>(null);
@@ -243,6 +248,12 @@ export function RouteScreen({ onBack, onStartMission, onReviewMission, userName 
           {routeTitle}
         </span>
       </div>
+
+      {fuel.fuelPhrase && (
+        <div style={{ marginBottom: 14 }}>
+          <MusicalFuelReminder variant={fuelVariant} fuel={fuel} />
+        </div>
+      )}
 
       {/* ── Node path ── */}
       <div style={{ position: 'relative', paddingLeft: 30 }}>

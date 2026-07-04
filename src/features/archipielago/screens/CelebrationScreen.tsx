@@ -2,8 +2,11 @@ import { B, PHOTOS } from "../data/brand";
 import { Btn } from "../components/Btn";
 import { Card } from "../components/Card";
 import { Tag } from "../components/Tag";
+import { MusicalFuelReminder } from "../components/MusicalFuelReminder";
+import { getMusicalFuel } from "../data/musicalFuel";
 
 export function CelebrationScreen({ onHome }: { onHome: () => void }) {
+  const fuel = getMusicalFuel();
   return (
     <div style={{ display: 'flex', flexDirection: 'column', gap: 16 }}>
       {/* Achievement header – solid green, not gradient */}
@@ -46,6 +49,8 @@ export function CelebrationScreen({ onHome }: { onHome: () => void }) {
           — SoundKeleles
         </div>
       </Card>
+      {fuel.fuelPhrase && <MusicalFuelReminder variant="celebration" fuel={fuel} />}
+
 
       {/* Next island preview */}
       <Card style={{ display: 'flex', alignItems: 'center', gap: 14, opacity: 0.7 }}>
