@@ -79,7 +79,16 @@ export function MissionGuideScreen({ onBack, userName }: { onBack: () => void; u
   const [contactSent, setContactSent] = useState(false);
   const [preparedGuideMessage, setPreparedGuideMessage] = useState<GuideMessagePayload | null>(null);
   const [isSendingContactMessage, setIsSendingContactMessage] = useState(false);
+  const [showVideoModal, setShowVideoModal] = useState(false);
   const guidePhoto = alvaroAsset.url;
+
+  function openVideoModal() {
+    setShowVideoModal(true);
+  }
+
+  function closeVideoModal() {
+    setShowVideoModal(false);
+  }
 
   function openContactModal() {
     setContactError(null);
