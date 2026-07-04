@@ -9,8 +9,44 @@ import alvaroAsset from "../../../assets/alvaro-campos.jpeg.asset.json";
 export function MissionGuideScreen({ onBack, userName }: { onBack: () => void; userName?: string }) {
   const safeName = userName?.trim();
   const firstName = safeName ? safeName.split(' ')[0] : 'Navegante';
-  const [showContactNotice, setShowContactNotice] = useState(false);
+  const [showContactModal, setShowContactModal] = useState(false);
+  const [contactEmail, setContactEmail] = useState('');
+  const [contactMessage, setContactMessage] = useState('');
+  const [contactError, setContactError] = useState<string | null>(null);
+  const [contactSent, setContactSent] = useState(false);
   const guidePhoto = alvaroAsset.url;
+
+  function openContactModal() {
+    setContactError(null);
+    setContactSent(false);
+    setShowContactModal(true);
+  }
+
+  function closeContactModal() {
+    setShowContactModal(false);
+    setContactError(null);
+    setContactSent(false);
+    setContactEmail('');
+    setContactMessage('');
+  }
+
+  function handleSendGuideMessage() {
+    const email = contactEmail.trim();
+    const message = contactMessage.trim();
+    if (!message) {
+      setContactError('Escribe un mensaje antes de enviarlo.');
+      return;
+    }
+    const emailOk = /^[^\s@]+@[^\s@]+\.[^\s@]+$/.test(email);
+    if (!emailOk) {
+      setContactError('Ingresa un correo válido para que podamos responderte.');
+      return;
+    }
+    // TODO: conectar con Supabase Edge Function para envío real de correo.
+    setContactError(null);
+    setContactSent(true);
+  }
+
 
   return (
     <div style={{ display: 'flex', flexDirection: 'column', gap: 16 }}>
