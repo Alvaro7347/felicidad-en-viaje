@@ -1,7 +1,7 @@
 import { useState } from "react";
 import { B } from "../data/brand";
-import { SILENCE_NODES } from "../data/islands";
-import { ISLANDS } from "../data/islands";
+import { SILENCE_NODES, ROUTE_STAGES } from "../data/islands";
+
 import type { Screen, NodeStatus } from "../types";
 import { Btn } from "../components/Btn";
 import { Card } from "../components/Card";
@@ -42,7 +42,7 @@ export function RouteScreen({ onBack, onStartMission, onReviewMission, userName:
           scrollbarWidth: 'none',
           gap: 0,
         }}>
-          {ISLANDS.map((isl, i) => {
+          {ROUTE_STAGES.map((isl, i) => {
             const isActive = isl.status === 'active';
             const isIslHov = hoveredIsland === isl.id;
             const isIslPress = pressedIsland === isl.id;
@@ -125,14 +125,14 @@ export function RouteScreen({ onBack, onStartMission, onReviewMission, userName:
                         <div style={{ width: `${isl.progress}%`, height: '100%', background: B.green, borderRadius: 999 }} />
                       </div>
                       <div style={{ fontSize: 9, fontWeight: 800, color: B.green, marginTop: 3, opacity: 0.85 }}>
-                        {isl.progress}% completada
+                        {isl.progress}% completado
                       </div>
                     </div>
                   )}
                 </div>
 
                 {/* Connector */}
-                {i < ISLANDS.length - 1 && (
+                {i < ROUTE_STAGES.length - 1 && (
                   <div style={{ flexShrink: 0, width: 22, textAlign: 'center' }}>
                     <span style={{ fontSize: 11, color: 'rgba(255,255,255,0.12)', letterSpacing: '-1px' }}>··›</span>
                   </div>
