@@ -52,6 +52,41 @@ function buildGuideMessagePayload(params: {
   };
 }
 
+async function saveGuideMessage(payload: GuideMessagePayload) {
+  const { error } = await supabase.from('support_messages').insert({
+    student_name: payload.studentName,
+    student_email: payload.studentEmail,
+    guide_name: payload.guideName,
+    guide_role: payload.guideRole,
+    stage_id: payload.stageId,
+    stage_title: payload.stageTitle,
+    mission_id: payload.missionId,
+    mission_title: payload.missionTitle,
+    source: payload.source,
+    message: payload.message,
+    status: 'pending',
+  });
+  if (error) throw error;
+}
+  studentName: string;
+  studentEmail: string;
+  message: string;
+}): GuideMessagePayload {
+  return {
+    studentName: params.studentName,
+    studentEmail: params.studentEmail,
+    guideName: GUIDE_CONTACT_CONTEXT.guideName,
+    guideRole: GUIDE_CONTACT_CONTEXT.guideRole,
+    stageId: GUIDE_CONTACT_CONTEXT.stageId,
+    stageTitle: GUIDE_CONTACT_CONTEXT.stageTitle,
+    missionId: GUIDE_CONTACT_CONTEXT.missionId,
+    missionTitle: GUIDE_CONTACT_CONTEXT.missionTitle,
+    source: GUIDE_CONTACT_CONTEXT.source,
+    message: params.message,
+    createdAt: new Date().toISOString(),
+  };
+}
+
 export function MissionGuideScreen({ onBack, userName }: { onBack: () => void; userName?: string }) {
   const safeName = userName?.trim();
   const firstName = safeName ? safeName.split(' ')[0] : 'Navegante';
