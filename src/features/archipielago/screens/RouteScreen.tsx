@@ -249,6 +249,12 @@ export function RouteScreen({ onBack, onStartMission, onReviewMission, userName 
         </span>
       </div>
 
+      {fuel.fuelPhrase && (
+        <div style={{ marginBottom: 14 }}>
+          <MusicalFuelReminder variant={fuelVariant} fuel={fuel} />
+        </div>
+      )}
+
       {/* ── Node path ── */}
       <div style={{ position: 'relative', paddingLeft: 30 }}>
         {/* Vertical connector line — thinner, subtler */}
