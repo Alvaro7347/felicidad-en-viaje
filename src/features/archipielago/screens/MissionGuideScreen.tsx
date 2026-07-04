@@ -348,21 +348,25 @@ export function MissionGuideScreen({ onBack, userName }: { onBack: () => void; u
           style={{
             position: 'fixed', inset: 0, background: 'rgba(0,0,0,0.75)',
             display: 'flex', alignItems: 'center', justifyContent: 'center',
-            padding: 16, zIndex: 1000,
+            padding: 12, zIndex: 1000,
+            maxHeight: '100dvh', overflowY: 'auto',
           }}
         >
           <div
             onClick={(e) => e.stopPropagation()}
             style={{
-              width: '100%', maxWidth: 720, background: B.white,
+              width: '100%', maxWidth: 900, background: B.white,
               borderRadius: 16, overflow: 'hidden', boxShadow: '0 20px 60px rgba(0,0,0,0.4)',
               display: 'flex', flexDirection: 'column',
+              maxHeight: 'calc(100dvh - 24px)',
             }}
           >
-            <div style={{ padding: '14px 16px', display: 'flex', alignItems: 'flex-start', justifyContent: 'space-between', gap: 12 }}>
+            <div style={{ padding: '10px 14px', display: 'flex', alignItems: 'center', justifyContent: 'space-between', gap: 12, flexShrink: 0 }}>
               <div style={{ minWidth: 0 }}>
-                <div style={{ fontWeight: 800, fontSize: 15, color: B.dark }}>Video de bienvenida</div>
-                <div style={{ fontSize: 12, color: '#666', marginTop: 2 }}>Álvaro te cuenta cómo será este viaje.</div>
+                <div style={{ fontWeight: 800, fontSize: 14, color: B.dark, lineHeight: 1.2 }}>Video de bienvenida</div>
+                <div style={{ fontSize: 11, color: '#666', marginTop: 2, lineHeight: 1.2, overflow: 'hidden', textOverflow: 'ellipsis', whiteSpace: 'nowrap' }}>
+                  Álvaro te cuenta cómo será este viaje.
+                </div>
               </div>
               <button
                 type="button"
@@ -371,19 +375,28 @@ export function MissionGuideScreen({ onBack, userName }: { onBack: () => void; u
                 style={{
                   background: 'transparent', border: '1px solid #ddd', borderRadius: 999,
                   padding: '6px 12px', fontSize: 12, fontWeight: 700, color: B.dark, cursor: 'pointer',
+                  flexShrink: 0,
                 }}
               >
                 Cerrar
               </button>
             </div>
-            <div style={{ position: 'relative', width: '100%', paddingTop: '56.25%', background: '#000' }}>
-              <iframe
-                src="https://www.youtube-nocookie.com/embed/ADOZ58fM9nA?rel=0&modestbranding=1&playsinline=1&autoplay=1"
-                title="Video de bienvenida de Álvaro Campos"
-                allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture; web-share"
-                allowFullScreen
-                style={{ position: 'absolute', inset: 0, width: '100%', height: '100%', border: 0 }}
-              />
+            <div style={{
+              flex: '1 1 auto', minHeight: 0, background: '#000',
+              display: 'flex', alignItems: 'center', justifyContent: 'center',
+            }}>
+              <div style={{
+                position: 'relative', width: '100%', maxWidth: '100%', maxHeight: '100%',
+                aspectRatio: '16 / 9',
+              }}>
+                <iframe
+                  src="https://www.youtube-nocookie.com/embed/ADOZ58fM9nA?rel=0&modestbranding=1&playsinline=1&autoplay=1"
+                  title="Video de bienvenida de Álvaro Campos"
+                  allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture; web-share"
+                  allowFullScreen
+                  style={{ position: 'absolute', inset: 0, width: '100%', height: '100%', border: 0 }}
+                />
+              </div>
             </div>
           </div>
         </div>
