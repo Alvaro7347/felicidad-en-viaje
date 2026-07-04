@@ -14,24 +14,24 @@ export function AppHeader({ screen, onHome }: { screen: Screen; onHome?: () => v
       <header style={{
         background: '#FFFFFF',
         border: `1px solid ${B.grayBorder}`,
-        borderRadius: 20,
-        padding: '12px 16px',
+        borderRadius: 18,
+        padding: '9px 14px',
         display: 'flex',
         alignItems: 'center',
-        gap: 14,
-        marginBottom: 20,
-        boxShadow: '0 2px 12px rgba(46,230,174,0.08)',
+        gap: 12,
+        marginBottom: 18,
+        boxShadow: '0 2px 10px rgba(46,230,174,0.06)',
       }}>
         <button
           onClick={onHome}
           aria-label="Inicio"
           style={{
-            border: 'none',
-            background: '#F0FBF6',
+            border: '1px solid rgba(46,230,174,0.18)',
+            background: '#F5FBF8',
             cursor: onHome ? 'pointer' : 'default',
             padding: 0,
-            width: 58,
-            height: 58,
+            width: 50,
+            height: 50,
             borderRadius: 999,
             display: 'flex',
             alignItems: 'center',
@@ -40,23 +40,23 @@ export function AppHeader({ screen, onHome }: { screen: Screen; onHome?: () => v
             overflow: 'hidden',
           }}
         >
-          <img src="/isologo-soundkeleles.jpg" alt="SoundKeleles" style={{ width: 54, height: 54, borderRadius: 999, objectFit: 'cover', display: 'block' }} />
+          <img src="/isologo-soundkeleles.jpg" alt="SoundKeleles" style={{ width: 42, height: 42, borderRadius: 999, objectFit: 'contain', display: 'block' }} />
         </button>
         <div style={{ flex: 1, minWidth: 0 }}>
           <div style={{
             fontFamily: 'Space Grotesk, sans-serif',
             fontWeight: 800,
-            fontSize: 18,
+            fontSize: 16,
             color: B.dark,
             letterSpacing: '-0.01em',
             lineHeight: 1.15,
           }}>
             Tu viaje musical
           </div>
-          <div style={{ fontSize: 12, color: B.grayText, marginTop: 3, lineHeight: 1.3 }}>
+          <div style={{ fontSize: 11.5, color: B.grayText, marginTop: 2, lineHeight: 1.3 }}>
             {active.title} · <span style={{ color: B.greenDark, fontWeight: 700 }}>{pct}% completada</span>
           </div>
-          <div style={{ marginTop: 8, height: 4, background: '#EAF6F0', borderRadius: 999, overflow: 'hidden' }}>
+          <div style={{ marginTop: 6, height: 3, background: '#EAF6F0', borderRadius: 999, overflow: 'hidden' }}>
             <div style={{ width: `${pct}%`, height: '100%', background: B.green, borderRadius: 999, transition: 'width 0.4s ease' }} />
           </div>
         </div>
