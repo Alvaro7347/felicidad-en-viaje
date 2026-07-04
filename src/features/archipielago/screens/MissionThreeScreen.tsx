@@ -52,7 +52,7 @@ export function MissionThreeScreen({ onBack }: { onBack: () => void }) {
     <div style={{ display: "flex", flexDirection: "column", gap: 16 }}>
       <BackBtn label="Puerto de Inicio" onClick={onBack} />
       <MissionIntroHeader
-        title="Qué es el Archipiélago"
+        title="¿Qué es el Archipiélago?"
         subtitle="Antes de seguir, te mostraremos cómo funciona tu viaje musical."
       />
 
