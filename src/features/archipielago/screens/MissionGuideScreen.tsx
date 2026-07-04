@@ -61,8 +61,9 @@ export function MissionGuideScreen({ onBack }: { onBack: () => void }) {
             onMouseEnter={(e) => { e.currentTarget.style.transform = 'translate(-50%, -50%) scale(1.08)'; e.currentTarget.style.opacity = '0.8'; }}
             onMouseLeave={(e) => { e.currentTarget.style.transform = 'translate(-50%, -50%) scale(1)'; e.currentTarget.style.opacity = '0.55'; }}
           >
-            <svg width="96" height="72" viewBox="0 0 32 24" fill="#FFFFFF" aria-hidden="true" style={{ filter: 'drop-shadow(0 2px 8px rgba(0,0,0,0.45))' }}>
-              <path d="M4 3v18l24-9z" />
+            <svg width="88" height="62" viewBox="0 0 68 48" aria-hidden="true" style={{ filter: 'drop-shadow(0 2px 10px rgba(0,0,0,0.35))' }}>
+              <rect x="0" y="0" width="68" height="48" rx="14" fill="rgba(230,232,236,0.28)" stroke="rgba(255,255,255,0.25)" strokeWidth="1" />
+              <path d="M27 15 L47 24 L27 33 Z" fill="#FFFFFF" />
             </svg>
           </button>
         </div>
