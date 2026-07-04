@@ -69,7 +69,7 @@ async function saveGuideMessage(payload: GuideMessagePayload) {
   if (error) throw error;
 }
 
-export function MissionGuideScreen({ onBack, userName }: { onBack: () => void; userName?: string }) {
+export function MissionGuideScreen({ onBack, onNext, userName }: { onBack: () => void; onNext?: () => void; userName?: string }) {
   const safeName = userName?.trim();
   const firstName = safeName ? safeName.split(' ')[0] : 'Navegante';
   const [showContactModal, setShowContactModal] = useState(false);
@@ -223,7 +223,10 @@ export function MissionGuideScreen({ onBack, userName }: { onBack: () => void; u
           Escríbele aquí
         </Btn>
       </Card>
-      <Btn onClick={onBack} fullWidth>Volver a la ruta</Btn>
+      {onNext && (
+        <Btn onClick={onNext} fullWidth>Continuar a Cuéntanos de ti</Btn>
+      )}
+      <Btn variant="ghost" onClick={onBack} fullWidth>Volver al Puerto de Inicio</Btn>
 
       {showContactModal && (
         <div
