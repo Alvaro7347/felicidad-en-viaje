@@ -1,7 +1,7 @@
 import { useState } from "react";
 import { B } from "../data/brand";
-import { SILENCE_NODES } from "../data/islands";
-import { ISLANDS } from "../data/islands";
+import { SILENCE_NODES, ROUTE_STAGES } from "../data/islands";
+
 import type { Screen, NodeStatus } from "../types";
 import { Btn } from "../components/Btn";
 import { Card } from "../components/Card";
