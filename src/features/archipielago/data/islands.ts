@@ -12,6 +12,13 @@ export const SILENCE_NODES: RouteNode[] = [
   { id: 'n8', title: 'Sello desbloqueado', subtitle: 'Guardián del Silencio', icon: '🏅', status: 'achievement', time: '' },
 ];
 
+export const ROUTE_STAGES = [
+  { id: 'puerto-inicio', title: 'Puerto de Inicio', status: 'active' as const, progress: 50 },
+  { id: 'primeras-melodias', title: 'Isla de Primeras Melodías', status: 'locked' as const, progress: 0 },
+  { id: 'pulso', title: 'Isla del Pulso', status: 'locked' as const, progress: 0 },
+  { id: 'ritmo', title: 'Isla del Ritmo', status: 'locked' as const, progress: 0 },
+];
+
 export const ISLANDS = [
   {
     id: 'silencio',
