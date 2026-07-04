@@ -205,11 +205,6 @@ export function MissionTwoScreen({
         subtitle="Antes de seguir navegando, queremos saber qué te trae a este viaje musical."
       />
 
-      <Card style={{ background: B.pinkLight, borderColor: "transparent" }}>
-        <p style={{ margin: 0, fontSize: 13, lineHeight: 1.6, color: B.dark }}>
-          Tu motivo será el <strong>combustible</strong> de este viaje. Lo recordaremos en momentos importantes para ayudarte a volver a conectar con tu sonido.
-        </p>
-      </Card>
 
       <Card>
         <div style={{ marginBottom: 18 }}>
