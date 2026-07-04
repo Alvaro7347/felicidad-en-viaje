@@ -1,4 +1,4 @@
-import { useState } from "react";
+import { useState, useRef, useEffect, useCallback } from "react";
 import { B } from "../data/brand";
 import { START_PORT_NODES, ROUTE_STAGES } from "../data/islands";
 
@@ -11,8 +11,35 @@ export function RouteScreen({ onBack, onStartMission, onReviewMission, userName:
   const [exploringNode, setExploringNode] = useState<string | null>(null);
   const [hoveredNode, setHoveredNode] = useState<string | null>(null);
   const [pressedNode, setPressedNode] = useState<string | null>(null);
-  const [hoveredIsland, setHoveredIsland] = useState<string | null>(null);
   const [pressedIsland, setPressedIsland] = useState<string | null>(null);
+  const [focusedStageId, setFocusedStageId] = useState<string>(ROUTE_STAGES[0].id);
+  const stripRef = useRef<HTMLDivElement | null>(null);
+  const stageRefs = useRef<Record<string, HTMLDivElement | null>>({});
+
+  const recomputeFocus = useCallback(() => {
+    const container = stripRef.current;
+    if (!container) return;
+    const cRect = container.getBoundingClientRect();
+    const cCenter = cRect.left + cRect.width / 2;
+    let bestId = ROUTE_STAGES[0].id;
+    let bestDist = Infinity;
+    for (const stage of ROUTE_STAGES) {
+      const el = stageRefs.current[stage.id];
+      if (!el) continue;
+      const r = el.getBoundingClientRect();
+      const center = r.left + r.width / 2;
+      const dist = Math.abs(center - cCenter);
+      if (dist < bestDist) { bestDist = dist; bestId = stage.id; }
+    }
+    setFocusedStageId((prev) => (prev === bestId ? prev : bestId));
+  }, []);
+
+  useEffect(() => {
+    recomputeFocus();
+    const onResize = () => recomputeFocus();
+    window.addEventListener('resize', onResize);
+    return () => window.removeEventListener('resize', onResize);
+  }, [recomputeFocus]);
   const nodeColors: Record<NodeStatus, { bg: string; border: string; icon: string; text: string }> = {
     done: { bg: B.green, border: B.greenDark, icon: B.dark, text: B.dark },
     current: { bg: B.green, border: B.pink, icon: B.dark, text: B.dark },
@@ -32,7 +59,10 @@ export function RouteScreen({ onBack, onStartMission, onReviewMission, userName:
         marginBottom: 20,
         overflow: 'hidden',
       }}>
-        <div style={{
+        <div
+          ref={stripRef}
+          onScroll={recomputeFocus}
+          style={{
           display: 'flex',
           alignItems: 'center',
           overflowX: 'auto',
@@ -44,25 +74,28 @@ export function RouteScreen({ onBack, onStartMission, onReviewMission, userName:
         }}>
           {ROUTE_STAGES.map((isl, i) => {
             const isActive = isl.status === 'active';
-            const isIslHov = hoveredIsland === isl.id;
+            const isFocused = focusedStageId === isl.id;
             const isIslPress = pressedIsland === isl.id;
 
-            const islScale = isIslPress ? 'scale(0.97)' : isIslHov ? 'scale(1.03)' : 'scale(1)';
-            const islShadow = isIslPress
-              ? 'none'
-              : isIslHov
+            const focusScale = isFocused ? 1 : 0.88;
+            const pressScale = isIslPress ? 0.96 : 1;
+            const islScale = `scale(${(focusScale * pressScale).toFixed(3)})`;
+            const islOpacity = isFocused
+              ? (isActive ? 1 : 0.8)
+              : (isActive ? 0.85 : 0.5);
+            const islShadow = isFocused && !isIslPress
               ? isActive
                 ? '0 6px 20px rgba(46,230,174,0.22)'
-                : '0 4px 12px rgba(0,0,0,0.18)'
+                : '0 4px 14px rgba(0,0,0,0.22)'
               : 'none';
-            const islBorder = isIslHov && !isIslPress
+            const islBorder = isFocused
               ? isActive
                 ? '1px solid rgba(46,230,174,0.55)'
-                : '1px solid rgba(255,255,255,0.18)'
+                : '1px solid rgba(255,255,255,0.22)'
               : isActive
               ? '1px solid rgba(46,230,174,0.28)'
               : '1px solid rgba(255,255,255,0.07)';
-            const islBg = isIslHov && isActive && !isIslPress
+            const islBg = isFocused && isActive
               ? 'rgba(46,230,174,0.14)'
               : isActive
               ? 'rgba(46,230,174,0.09)'
@@ -72,46 +105,50 @@ export function RouteScreen({ onBack, onStartMission, onReviewMission, userName:
               <div key={isl.id} style={{ display: 'flex', alignItems: 'center', flexShrink: 0 }}>
                 {/* Island chip */}
                 <div
-                  onMouseEnter={() => setHoveredIsland(isl.id)}
-                  onMouseLeave={() => { setHoveredIsland(null); setPressedIsland(null); }}
+                  ref={(el) => { stageRefs.current[isl.id] = el; }}
                   onMouseDown={() => setPressedIsland(isl.id)}
                   onMouseUp={() => setPressedIsland(null)}
+                  onMouseLeave={() => setPressedIsland(null)}
                   onTouchStart={() => setPressedIsland(isl.id)}
                   onTouchEnd={() => setPressedIsland(null)}
                   onTouchCancel={() => setPressedIsland(null)}
                   style={{
-                  scrollSnapAlign: 'start',
+                  scrollSnapAlign: 'center',
                   flexShrink: 0,
                   background: islBg,
                   border: islBorder,
                   borderRadius: 13,
-                  padding: isActive ? '9px 13px' : '7px 11px',
+                  padding: isFocused ? '9px 13px' : '7px 11px',
                   transform: islScale,
+                  transformOrigin: 'center center',
+                  opacity: islOpacity,
                   boxShadow: islShadow,
-                  transition: 'transform 0.18s cubic-bezier(0.34,1.56,0.64,1), box-shadow 0.18s ease, border-color 0.15s ease, background 0.15s ease',
+                  transition: 'transform 0.22s ease, opacity 0.22s ease, box-shadow 0.22s ease, border-color 0.22s ease, background 0.22s ease, padding 0.22s ease',
                   cursor: 'pointer',
                   userSelect: 'none',
                   WebkitUserSelect: 'none',
                 }}>
                   <div style={{ display: 'flex', alignItems: 'center', gap: 8 }}>
                     <span style={{
-                      fontSize: isActive ? 20 : 15,
+                      fontSize: isFocused ? 20 : 15,
                       opacity: isActive ? 1 : 0.55,
                       filter: isActive ? 'none' : 'grayscale(0.4)',
+                      transition: 'font-size 0.22s ease',
                     }}>🏝</span>
                     <div>
                       <div style={{
                         fontFamily: 'Space Grotesk, sans-serif',
                         fontWeight: 800,
-                        fontSize: isActive ? 13 : 11,
-                        color: isActive ? B.white : 'rgba(255,255,255,0.38)',
+                        fontSize: isFocused ? 13 : 11,
+                        color: isActive ? B.white : (isFocused ? 'rgba(255,255,255,0.7)' : 'rgba(255,255,255,0.38)'),
                         lineHeight: 1.2,
                         whiteSpace: 'nowrap',
+                        transition: 'font-size 0.22s ease, color 0.22s ease',
                       }}>
                         {isl.title}
                       </div>
                       {!isActive && (
-                        <div style={{ fontSize: 9, color: 'rgba(255,255,255,0.22)', marginTop: 2, letterSpacing: '0.02em' }}>
+                        <div style={{ fontSize: 9, color: isFocused ? 'rgba(255,255,255,0.42)' : 'rgba(255,255,255,0.22)', marginTop: 2, letterSpacing: '0.02em' }}>
                           próximamente
                         </div>
                       )}
@@ -130,6 +167,7 @@ export function RouteScreen({ onBack, onStartMission, onReviewMission, userName:
                     </div>
                   )}
                 </div>
+
 
                 {/* Connector */}
                 {i < ROUTE_STAGES.length - 1 && (
