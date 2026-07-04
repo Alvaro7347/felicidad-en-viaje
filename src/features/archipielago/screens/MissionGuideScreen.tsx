@@ -79,7 +79,16 @@ export function MissionGuideScreen({ onBack, userName }: { onBack: () => void; u
   const [contactSent, setContactSent] = useState(false);
   const [preparedGuideMessage, setPreparedGuideMessage] = useState<GuideMessagePayload | null>(null);
   const [isSendingContactMessage, setIsSendingContactMessage] = useState(false);
+  const [showVideoModal, setShowVideoModal] = useState(false);
   const guidePhoto = alvaroAsset.url;
+
+  function openVideoModal() {
+    setShowVideoModal(true);
+  }
+
+  function closeVideoModal() {
+    setShowVideoModal(false);
+  }
 
   function openContactModal() {
     setContactError(null);
@@ -163,6 +172,7 @@ export function MissionGuideScreen({ onBack, userName }: { onBack: () => void; u
           <button
             type="button"
             aria-label="Reproducir video de bienvenida"
+            onClick={openVideoModal}
             style={{
               position: 'absolute',
               left: '50%',
@@ -172,6 +182,7 @@ export function MissionGuideScreen({ onBack, userName }: { onBack: () => void; u
               border: 'none',
               padding: 0,
               cursor: 'pointer',
+              zIndex: 2,
               display: 'flex',
               alignItems: 'center',
               justifyContent: 'center',
@@ -325,6 +336,55 @@ export function MissionGuideScreen({ onBack, userName }: { onBack: () => void; u
                 </Btn>
               </>
             )}
+          </div>
+        </div>
+      )}
+      {showVideoModal && (
+        <div
+          role="dialog"
+          aria-modal="true"
+          aria-label="Video de bienvenida"
+          onClick={closeVideoModal}
+          style={{
+            position: 'fixed', inset: 0, background: 'rgba(0,0,0,0.75)',
+            display: 'flex', alignItems: 'center', justifyContent: 'center',
+            padding: 16, zIndex: 1000,
+          }}
+        >
+          <div
+            onClick={(e) => e.stopPropagation()}
+            style={{
+              width: '100%', maxWidth: 720, background: B.white,
+              borderRadius: 16, overflow: 'hidden', boxShadow: '0 20px 60px rgba(0,0,0,0.4)',
+              display: 'flex', flexDirection: 'column',
+            }}
+          >
+            <div style={{ padding: '14px 16px', display: 'flex', alignItems: 'flex-start', justifyContent: 'space-between', gap: 12 }}>
+              <div style={{ minWidth: 0 }}>
+                <div style={{ fontWeight: 800, fontSize: 15, color: B.dark }}>Video de bienvenida</div>
+                <div style={{ fontSize: 12, color: '#666', marginTop: 2 }}>Álvaro te cuenta cómo será este viaje.</div>
+              </div>
+              <button
+                type="button"
+                onClick={closeVideoModal}
+                aria-label="Cerrar video"
+                style={{
+                  background: 'transparent', border: '1px solid #ddd', borderRadius: 999,
+                  padding: '6px 12px', fontSize: 12, fontWeight: 700, color: B.dark, cursor: 'pointer',
+                }}
+              >
+                Cerrar
+              </button>
+            </div>
+            <div style={{ position: 'relative', width: '100%', paddingTop: '56.25%', background: '#000' }}>
+              <iframe
+                src="https://www.youtube-nocookie.com/embed/ADOZ58fM9nA?rel=0&modestbranding=1&playsinline=1&autoplay=1"
+                title="Video de bienvenida de Álvaro Campos"
+                allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture; web-share"
+                allowFullScreen
+                style={{ position: 'absolute', inset: 0, width: '100%', height: '100%', border: 0 }}
+              />
+            </div>
           </div>
         </div>
       )}
