@@ -90,13 +90,11 @@ export function ArchipelagoApp() {
           <DiagnosisResultScreen
             answers={diagAnswers}
             userName={userName}
-            onEnter={() => setScreen("entry-moment")}
+            onEnter={goToRoute}
           />
         )}
 
-        {screen === "entry-moment" && (
-          <EntryMomentScreen userName={userName} onContinue={goToRoute} />
-        )}
+
 
         {screen === "route" && (
           <RouteScreen
