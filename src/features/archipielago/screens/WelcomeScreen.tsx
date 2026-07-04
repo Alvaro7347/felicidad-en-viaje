@@ -4,8 +4,6 @@ import { B } from "../data/brand";
 export function WelcomeScreen({ onStart }: { onStart: () => void }) {
   const [hovBtn1, setHovBtn1] = useState(false);
   const [pressBtn1, setPressBtn1] = useState(false);
-  const [hovBtn2, setHovBtn2] = useState(false);
-  const [pressBtn2, setPressBtn2] = useState(false);
 
   return (
     <>
@@ -117,15 +115,8 @@ export function WelcomeScreen({ onStart }: { onStart: () => void }) {
             No tengo cuenta
           </div>
 
-          {/* Botón secundario — acompaña, no compite */}
+          {/* Botón secundario — placeholder visual, sin acción todavía */}
           <div
-            onMouseEnter={() => setHovBtn2(true)}
-            onMouseLeave={() => { setHovBtn2(false); setPressBtn2(false); }}
-            onMouseDown={() => setPressBtn2(true)}
-            onMouseUp={() => setPressBtn2(false)}
-            onTouchStart={() => setPressBtn2(true)}
-            onTouchEnd={() => setPressBtn2(false)}
-            onTouchCancel={() => setPressBtn2(false)}
             style={{
               background: 'transparent',
               border: `1px solid rgba(27,202,152,0.35)`,
@@ -137,9 +128,7 @@ export function WelcomeScreen({ onStart }: { onStart: () => void }) {
               fontWeight: 500,
               fontSize: 14.5,
               color: '#6B7280',
-              opacity: hovBtn2 ? 0.85 : 0.7,
-              transform: pressBtn2 ? 'scale(0.99)' : 'scale(1)',
-              transition: 'transform 0.16s ease, opacity 0.16s ease',
+              opacity: 0.7,
               userSelect: 'none',
               WebkitUserSelect: 'none',
             }}

@@ -7,7 +7,7 @@ export function AppHeader({ screen, onHome }: { screen: Screen; onHome?: () => v
   const isOnboarding = ONBOARDING_SCREENS.includes(screen);
   if (screen === 'onboarding' || screen === 'welcome' || screen === 'diagnosis' || screen === 'diagnosis-result') return null;
 
-  const modernHeaderScreens: Screen[] = ['route', 'mission', 'mission-guide', 'mission-two', 'mission-three', 'mission-four'];
+  const modernHeaderScreens: Screen[] = ['route', 'mission', 'mission-guide', 'mission-two', 'mission-three', 'mission-four', 'celebration'];
   if (modernHeaderScreens.includes(screen)) {
     const active = ROUTE_STAGES.find(s => s.status === 'active') ?? ROUTE_STAGES[0];
     const pct = active.progress;

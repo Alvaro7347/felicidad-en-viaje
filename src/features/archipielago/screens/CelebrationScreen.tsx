@@ -70,6 +70,3 @@ export function CelebrationScreen({ onHome }: { onHome: () => void }) {
   );
 }
 
-// ─── Root ─────────────────────────────────────────────────────────────────────
-
-// ─── Dev-only screen jump panel ───────────────────────────────────────────────

@@ -24,6 +24,7 @@ import { WelcomeScreen } from "./screens/WelcomeScreen";
 // Nodo de la ruta → pantalla de revisión. Explícito y fácil de extender.
 const REVIEW_MISSION_BY_NODE: Record<string, Screen> = {
   n1: "mission-guide",
+  n2: "mission-two",
   n3: "mission-three",
   n4: "mission-four",
 };
@@ -105,7 +106,6 @@ export function ArchipelagoApp() {
         {screen === "route" && (
           <RouteScreen
             userName={userName}
-            onBack={goToRoute}
             onStartMission={() => setScreen("mission")}
             onReviewMission={(id) => setScreen(REVIEW_MISSION_BY_NODE[id] ?? "mission-two")}
           />
@@ -113,7 +113,6 @@ export function ArchipelagoApp() {
 
         {screen === "mission" && (
           <MissionScreen
-            userName={userName}
             onBack={() => setScreen("route")}
             onComplete={() => setScreen("celebration")}
             emotion={emotion}

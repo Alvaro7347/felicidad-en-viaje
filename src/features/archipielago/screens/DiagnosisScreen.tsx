@@ -1,7 +1,7 @@
 import { useState } from "react";
 import { B } from "../data/brand";
 import { DIAG_QUESTIONS } from "../data/diagnosis";
-import type { Screen, DiagAnswers } from "../types";
+import type { DiagAnswers } from "../types";
 import { Btn } from "../components/Btn";
 import { Card } from "../components/Card";
 import { DiagnosisProgress } from "../components/DiagnosisProgress";
@@ -221,4 +221,4 @@ export function DiagnosisScreen({ onComplete }: { onComplete: (answers: DiagAnsw
   );
 }
 
-// ─── Screen: Diagnosis Result ─────────────────────────────────────────────────
+

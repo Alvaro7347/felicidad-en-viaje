@@ -5,12 +5,11 @@ import { Card } from "../components/Card";
 import { BackBtn } from "../components/BackBtn";
 import { MissionIntroHeader } from "../components/MissionIntroHeader";
 
-export function MissionScreen({ onBack, onComplete, emotion, setEmotion, userName: _userName }: {
+export function MissionScreen({ onBack, onComplete, emotion, setEmotion }: {
   onBack: () => void;
   onComplete: () => void;
   emotion: string | null;
   setEmotion: (id: string) => void;
-  userName: string;
 }) {
   const canComplete = emotion !== null;
   return (
