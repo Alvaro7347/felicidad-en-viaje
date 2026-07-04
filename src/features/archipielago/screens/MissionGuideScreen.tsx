@@ -46,7 +46,7 @@ export function MissionGuideScreen({ onBack }: { onBack: () => void }) {
             style={{
               position: 'absolute',
               left: '50%',
-              top: '72%',
+              top: '58%',
               transform: 'translate(-50%, -50%)',
               background: 'transparent',
               border: 'none',
@@ -61,8 +61,8 @@ export function MissionGuideScreen({ onBack }: { onBack: () => void }) {
             onMouseEnter={(e) => { e.currentTarget.style.transform = 'translate(-50%, -50%) scale(1.08)'; e.currentTarget.style.opacity = '0.8'; }}
             onMouseLeave={(e) => { e.currentTarget.style.transform = 'translate(-50%, -50%) scale(1)'; e.currentTarget.style.opacity = '0.55'; }}
           >
-            <svg width="72" height="72" viewBox="0 0 24 24" fill="#FFFFFF" aria-hidden="true" style={{ filter: 'drop-shadow(0 2px 8px rgba(0,0,0,0.45))' }}>
-              <path d="M8 5v14l11-7z" />
+            <svg width="96" height="72" viewBox="0 0 32 24" fill="#FFFFFF" aria-hidden="true" style={{ filter: 'drop-shadow(0 2px 8px rgba(0,0,0,0.45))' }}>
+              <path d="M4 3v18l24-9z" />
             </svg>
           </button>
         </div>
