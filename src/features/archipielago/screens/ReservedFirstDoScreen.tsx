@@ -1,3 +1,4 @@
+// Contenido preservado para uso futuro. No está conectado al flujo actual.
 import { B, PHOTOS } from "../data/brand";
 import { EMOTIONS } from "../data/emotions";
 import { Btn } from "../components/Btn";
@@ -5,7 +6,7 @@ import { Card } from "../components/Card";
 import { BackBtn } from "../components/BackBtn";
 import { MissionIntroHeader } from "../components/MissionIntroHeader";
 
-export function MissionScreen({ onBack, onComplete, emotion, setEmotion }: {
+export function ReservedFirstDoScreen({ onBack, onComplete, emotion, setEmotion }: {
   onBack: () => void;
   onComplete: () => void;
   emotion: string | null;
