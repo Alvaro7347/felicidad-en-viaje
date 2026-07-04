@@ -1,22 +1,19 @@
 import { B, PHOTOS } from "../data/brand";
 import { Btn } from "../components/Btn";
 import { Card } from "../components/Card";
-import { Tag } from "../components/Tag";
 import { BackBtn } from "../components/BackBtn";
+import { MissionIntroHeader } from "../components/MissionIntroHeader";
 
 export function MissionThreeScreen({ onBack }: { onBack: () => void }) {
   return (
     <div style={{ display: 'flex', flexDirection: 'column', gap: 16 }}>
       <BackBtn label="Puerto de Inicio" onClick={onBack} />
-      <Card style={{ background: B.green, padding: '18px 22px' }}>
-        <Tag color="pink">Misión completada · Nodo 3 de 8</Tag>
-        <h2 style={{ fontFamily: 'Space Grotesk, sans-serif', fontWeight: 800, fontSize: 'clamp(20px,4vw,26px)', margin: '10px 0 6px 0', color: B.dark }}>
-          Toma tu ukelele sin tensión
-        </h2>
-        <p style={{ fontSize: 14, color: '#555', margin: 0, lineHeight: 1.55 }}>
-          Antes de tocar, tu cuerpo también necesita sentirse cómodo.
-        </p>
-      </Card>
+      <MissionIntroHeader
+        eyebrow="Nodo 3 de 8 · Puerto de Inicio"
+        status="Misión completada"
+        title="Toma tu ukelele sin tensión"
+        subtitle="Antes de tocar, tu cuerpo también necesita sentirse cómodo."
+      />
       <Card style={{ padding: 0, overflow: 'hidden' }}>
         <div style={{ position: 'relative', height: 210 }}>
           <img src={PHOTOS.class} alt="Video de la misión" style={{ width: '100%', height: '100%', objectFit: 'cover' }} />

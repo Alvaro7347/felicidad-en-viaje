@@ -1,22 +1,19 @@
 import { B, PHOTOS } from "../data/brand";
 import { Btn } from "../components/Btn";
 import { Card } from "../components/Card";
-import { Tag } from "../components/Tag";
 import { BackBtn } from "../components/BackBtn";
+import { MissionIntroHeader } from "../components/MissionIntroHeader";
 
 export function MissionFourScreen({ onBack }: { onBack: () => void }) {
   return (
     <div style={{ display: 'flex', flexDirection: 'column', gap: 16 }}>
       <BackBtn label="Puerto de Inicio" onClick={onBack} />
-      <Card style={{ background: B.green, padding: '18px 22px' }}>
-        <Tag color="pink">Misión completada · Nodo 4 de 8</Tag>
-        <h2 style={{ fontFamily: 'Space Grotesk, sans-serif', fontWeight: 800, fontSize: 'clamp(20px,4vw,26px)', margin: '10px 0 6px 0', color: B.dark }}>
-          Afina tu primer sonido
-        </h2>
-        <p style={{ fontSize: 14, color: '#555', margin: 0, lineHeight: 1.55 }}>
-          Antes de tocar música, tu ukelele también necesita encontrar su voz.
-        </p>
-      </Card>
+      <MissionIntroHeader
+        eyebrow="Nodo 4 de 8 · Puerto de Inicio"
+        status="Misión completada"
+        title="Afina tu primer sonido"
+        subtitle="Antes de tocar música, tu ukelele también necesita encontrar su voz."
+      />
       <Card style={{ padding: 0, overflow: 'hidden' }}>
         <div style={{ position: 'relative', height: 210 }}>
           <img src={PHOTOS.class} alt="Video de afinación" style={{ width: '100%', height: '100%', objectFit: 'cover' }} />
