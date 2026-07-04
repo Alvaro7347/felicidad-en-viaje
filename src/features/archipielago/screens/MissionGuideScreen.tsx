@@ -78,6 +78,7 @@ export function MissionGuideScreen({ onBack, userName }: { onBack: () => void; u
   const [contactError, setContactError] = useState<string | null>(null);
   const [contactSent, setContactSent] = useState(false);
   const [preparedGuideMessage, setPreparedGuideMessage] = useState<GuideMessagePayload | null>(null);
+  const [isSendingContactMessage, setIsSendingContactMessage] = useState(false);
   const guidePhoto = alvaroAsset.url;
 
   function openContactModal() {
@@ -88,6 +89,7 @@ export function MissionGuideScreen({ onBack, userName }: { onBack: () => void; u
   }
 
   function closeContactModal() {
+    if (isSendingContactMessage) return;
     setShowContactModal(false);
     setContactError(null);
     setContactSent(false);
@@ -96,7 +98,8 @@ export function MissionGuideScreen({ onBack, userName }: { onBack: () => void; u
     setPreparedGuideMessage(null);
   }
 
-  function handleSendGuideMessage() {
+  async function handleSendGuideMessage() {
+    if (isSendingContactMessage) return;
     const email = contactEmail.trim();
     const message = contactMessage.trim();
     if (!message) {
@@ -113,10 +116,18 @@ export function MissionGuideScreen({ onBack, userName }: { onBack: () => void; u
       studentEmail: email,
       message,
     });
-    // TODO: enviar prepared payload a Supabase Edge Function cuando activemos backend real.
-    setPreparedGuideMessage(payload);
     setContactError(null);
-    setContactSent(true);
+    setIsSendingContactMessage(true);
+    try {
+      await saveGuideMessage(payload);
+      setPreparedGuideMessage(payload);
+      setContactSent(true);
+    } catch (err) {
+      console.error('[MissionGuideScreen] Error guardando mensaje al guía:', err);
+      setContactError('No pudimos enviar tu mensaje. Intenta nuevamente.');
+    } finally {
+      setIsSendingContactMessage(false);
+    }
   }
 
 
