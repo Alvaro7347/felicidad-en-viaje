@@ -2,7 +2,7 @@ import type { RouteNode } from "../types";
 
 export const START_PORT_NODES: RouteNode[] = [
   { id: 'n1', title: 'Conoce a tu guía', subtitle: 'Una bienvenida de SoundKeleles', icon: '👋', status: 'done', type: 'Video', time: '2 min' },
-  { id: 'n2', title: 'Conoce el Archipiélago', subtitle: 'Descubre cómo funciona este viaje musical.', icon: '📝', status: 'done', type: 'Historia interactiva', time: '3 min' },
+  { id: 'n2', title: 'Cuéntanos de ti', subtitle: 'Tu motivo será el combustible de este viaje.', icon: '💗', status: 'done', type: 'Reflexión', time: '3 min' },
   { id: 'n3', title: 'Toma tu ukelele sin tensión', subtitle: 'Postura, agarre y respiración', icon: '🎸', status: 'done', type: 'Microclase', time: '4 min' },
   { id: 'n4', title: 'Afina tu primer sonido', subtitle: 'Aprende a usar el afinador', icon: '🎵', status: 'done', type: 'Práctica', time: '5 min' },
   { id: 'n5', title: 'Toca tu primer DO', subtitle: 'Hoy abrís tu primera puerta musical', icon: '🎶', status: 'current', type: 'Misión', time: '3 min' },
