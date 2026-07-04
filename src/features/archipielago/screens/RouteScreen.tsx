@@ -42,7 +42,7 @@ export function RouteScreen({ onBack, onStartMission, onReviewMission, userName:
           scrollbarWidth: 'none',
           gap: 0,
         }}>
-          {ISLANDS.map((isl, i) => {
+          {ROUTE_STAGES.map((isl, i) => {
             const isActive = isl.status === 'active';
             const isIslHov = hoveredIsland === isl.id;
             const isIslPress = pressedIsland === isl.id;
@@ -132,7 +132,7 @@ export function RouteScreen({ onBack, onStartMission, onReviewMission, userName:
                 </div>
 
                 {/* Connector */}
-                {i < ISLANDS.length - 1 && (
+                {i < ROUTE_STAGES.length - 1 && (
                   <div style={{ flexShrink: 0, width: 22, textAlign: 'center' }}>
                     <span style={{ fontSize: 11, color: 'rgba(255,255,255,0.12)', letterSpacing: '-1px' }}>··›</span>
                   </div>
