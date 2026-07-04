@@ -212,21 +212,39 @@ export function MissionGuideScreen({ onBack, onNext, userName }: { onBack: () =>
           <div><strong style={{ color: B.dark }}>Frase del guía:</strong> “No estás aquí para demostrar talento. Estás aquí para descubrir tu sonido.”</div>
         </div>
       </Card>
-      <Card>
-        <div style={{ fontSize: 11, fontWeight: 800, color: B.grayText, letterSpacing: '1.2px', textTransform: 'uppercase', marginBottom: 8 }}>
-          ¿Necesitas apoyo?
+      <Card style={{ padding: '12px 14px' }}>
+        <div style={{ display: 'flex', alignItems: 'center', justifyContent: 'space-between', gap: 12, flexWrap: 'wrap' }}>
+          <div style={{ minWidth: 0, flex: '1 1 200px' }}>
+            <div style={{ fontSize: 13, fontWeight: 700, color: B.dark, marginBottom: 2 }}>
+              ¿Necesitas apoyo?
+            </div>
+            <div style={{ fontSize: 12, color: B.grayText, lineHeight: 1.5 }}>
+              Puedes escribirle a tu profesor guía.
+            </div>
+          </div>
+          <button
+            type="button"
+            onClick={openContactModal}
+            style={{
+              background: 'transparent',
+              border: 'none',
+              padding: 0,
+              color: B.pink,
+              fontFamily: 'Quicksand, sans-serif',
+              fontWeight: 700,
+              fontSize: 13,
+              cursor: 'pointer',
+              textDecoration: 'underline',
+              textUnderlineOffset: 3,
+            }}
+          >
+            Escríbele aquí →
+          </button>
         </div>
-        <p style={{ margin: '0 0 12px', color: '#666', lineHeight: 1.7, fontSize: 13 }}>
-          Si tienes una duda o necesitas acompañamiento, puedes escribirle a tu profesor guía.
-        </p>
-        <Btn variant="ghost" onClick={openContactModal} fullWidth>
-          Escríbele aquí
-        </Btn>
       </Card>
       {onNext && (
         <Btn onClick={onNext} fullWidth>Continuar a Cuéntanos de ti</Btn>
       )}
-      <Btn variant="ghost" onClick={onBack} fullWidth>Volver al Puerto de Inicio</Btn>
 
       {showContactModal && (
         <div
