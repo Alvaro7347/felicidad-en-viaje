@@ -240,7 +240,7 @@ export function RouteScreen({ onBack, onStartMission, onReviewMission, userName 
       <div style={{ display: 'flex', alignItems: 'center', gap: 8, marginBottom: 14 }}>
         <span style={{ fontSize: 15 }}>✨</span>
         <span style={{ fontFamily: 'Space Grotesk, sans-serif', fontWeight: 800, fontSize: 15, color: B.dark, letterSpacing: '-0.01em' }}>
-          Misiones de hoy
+          {routeTitle}
         </span>
       </div>
 
