@@ -4,7 +4,7 @@ import { ONBOARDING_SCREENS } from "../data/screens";
 
 export function AppHeader({ screen, onHome }: { screen: Screen; onHome?: () => void }) {
   const isOnboarding = ONBOARDING_SCREENS.includes(screen);
-  if (screen === 'onboarding' || screen === 'welcome') return null;
+  if (screen === 'onboarding' || screen === 'welcome' || screen === 'diagnosis' || screen === 'diagnosis-result') return null;
   return (
     <header style={{
       background: B.green,
