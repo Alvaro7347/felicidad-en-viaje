@@ -3,9 +3,12 @@ import { B } from "../data/brand";
 import type { Screen } from "../types";
 import { DEV_SCREENS } from "../data/screens";
 
+export const SHOW_DEV_NAV =
+  import.meta.env.DEV || import.meta.env.VITE_SHOW_DEV_NAV === "true";
+
 export function DevNav({ current, onGo }: { current: Screen; onGo: (s: Screen) => void }) {
   const [open, setOpen] = useState(false);
-  if (!import.meta.env.DEV) return null;
+  if (!SHOW_DEV_NAV) return null;
   return (
     <div style={{
       position: 'fixed', bottom: 20, right: 16, zIndex: 9999,
