@@ -5,6 +5,7 @@ import { Card } from "../components/Card";
 import { Tag } from "../components/Tag";
 import { BackBtn } from "../components/BackBtn";
 import alvaroAsset from "../../../assets/alvaro-campos.jpeg.asset.json";
+import { supabase } from "@/integrations/supabase/client";
 
 const GUIDE_CONTACT_CONTEXT = {
   guideName: 'Álvaro Campos',
@@ -51,6 +52,23 @@ function buildGuideMessagePayload(params: {
   };
 }
 
+async function saveGuideMessage(payload: GuideMessagePayload) {
+  const { error } = await supabase.from('support_messages').insert({
+    student_name: payload.studentName,
+    student_email: payload.studentEmail,
+    guide_name: payload.guideName,
+    guide_role: payload.guideRole,
+    stage_id: payload.stageId,
+    stage_title: payload.stageTitle,
+    mission_id: payload.missionId,
+    mission_title: payload.missionTitle,
+    source: payload.source,
+    message: payload.message,
+    status: 'pending',
+  });
+  if (error) throw error;
+}
+
 export function MissionGuideScreen({ onBack, userName }: { onBack: () => void; userName?: string }) {
   const safeName = userName?.trim();
   const firstName = safeName ? safeName.split(' ')[0] : 'Navegante';
@@ -60,6 +78,7 @@ export function MissionGuideScreen({ onBack, userName }: { onBack: () => void; u
   const [contactError, setContactError] = useState<string | null>(null);
   const [contactSent, setContactSent] = useState(false);
   const [preparedGuideMessage, setPreparedGuideMessage] = useState<GuideMessagePayload | null>(null);
+  const [isSendingContactMessage, setIsSendingContactMessage] = useState(false);
   const guidePhoto = alvaroAsset.url;
 
   function openContactModal() {
@@ -70,6 +89,7 @@ export function MissionGuideScreen({ onBack, userName }: { onBack: () => void; u
   }
 
   function closeContactModal() {
+    if (isSendingContactMessage) return;
     setShowContactModal(false);
     setContactError(null);
     setContactSent(false);
@@ -78,7 +98,8 @@ export function MissionGuideScreen({ onBack, userName }: { onBack: () => void; u
     setPreparedGuideMessage(null);
   }
 
-  function handleSendGuideMessage() {
+  async function handleSendGuideMessage() {
+    if (isSendingContactMessage) return;
     const email = contactEmail.trim();
     const message = contactMessage.trim();
     if (!message) {
@@ -95,10 +116,18 @@ export function MissionGuideScreen({ onBack, userName }: { onBack: () => void; u
       studentEmail: email,
       message,
     });
-    // TODO: enviar prepared payload a Supabase Edge Function cuando activemos backend real.
-    setPreparedGuideMessage(payload);
     setContactError(null);
-    setContactSent(true);
+    setIsSendingContactMessage(true);
+    try {
+      await saveGuideMessage(payload);
+      setPreparedGuideMessage(payload);
+      setContactSent(true);
+    } catch (err) {
+      console.error('[MissionGuideScreen] Error guardando mensaje al guía:', err);
+      setContactError('No pudimos enviar tu mensaje. Intenta nuevamente.');
+    } finally {
+      setIsSendingContactMessage(false);
+    }
   }
 
 
@@ -271,11 +300,11 @@ export function MissionGuideScreen({ onBack, userName }: { onBack: () => void; u
                   </div>
                 )}
                 <div style={{ display: 'flex', gap: 10, marginTop: 16 }}>
-                  <Btn variant="ghost" onClick={closeContactModal} fullWidth>
+                  <Btn variant="ghost" onClick={closeContactModal} fullWidth disabled={isSendingContactMessage}>
                     Cancelar
                   </Btn>
-                  <Btn onClick={handleSendGuideMessage} fullWidth>
-                    Enviar mensaje
+                  <Btn onClick={handleSendGuideMessage} fullWidth disabled={isSendingContactMessage}>
+                    {isSendingContactMessage ? 'Enviando...' : 'Enviar mensaje'}
                   </Btn>
                 </div>
               </>
@@ -286,10 +315,10 @@ export function MissionGuideScreen({ onBack, userName }: { onBack: () => void; u
                   fontFamily: 'Space Grotesk, sans-serif', fontWeight: 800,
                   fontSize: 20, margin: '0 0 8px', color: B.dark, textAlign: 'center',
                 }}>
-                  Mensaje preparado
+                  Mensaje enviado
                 </h3>
                 <p style={{ fontSize: 13.5, color: '#666', margin: '0 0 18px', lineHeight: 1.6, textAlign: 'center' }}>
-                  Tu guía recibirá tu duda y podrá responderte por correo cuando activemos esta función.
+                  Tu mensaje quedó registrado. Tu guía podrá revisarlo y responderte por correo cuando activemos la respuesta desde la app.
                 </p>
                 <Btn onClick={closeContactModal} fullWidth>
                   Entendido
