@@ -300,11 +300,11 @@ export function MissionGuideScreen({ onBack, userName }: { onBack: () => void; u
                   </div>
                 )}
                 <div style={{ display: 'flex', gap: 10, marginTop: 16 }}>
-                  <Btn variant="ghost" onClick={closeContactModal} fullWidth>
+                  <Btn variant="ghost" onClick={closeContactModal} fullWidth disabled={isSendingContactMessage}>
                     Cancelar
                   </Btn>
-                  <Btn onClick={handleSendGuideMessage} fullWidth>
-                    Enviar mensaje
+                  <Btn onClick={handleSendGuideMessage} fullWidth disabled={isSendingContactMessage}>
+                    {isSendingContactMessage ? 'Enviando...' : 'Enviar mensaje'}
                   </Btn>
                 </div>
               </>
@@ -315,10 +315,10 @@ export function MissionGuideScreen({ onBack, userName }: { onBack: () => void; u
                   fontFamily: 'Space Grotesk, sans-serif', fontWeight: 800,
                   fontSize: 20, margin: '0 0 8px', color: B.dark, textAlign: 'center',
                 }}>
-                  Mensaje preparado
+                  Mensaje enviado
                 </h3>
                 <p style={{ fontSize: 13.5, color: '#666', margin: '0 0 18px', lineHeight: 1.6, textAlign: 'center' }}>
-                  Tu guía recibirá tu duda y podrá responderte por correo cuando activemos esta función.
+                  Tu mensaje quedó registrado. Tu guía podrá revisarlo y responderte por correo cuando activemos la respuesta desde la app.
                 </p>
                 <Btn onClick={closeContactModal} fullWidth>
                   Entendido
