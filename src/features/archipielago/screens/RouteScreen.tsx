@@ -58,6 +58,7 @@ export function RouteScreen({ onBack, onStartMission, onReviewMission, userName:
         padding: '12px 0',
         marginBottom: 20,
         overflow: 'hidden',
+        minHeight: 108,
       }}>
         <div
           ref={stripRef}
@@ -68,21 +69,22 @@ export function RouteScreen({ onBack, onStartMission, onReviewMission, userName:
           overflowX: 'auto',
           scrollSnapType: 'x mandatory',
           WebkitOverflowScrolling: 'touch',
-          padding: '2px 16px 2px',
+          padding: '2px 16px',
           scrollbarWidth: 'none',
           gap: 0,
+          minHeight: 84,
         }}>
           {ROUTE_STAGES.map((isl, i) => {
             const isActive = isl.status === 'active';
             const isFocused = focusedStageId === isl.id;
             const isIslPress = pressedIsland === isl.id;
 
-            const focusScale = isFocused ? 1 : 0.88;
-            const pressScale = isIslPress ? 0.96 : 1;
+            const focusScale = isFocused ? 1 : 0.96;
+            const pressScale = isIslPress ? 0.97 : 1;
             const islScale = `scale(${(focusScale * pressScale).toFixed(3)})`;
             const islOpacity = isFocused
-              ? (isActive ? 1 : 0.8)
-              : (isActive ? 0.85 : 0.5);
+              ? (isActive ? 1 : 0.85)
+              : (isActive ? 0.78 : 0.55);
             const islShadow = isFocused && !isIslPress
               ? isActive
                 ? '0 6px 20px rgba(46,230,174,0.22)'
@@ -90,82 +92,88 @@ export function RouteScreen({ onBack, onStartMission, onReviewMission, userName:
               : 'none';
             const islBorder = isFocused
               ? isActive
-                ? '1px solid rgba(46,230,174,0.55)'
-                : '1px solid rgba(255,255,255,0.22)'
+                ? '1px solid rgba(46,230,174,0.6)'
+                : '1px solid rgba(255,255,255,0.28)'
               : isActive
-              ? '1px solid rgba(46,230,174,0.28)'
-              : '1px solid rgba(255,255,255,0.07)';
+              ? '1px solid rgba(46,230,174,0.25)'
+              : '1px solid rgba(255,255,255,0.1)';
             const islBg = isFocused && isActive
               ? 'rgba(46,230,174,0.14)'
               : isActive
-              ? 'rgba(46,230,174,0.09)'
-              : 'transparent';
+              ? 'rgba(46,230,174,0.08)'
+              : 'rgba(255,255,255,0.02)';
 
             return (
               <div key={isl.id} style={{ display: 'flex', alignItems: 'center', flexShrink: 0 }}>
-                {/* Island chip */}
-                <div
-                  ref={(el) => { stageRefs.current[isl.id] = el; }}
-                  onMouseDown={() => setPressedIsland(isl.id)}
-                  onMouseUp={() => setPressedIsland(null)}
-                  onMouseLeave={() => setPressedIsland(null)}
-                  onTouchStart={() => setPressedIsland(isl.id)}
-                  onTouchEnd={() => setPressedIsland(null)}
-                  onTouchCancel={() => setPressedIsland(null)}
-                  style={{
-                  scrollSnapAlign: 'center',
+                {/* Stable wrapper — reserves fixed space so scaling doesn't shift layout */}
+                <div style={{
                   flexShrink: 0,
-                  background: islBg,
-                  border: islBorder,
-                  borderRadius: 13,
-                  padding: isFocused ? '9px 13px' : '7px 11px',
-                  transform: islScale,
-                  transformOrigin: 'center center',
-                  opacity: islOpacity,
-                  boxShadow: islShadow,
-                  transition: 'transform 0.22s ease, opacity 0.22s ease, box-shadow 0.22s ease, border-color 0.22s ease, background 0.22s ease, padding 0.22s ease',
-                  cursor: 'pointer',
-                  userSelect: 'none',
-                  WebkitUserSelect: 'none',
+                  minHeight: 76,
+                  display: 'flex',
+                  alignItems: 'center',
+                  scrollSnapAlign: 'center',
                 }}>
-                  <div style={{ display: 'flex', alignItems: 'center', gap: 8 }}>
-                    <span style={{
-                      fontSize: isFocused ? 20 : 15,
-                      opacity: isActive ? 1 : 0.55,
-                      filter: isActive ? 'none' : 'grayscale(0.4)',
-                      transition: 'font-size 0.22s ease',
-                    }}>🏝</span>
-                    <div>
-                      <div style={{
-                        fontFamily: 'Space Grotesk, sans-serif',
-                        fontWeight: 800,
-                        fontSize: isFocused ? 13 : 11,
-                        color: isActive ? B.white : (isFocused ? 'rgba(255,255,255,0.7)' : 'rgba(255,255,255,0.38)'),
-                        lineHeight: 1.2,
-                        whiteSpace: 'nowrap',
-                        transition: 'font-size 0.22s ease, color 0.22s ease',
-                      }}>
-                        {isl.title}
-                      </div>
-                      {!isActive && (
-                        <div style={{ fontSize: 9, color: isFocused ? 'rgba(255,255,255,0.42)' : 'rgba(255,255,255,0.22)', marginTop: 2, letterSpacing: '0.02em' }}>
-                          próximamente
+                  {/* Island chip */}
+                  <div
+                    ref={(el) => { stageRefs.current[isl.id] = el; }}
+                    onMouseDown={() => setPressedIsland(isl.id)}
+                    onMouseUp={() => setPressedIsland(null)}
+                    onMouseLeave={() => setPressedIsland(null)}
+                    onTouchStart={() => setPressedIsland(isl.id)}
+                    onTouchEnd={() => setPressedIsland(null)}
+                    onTouchCancel={() => setPressedIsland(null)}
+                    style={{
+                    background: islBg,
+                    border: islBorder,
+                    borderRadius: 13,
+                    padding: '8px 12px',
+                    transform: islScale,
+                    transformOrigin: 'center center',
+                    opacity: islOpacity,
+                    boxShadow: islShadow,
+                    transition: 'transform 0.22s ease, opacity 0.22s ease, box-shadow 0.22s ease, border-color 0.22s ease, background 0.22s ease',
+                    cursor: 'pointer',
+                    userSelect: 'none',
+                    WebkitUserSelect: 'none',
+                  }}>
+                    <div style={{ display: 'flex', alignItems: 'center', gap: 8 }}>
+                      <span style={{
+                        fontSize: 18,
+                        opacity: isActive ? 1 : 0.55,
+                        filter: isActive ? 'none' : 'grayscale(0.4)',
+                      }}>🏝</span>
+                      <div>
+                        <div style={{
+                          fontFamily: 'Space Grotesk, sans-serif',
+                          fontWeight: 800,
+                          fontSize: 12,
+                          color: isActive ? B.white : (isFocused ? 'rgba(255,255,255,0.78)' : 'rgba(255,255,255,0.45)'),
+                          lineHeight: 1.2,
+                          whiteSpace: 'nowrap',
+                          transition: 'color 0.22s ease',
+                        }}>
+                          {isl.title}
                         </div>
-                      )}
+                        {!isActive && (
+                          <div style={{ fontSize: 9, color: isFocused ? 'rgba(255,255,255,0.45)' : 'rgba(255,255,255,0.25)', marginTop: 2, letterSpacing: '0.02em' }}>
+                            próximamente
+                          </div>
+                        )}
+                      </div>
                     </div>
-                  </div>
 
-                  {/* Progress strip — active only */}
-                  {isActive && (
-                    <div style={{ marginTop: 8 }}>
-                      <div style={{ height: 3, background: 'rgba(255,255,255,0.08)', borderRadius: 999, overflow: 'hidden', width: 120 }}>
-                        <div style={{ width: `${isl.progress}%`, height: '100%', background: B.green, borderRadius: 999 }} />
+                    {/* Progress strip — active only */}
+                    {isActive && (
+                      <div style={{ marginTop: 8 }}>
+                        <div style={{ height: 3, background: 'rgba(255,255,255,0.08)', borderRadius: 999, overflow: 'hidden', width: 120 }}>
+                          <div style={{ width: `${isl.progress}%`, height: '100%', background: B.green, borderRadius: 999 }} />
+                        </div>
+                        <div style={{ fontSize: 9, fontWeight: 800, color: B.green, marginTop: 3, opacity: 0.85 }}>
+                          {isl.progress}% completado
+                        </div>
                       </div>
-                      <div style={{ fontSize: 9, fontWeight: 800, color: B.green, marginTop: 3, opacity: 0.85 }}>
-                        {isl.progress}% completado
-                      </div>
-                    </div>
-                  )}
+                    )}
+                  </div>
                 </div>
 
 
