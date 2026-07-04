@@ -118,72 +118,83 @@ export function DiagnosisScreen({ onComplete }: { onComplete: (answers: DiagAnsw
       {/* ── Steps 0..N: Questions ── */}
       {step >= 0 && q && (
         <Card>
-          <div style={{ fontSize: 11, fontWeight: 800, color: B.pink, marginBottom: 8, letterSpacing: '1px', textTransform: 'uppercase' }}>
-            Pregunta {step + 1} de {totalSteps}
-          </div>
-          <h2 style={{
-            fontFamily: 'Space Grotesk, sans-serif', fontWeight: 800,
-            fontSize: 'clamp(17px, 3.5vw, 21px)', color: B.dark,
-            margin: '0 0 4px 0', lineHeight: 1.3,
-          }}>
-            {q.question}
-          </h2>
-          {q.subtitle && (
-            <p style={{ fontSize: 13, color: '#999', margin: '0 0 18px 0', fontStyle: 'italic' }}>
-              {q.subtitle}
-            </p>
-          )}
-          {!q.subtitle && <div style={{ marginBottom: 18 }} />}
-
-          <div style={{ display: 'flex', flexDirection: 'column', gap: 9 }}>
-            {q.options.map((opt) => {
-              const isChosen = isMulti
-                ? multiSel.includes(opt)
-                : chosen === opt;
-              return (
-                <button
-                  key={opt}
-                  onClick={() => isMulti ? toggleMulti(opt) : handleSingleSelect(opt)}
-                  style={{
-                    textAlign: 'left',
-                    border: `2px solid ${isChosen ? B.green : B.grayBorder}`,
-                    background: isChosen ? B.greenLight : B.white,
-                    borderRadius: 13, padding: '12px 15px', cursor: 'pointer',
-                    fontFamily: 'Quicksand, sans-serif', fontWeight: isChosen ? 800 : 600,
-                    fontSize: 14, color: isChosen ? B.dark : '#555',
-                    transition: 'all 0.15s',
-                    display: 'flex', alignItems: 'center', gap: 12,
-                  }}
-                >
-                  <span style={{
-                    width: 22, height: 22,
-                    borderRadius: isMulti ? 6 : 999,
-                    flexShrink: 0,
-                    border: `2px solid ${isChosen ? B.green : B.grayBorder}`,
-                    background: isChosen ? B.green : 'transparent',
-                    display: 'flex', alignItems: 'center', justifyContent: 'center',
-                    fontSize: 11, color: B.dark, fontWeight: 900,
-                    transition: 'all 0.15s',
-                  }}>
-                    {isChosen ? '✓' : ''}
-                  </span>
-                  {opt}
-                </button>
-              );
-            })}
-          </div>
-
-          {isMulti && (
-            <div style={{ marginTop: 16 }}>
-              <Btn
-                onClick={confirmMulti}
-                fullWidth
-                variant={multiSel.length > 0 ? 'primary' : 'ghost'}
-              >
-                {multiSel.length > 0 ? `Continuar con ${multiSel.length} selección${multiSel.length > 1 ? 'es' : ''} →` : 'Elige al menos una opción'}
-              </Btn>
+          <div
+            style={{
+              display: 'flex',
+              flexDirection: 'column',
+              minHeight: 'min(520px, 70vh)',
+            }}
+          >
+            <div style={{ fontSize: 11, fontWeight: 800, color: B.pink, marginBottom: 8, letterSpacing: '1px', textTransform: 'uppercase' }}>
+              Pregunta {step + 1} de {totalSteps}
             </div>
-          )}
+            <h2 style={{
+              fontFamily: 'Space Grotesk, sans-serif', fontWeight: 800,
+              fontSize: 'clamp(17px, 3.5vw, 21px)', color: B.dark,
+              margin: '0 0 4px 0', lineHeight: 1.3,
+            }}>
+              {q.question}
+            </h2>
+            <p style={{
+              fontSize: 13, color: '#999', margin: '0 0 18px 0',
+              fontStyle: 'italic', minHeight: 20,
+            }}>
+              {q.subtitle ?? ''}
+            </p>
+
+            <div style={{ display: 'flex', flexDirection: 'column', gap: 9, flex: 1 }}>
+              {q.options.map((opt) => {
+                const isChosen = isMulti
+                  ? multiSel.includes(opt)
+                  : chosen === opt;
+                return (
+                  <button
+                    key={opt}
+                    onClick={() => isMulti ? toggleMulti(opt) : handleSingleSelect(opt)}
+                    style={{
+                      textAlign: 'left',
+                      border: `2px solid ${isChosen ? B.green : B.grayBorder}`,
+                      background: isChosen ? B.greenLight : B.white,
+                      borderRadius: 13, padding: '12px 15px', cursor: 'pointer',
+                      fontFamily: 'Quicksand, sans-serif', fontWeight: isChosen ? 800 : 600,
+                      fontSize: 14, color: isChosen ? B.dark : '#555',
+                      transition: 'all 0.15s',
+                      display: 'flex', alignItems: 'center', gap: 12,
+                      minHeight: 56, lineHeight: 1.35,
+                    }}
+                  >
+                    <span style={{
+                      width: 22, height: 22,
+                      borderRadius: isMulti ? 6 : 999,
+                      flexShrink: 0,
+                      border: `2px solid ${isChosen ? B.green : B.grayBorder}`,
+                      background: isChosen ? B.green : 'transparent',
+                      display: 'flex', alignItems: 'center', justifyContent: 'center',
+                      fontSize: 11, color: B.white, fontWeight: 900,
+                      transition: 'all 0.15s',
+                    }}>
+                      {isChosen ? '✓' : ''}
+                    </span>
+                    <span style={{ flex: 1 }}>{opt}</span>
+                  </button>
+                );
+              })}
+            </div>
+
+            {/* Stable footer slot: always reserved so the card doesn't jump
+                between single-select and multi-select questions. */}
+            <div style={{ marginTop: 16, minHeight: 52 }}>
+              {isMulti && (
+                <Btn
+                  onClick={confirmMulti}
+                  fullWidth
+                  variant={multiSel.length > 0 ? 'primary' : 'ghost'}
+                >
+                  {multiSel.length > 0 ? `Continuar con ${multiSel.length} selección${multiSel.length > 1 ? 'es' : ''} →` : 'Elige al menos una opción'}
+                </Btn>
+              )}
+            </div>
+          </div>
         </Card>
       )}
 
