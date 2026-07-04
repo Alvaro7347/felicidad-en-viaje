@@ -39,32 +39,32 @@ export function MissionGuideScreen({ onBack }: { onBack: () => void }) {
                 Álvaro te cuenta cómo será este viaje.
               </div>
             </div>
-            <button
-              type="button"
-              aria-label="Reproducir video de bienvenida"
-              style={{
-                width: 46,
-                height: 46,
-                borderRadius: 999,
-                background: '#FFFFFF',
-                border: 'none',
-                boxShadow: '0 4px 14px rgba(0,0,0,0.25)',
-                display: 'flex',
-                alignItems: 'center',
-                justifyContent: 'center',
-                cursor: 'pointer',
-                padding: 0,
-                flexShrink: 0,
-                transition: 'transform 0.18s ease',
-              }}
-              onMouseEnter={(e) => { e.currentTarget.style.transform = 'scale(1.06)'; }}
-              onMouseLeave={(e) => { e.currentTarget.style.transform = 'scale(1)'; }}
-            >
-              <svg width="14" height="14" viewBox="0 0 24 24" fill={B.dark} aria-hidden="true" style={{ marginLeft: 2 }}>
-                <path d="M8 5v14l11-7z" />
-              </svg>
-            </button>
           </div>
+          <button
+            type="button"
+            aria-label="Reproducir video de bienvenida"
+            style={{
+              position: 'absolute',
+              left: '50%',
+              top: '72%',
+              transform: 'translate(-50%, -50%)',
+              background: 'transparent',
+              border: 'none',
+              padding: 0,
+              cursor: 'pointer',
+              display: 'flex',
+              alignItems: 'center',
+              justifyContent: 'center',
+              transition: 'transform 0.2s ease, opacity 0.2s ease',
+              opacity: 0.55,
+            }}
+            onMouseEnter={(e) => { e.currentTarget.style.transform = 'translate(-50%, -50%) scale(1.08)'; e.currentTarget.style.opacity = '0.8'; }}
+            onMouseLeave={(e) => { e.currentTarget.style.transform = 'translate(-50%, -50%) scale(1)'; e.currentTarget.style.opacity = '0.55'; }}
+          >
+            <svg width="72" height="72" viewBox="0 0 24 24" fill="#FFFFFF" aria-hidden="true" style={{ filter: 'drop-shadow(0 2px 8px rgba(0,0,0,0.45))' }}>
+              <path d="M8 5v14l11-7z" />
+            </svg>
+          </button>
         </div>
       </Card>
       <Card>
