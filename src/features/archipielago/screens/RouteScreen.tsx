@@ -169,7 +169,7 @@ export function RouteScreen({ onBack, onStartMission, onReviewMission, userName:
                     </div>
 
                     {/* Reserved bottom area — keeps active and locked cards the same structural size */}
-                    <div style={{ marginTop: 8, height: 15 }}>
+                    <div style={{ marginTop: 8, minHeight: 18 }}>
                       {isActive ? (
                         <>
                           <div style={{ height: 3, background: 'rgba(255,255,255,0.08)', borderRadius: 999, overflow: 'hidden', width: 120 }}>
