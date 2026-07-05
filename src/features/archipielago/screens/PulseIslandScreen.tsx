@@ -96,6 +96,7 @@ export function PulseIslandScreen({
     if (id === 'puerto-inicio') { onOpenStartPort(); return; }
     if (id === 'primeras-melodias') { onOpenFirstMelodiesIsland(); return; }
     if (id === 'ritmo') { onOpenRhythmIsland(); return; }
+    if (id === 'musical') { onOpenMusicIsland(); return; }
     if (id === 'pulso') {
       window.scrollTo({ top: 0, behavior: 'smooth' });
       return;
