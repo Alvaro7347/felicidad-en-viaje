@@ -89,7 +89,7 @@ export function FirstMelodiesIslandScreen({ onBack, onOpenLesson, onOpenPulseIsl
       return;
     }
     if (id === 'pulso') { onOpenPulseIsland(); return; }
-    setModal('locked-island');
+    if (id === 'ritmo') { onOpenRhythmIsland(); return; }
   };
 
   return (
