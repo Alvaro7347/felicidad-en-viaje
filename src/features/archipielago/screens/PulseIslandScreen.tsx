@@ -127,6 +127,7 @@ export function PulseIslandScreen({
           {TERRITORIES.map((t, i) => {
             const isActive = t.state === 'active';
             const isDone = t.state === 'done';
+            const isPrototype = t.state === 'prototype';
             const isFocused = focusedStageId === t.id;
             const isPress = pressedIsland === t.id;
             const focusScale = isFocused ? 1 : 0.96;
