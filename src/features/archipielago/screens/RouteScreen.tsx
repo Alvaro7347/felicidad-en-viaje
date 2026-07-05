@@ -133,6 +133,7 @@ export function RouteScreen({ onStartMission, onReviewMission, onOpenFirstMelodi
                       if (isl.id === 'puerto-inicio') return;
                       if (isl.id === 'primeras-melodias') { onOpenFirstMelodiesIsland(); return; }
                       if (isl.id === 'pulso') { onOpenPulseIsland(); return; }
+                      if (isl.id === 'ritmo') { onOpenRhythmIsland(); return; }
                       setShowLockedIsland(true);
                     }}
                     style={{
