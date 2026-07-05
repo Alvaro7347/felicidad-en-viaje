@@ -163,7 +163,7 @@ export function FirstMelodiesIslandScreen({ onBack, onOpenLesson, onOpenPulseIsl
                   >
                     <div style={{ display: 'flex', alignItems: 'center', gap: 8 }}>
                       <span style={{ fontSize: 18, opacity: isActive || isDone ? 1 : 0.55 }}>
-                        {t.state === 'locked' ? '🔒' : '🏝'}
+                        {'🏝'}
                       </span>
                       <div>
                         <div style={{
