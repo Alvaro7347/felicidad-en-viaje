@@ -246,6 +246,23 @@ export function RouteScreen({ onStartMission, onReviewMission, onOpenFirstMelodi
         </div>
       )}
 
+      {showLockedIsland && (
+        <div style={{
+          position: 'fixed', inset: 0, background: 'rgba(60,60,59,0.45)', zIndex: 60,
+          display: 'flex', alignItems: 'center', justifyContent: 'center', padding: 16,
+        }}>
+          <Card style={{ width: '100%', maxWidth: 420, border: `1.5px solid ${B.grayBorder}` }}>
+            <div style={{ fontSize: 18, fontFamily: 'Space Grotesk, sans-serif', fontWeight: 800, color: B.dark, marginBottom: 8 }}>
+              🔒 Isla aún bloqueada
+            </div>
+            <div style={{ fontSize: 13.5, lineHeight: 1.6, color: B.grayText, marginBottom: 14 }}>
+              Para llegar aquí, primero necesitas completar las unidades anteriores. El viaje avanza una isla a la vez.
+            </div>
+            <Btn onClick={() => setShowLockedIsland(false)} fullWidth>Entendido</Btn>
+          </Card>
+        </div>
+      )}
+
       {/* ── Section title ── */}
       <div style={{ display: 'flex', alignItems: 'center', gap: 8, marginBottom: 14 }}>
         <span style={{ fontSize: 15 }}>✨</span>
