@@ -271,7 +271,10 @@ export function ChordsIslandScreen({
                 </div>
 
                 <div
-                  onClick={() => setModal({ kind: isCurrent ? 'first' : 'locked' })}
+                  onClick={() => {
+                    if (isCurrent) onOpenLesson(node.id);
+                    else setModal({ kind: 'locked', lessonId: node.id });
+                  }}
                   onMouseEnter={() => setHoveredNode(node.id)}
                   onMouseLeave={() => { setHoveredNode(null); setPressedNode(null); }}
                   onMouseDown={() => setPressedNode(node.id)}
