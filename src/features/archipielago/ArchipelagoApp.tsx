@@ -16,6 +16,7 @@ import { MissionEightScreen } from "./screens/MissionEightScreen";
 import { FirstMelodiesIslandScreen } from "./screens/FirstMelodiesIslandScreen";
 import { FirstMelodiesLessonScreen } from "./screens/FirstMelodiesLessonScreen";
 import { PulseIslandScreen } from "./screens/PulseIslandScreen";
+import { PulseLessonScreen } from "./screens/PulseLessonScreen";
 import { MissionNineScreen } from "./screens/MissionNineScreen";
 import { MissionFourScreen } from "./screens/MissionFourScreen";
 import { MissionGuideScreen } from "./screens/MissionGuideScreen";
@@ -66,6 +67,7 @@ export function ArchipelagoApp() {
     return window.localStorage.getItem("archipielago_user_name") || "Navegante";
   });
   const [firstMelodiesLessonId, setFirstMelodiesLessonId] = useState<string>("m1");
+  const [pulseLessonId, setPulseLessonId] = useState<string>("p1");
   
 
   const goToRoute = () => setScreen("route");
@@ -158,6 +160,16 @@ export function ArchipelagoApp() {
           <PulseIslandScreen
             onOpenStartPort={() => setScreen("route")}
             onOpenFirstMelodiesIsland={() => setScreen("first-melodies-island")}
+            onOpenLesson={(lessonId) => {
+              setPulseLessonId(lessonId);
+              setScreen("pulse-lesson");
+            }}
+          />
+        )}
+        {screen === "pulse-lesson" && (
+          <PulseLessonScreen
+            lessonId={pulseLessonId}
+            onBackToIsland={() => setScreen("pulse-island")}
           />
         )}
         {screen === "first-melodies-lesson" && (
