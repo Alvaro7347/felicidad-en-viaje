@@ -34,8 +34,15 @@ export function FirstMelodiesIslandScreen({ onBack }: { onBack: () => void }) {
   const [pressedNode, setPressedNode] = useState<string | null>(null);
   const [pressedIsland, setPressedIsland] = useState<string | null>(null);
   const [focusedStageId, setFocusedStageId] = useState<string>('primeras-melodias');
+  const [mounted, setMounted] = useState(false);
   const stripRef = useRef<HTMLDivElement | null>(null);
   const stageRefs = useRef<Record<string, HTMLDivElement | null>>({});
+
+  useEffect(() => {
+    const id = requestAnimationFrame(() => setMounted(true));
+    return () => cancelAnimationFrame(id);
+  }, []);
+
 
   const recomputeFocus = useCallback(() => {
     const container = stripRef.current;
