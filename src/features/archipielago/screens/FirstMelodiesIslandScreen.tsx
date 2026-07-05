@@ -101,26 +101,7 @@ export function FirstMelodiesIslandScreen({ onBack }: { onBack: () => void }) {
     }}>
 
 
-      {/* Tarjeta superior de progreso */}
-      <Card style={{ padding: 18 }}>
-        <div style={{ display: 'flex', alignItems: 'center', gap: 12 }}>
-          <div style={{
-            width: 44, height: 44, borderRadius: 12, background: B.greenLight,
-            display: 'flex', alignItems: 'center', justifyContent: 'center', fontSize: 22,
-          }}>🏝️</div>
-          <div style={{ flex: 1, minWidth: 0 }}>
-            <div style={{ fontFamily: 'Space Grotesk, sans-serif', fontWeight: 800, fontSize: 15, color: B.dark }}>
-              Tu viaje musical
-            </div>
-            <div style={{ fontSize: 12, color: B.grayText, marginTop: 2 }}>
-              Isla de Primeras Melodías · 0% completado
-            </div>
-          </div>
-        </div>
-        <div style={{ marginTop: 12, height: 6, background: B.gray, borderRadius: 999, overflow: 'hidden' }}>
-          <div style={{ width: '0%', height: '100%', background: B.green, borderRadius: 999 }} />
-        </div>
-      </Card>
+
 
       {/* Carrusel negro de territorios */}
       <div style={{
