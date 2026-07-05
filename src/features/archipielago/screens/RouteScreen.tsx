@@ -7,7 +7,7 @@ import { Btn } from "../components/Btn";
 import { Card } from "../components/Card";
 import { touchLastVisit } from "../data/musicalFuel";
 
-export function RouteScreen({ onStartMission, onReviewMission, onOpenFirstMelodiesIsland, onOpenPulseIsland, onOpenRhythmIsland, onOpenMusicIsland, onOpenJoyIsland, userName }: { onStartMission: () => void; onReviewMission: (id: string) => void; onOpenFirstMelodiesIsland: () => void; onOpenPulseIsland: () => void; onOpenRhythmIsland: () => void; onOpenMusicIsland: () => void; onOpenJoyIsland: () => void; userName: string }) {
+export function RouteScreen({ onStartMission, onReviewMission, onOpenFirstMelodiesIsland, onOpenPulseIsland, onOpenRhythmIsland, onOpenMusicIsland, onOpenJoyIsland, onOpenChordsIsland, onOpenStrummingIsland, onOpenSongsIsland, userName }: { onStartMission: () => void; onReviewMission: (id: string) => void; onOpenFirstMelodiesIsland: () => void; onOpenPulseIsland: () => void; onOpenRhythmIsland: () => void; onOpenMusicIsland: () => void; onOpenJoyIsland: () => void; onOpenChordsIsland: () => void; onOpenStrummingIsland: () => void; onOpenSongsIsland: () => void; userName: string }) {
   const firstName = (userName ?? '').trim().split(/\s+/)[0] ?? '';
   const routeTitle = firstName ? `${firstName}, esta es tu ruta` : 'Esta es tu ruta';
   // Mantenemos el registro de última visita para futuros usos del combustible musical
@@ -136,6 +136,9 @@ export function RouteScreen({ onStartMission, onReviewMission, onOpenFirstMelodi
                       if (isl.id === 'ritmo') { onOpenRhythmIsland(); return; }
                       if (isl.id === 'musical') { onOpenMusicIsland(); return; }
                       if (isl.id === 'alegria') { onOpenJoyIsland(); return; }
+                      if (isl.id === 'acordes') { onOpenChordsIsland(); return; }
+                      if (isl.id === 'rasgueo') { onOpenStrummingIsland(); return; }
+                      if (isl.id === 'canciones') { onOpenSongsIsland(); return; }
                       setShowLockedIsland(true);
                     }}
                     style={{
@@ -177,7 +180,7 @@ export function RouteScreen({ onStartMission, onReviewMission, onOpenFirstMelodi
                           {isl.title}
                         </div>
                         {!isActive && (() => {
-                          const isPrototype = isl.id === 'primeras-melodias' || isl.id === 'pulso' || isl.id === 'ritmo' || isl.id === 'musical' || isl.id === 'alegria';
+                          const isPrototype = isl.id === 'primeras-melodias' || isl.id === 'pulso' || isl.id === 'ritmo' || isl.id === 'musical' || isl.id === 'alegria' || isl.id === 'acordes' || isl.id === 'rasgueo' || isl.id === 'canciones';
                           return (
                             <div style={{ fontSize: 9, color: isPrototype ? 'rgba(46,230,174,0.85)' : (isFocused ? 'rgba(255,255,255,0.45)' : 'rgba(255,255,255,0.25)'), marginTop: 2, letterSpacing: '0.02em' }}>
                               {isPrototype ? 'disponible prototipo' : 'próximamente'}

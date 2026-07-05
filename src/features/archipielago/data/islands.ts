@@ -20,4 +20,7 @@ export const ROUTE_STAGES = [
   { id: 'ritmo', title: 'Isla del Ritmo', status: 'locked' as const, progress: 0, completionText: 'completada' },
   { id: 'musical', title: 'Isla Musical', status: 'locked' as const, progress: 0, completionText: 'completada' },
   { id: 'alegria', title: 'Isla de la Alegría', status: 'locked' as const, progress: 0, completionText: 'completada' },
+  { id: 'acordes', title: 'Isla de los Acordes', status: 'locked' as const, progress: 0, completionText: 'completada' },
+  { id: 'rasgueo', title: 'Isla del Rasgueo', status: 'locked' as const, progress: 0, completionText: 'completada' },
+  { id: 'canciones', title: 'Isla de las Canciones', status: 'locked' as const, progress: 0, completionText: 'completada' },
 ];

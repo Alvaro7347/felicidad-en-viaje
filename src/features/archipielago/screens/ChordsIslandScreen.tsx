@@ -4,40 +4,57 @@ import type { NodeStatus, RouteNode } from "../types";
 import { Btn } from "../components/Btn";
 import { Card } from "../components/Card";
 
-
-const MELODIES_NODES: RouteNode[] = [
-  { id: 'm1', title: 'Tu primer acorde: DO', subtitle: 'Despierta tu mano izquierda y toca tu primer acorde.', icon: '🎸', status: 'current', type: 'Video práctica', time: '4 min' },
-  { id: 'm2', title: 'Mapa visual del DO', subtitle: 'Aprende a reconocer el acorde DO al verlo.', icon: '🗺️', status: 'locked', type: 'Diagrama', time: '2 min' },
-  { id: 'm3', title: 'Dos nuevos amigos: LAm y FA', subtitle: 'Suma dos acordes nuevos sin abrumarte.', icon: '✨', status: 'locked', type: 'Video práctica', time: '5 min' },
-  { id: 'm4', title: 'Mapas visuales LAm y FA', subtitle: 'Refuerza los acordes con apoyo visual.', icon: '🗺️', status: 'locked', type: 'Diagrama', time: '3 min' },
-  { id: 'm5', title: 'Tu primera estrofa: Tren al Sur', subtitle: 'Usa DO, LAm y FA para sentir música real.', icon: '🎶', status: 'locked', type: 'Karaoke', time: '6 min' },
-  { id: 'm6', title: 'Stay With Me en acordes', subtitle: 'Consolida tus primeros acordes en una canción conocida.', icon: '🎵', status: 'locked', type: 'Video práctica', time: '5 min' },
-  { id: 'm7', title: 'Karaoke Stay With Me', subtitle: 'Practica cambios de acordes con guía temporal.', icon: '🎤', status: 'locked', type: 'Karaoke', time: '6 min' },
-  { id: 'm8', title: 'Comparte tu primer logro', subtitle: 'Podrás subir tu video de forma opcional para recibir feedback.', icon: '📹', status: 'locked', type: 'Comunidad', time: '5 min' },
-  { id: 'm9', title: 'Dedos despiertos', subtitle: 'Entrena coordinación y digitación desde cero.', icon: '🤲', status: 'locked', type: 'Práctica', time: '4 min' },
-  { id: 'm10', title: 'Lo que ya conquistaste', subtitle: 'Resumen, medición breve y premio de cierre.', icon: '🏆', status: 'locked', type: 'Resumen', time: '3 min' },
+const CHORDS_NODES: RouteNode[] = [
+  { id: 'chords1',  title: 'Qué es un acorde',                                subtitle: 'Comprende cómo se forma un acorde y por qué suena como suena.', icon: '🎼', status: 'current', type: 'Video práctica', time: '5 min' },
+  { id: 'chords2',  title: 'Acordes Mayores',                                 subtitle: 'Descubre la base alegre y estable de muchos acordes.',           icon: '☀️', status: 'locked',  type: 'Video práctica', time: '5 min' },
+  { id: 'chords3',  title: 'Diagramas acordes Mayores',                       subtitle: 'Revisa visualmente las formas de los acordes mayores.',           icon: '🗺️', status: 'locked',  type: 'Diagrama',        time: '5 min' },
+  { id: 'chords4',  title: 'Cómo entrenar acordes con cejillo',               subtitle: 'Aprende cómo preparar tu mano para acordes con cejillo.',         icon: '✋', status: 'locked',  type: 'Video práctica', time: '6 min' },
+  { id: 'chords5',  title: 'Acordes Sostenidos Mayores',                      subtitle: 'Suma nuevos colores usando acordes sostenidos mayores.',          icon: '#️⃣', status: 'locked',  type: 'Video práctica', time: '6 min' },
+  { id: 'chords6',  title: 'Diagramas acordes Sostenidos Mayores',            subtitle: 'Usa mapas visuales para estudiar los acordes sostenidos.',        icon: '🗺️', status: 'locked',  type: 'Diagrama',        time: '5 min' },
+  { id: 'chords7',  title: 'Acordes Menores',                                 subtitle: 'Reconoce el sonido emocional de los acordes menores.',            icon: '🌙', status: 'locked',  type: 'Video práctica', time: '5 min' },
+  { id: 'chords8',  title: 'Diagramas acordes Menores',                       subtitle: 'Refuerza visualmente las formas de los acordes menores.',         icon: '🗺️', status: 'locked',  type: 'Diagrama',        time: '5 min' },
+  { id: 'chords9',  title: 'Acordes Séptima, Séptima Menor y Maj7',           subtitle: 'Explora acordes con más color y tensión musical.',                icon: '🎹', status: 'locked',  type: 'Video práctica', time: '7 min' },
+  { id: 'chords10', title: 'Diagramas acordes Séptima y Maj7',                subtitle: 'Estudia visualmente acordes de séptima y Maj7.',                  icon: '🗺️', status: 'locked',  type: 'Diagrama',        time: '5 min' },
+  { id: 'chords11', title: 'Transportando acordes',                           subtitle: 'Aprende a mover acordes para tocar en distintas tonalidades.',    icon: '🧭', status: 'locked',  type: 'Video práctica', time: '6 min' },
+  { id: 'chords12', title: 'Cierre Isla de los Acordes',                      subtitle: 'Revisa lo aprendido y celebra tu comprensión musical.',           icon: '🏆', status: 'locked',  type: 'Cierre de isla', time: '4 min' },
 ];
 
-// Territorios visibles en el carrusel — la Isla de Primeras Melodías es la activa aquí.
 const TERRITORIES = [
-  { id: 'puerto-inicio', title: 'Puerto de Inicio', state: 'done' as const },
-  { id: 'primeras-melodias', title: 'Isla de Primeras Melodías', state: 'active' as const, progress: 0 },
-  { id: 'pulso', title: 'Isla del Pulso', state: 'prototype' as const },
-  { id: 'ritmo', title: 'Isla del Ritmo', state: 'prototype' as const },
-  { id: 'musical', title: 'Isla Musical', state: 'prototype' as const },
-  { id: 'alegria', title: 'Isla de la Alegría', state: 'prototype' as const },
-  { id: 'acordes', title: 'Isla de los Acordes', state: 'prototype' as const },
-  { id: 'rasgueo', title: 'Isla del Rasgueo', state: 'prototype' as const },
-  { id: 'canciones', title: 'Isla de las Canciones', state: 'prototype' as const },
+  { id: 'puerto-inicio',     title: 'Puerto de Inicio',           state: 'done' as const },
+  { id: 'primeras-melodias', title: 'Isla de Primeras Melodías',  state: 'done' as const },
+  { id: 'pulso',             title: 'Isla del Pulso',             state: 'done' as const },
+  { id: 'ritmo',             title: 'Isla del Ritmo',             state: 'done' as const },
+  { id: 'musical',           title: 'Isla Musical',               state: 'done' as const },
+  { id: 'alegria',           title: 'Isla de la Alegría',         state: 'done' as const },
+  { id: 'acordes',           title: 'Isla de los Acordes',        state: 'active' as const, progress: 0 },
+  { id: 'rasgueo',           title: 'Isla del Rasgueo',           state: 'prototype' as const },
+  { id: 'canciones',         title: 'Isla de las Canciones',      state: 'prototype' as const },
 ];
 
-export function FirstMelodiesIslandScreen({ onBack, onOpenLesson, onOpenPulseIsland, onOpenRhythmIsland, onOpenMusicIsland, onOpenJoyIsland, onOpenChordsIsland, onOpenStrummingIsland, onOpenSongsIsland }: { onBack: () => void; onOpenLesson: (lessonId: string) => void; onOpenPulseIsland: () => void; onOpenRhythmIsland: () => void; onOpenMusicIsland: () => void; onOpenJoyIsland: () => void; onOpenChordsIsland: () => void; onOpenStrummingIsland: () => void; onOpenSongsIsland: () => void }) {
-  const [modal, setModal] = useState<null | 'locked-island' | 'locked-node' | 'coming-soon'>(null);
-  const [pendingNodeId, setPendingNodeId] = useState<string | null>(null);
+export function ChordsIslandScreen({
+  onOpenStartPort,
+  onOpenFirstMelodiesIsland,
+  onOpenPulseIsland,
+  onOpenRhythmIsland,
+  onOpenMusicIsland,
+  onOpenJoyIsland,
+  onOpenStrummingIsland,
+  onOpenSongsIsland,
+}: {
+  onOpenStartPort: () => void;
+  onOpenFirstMelodiesIsland: () => void;
+  onOpenPulseIsland: () => void;
+  onOpenRhythmIsland: () => void;
+  onOpenMusicIsland: () => void;
+  onOpenJoyIsland: () => void;
+  onOpenStrummingIsland: () => void;
+  onOpenSongsIsland: () => void;
+}) {
+  const [modal, setModal] = useState<null | { kind: 'first' } | { kind: 'locked' }>(null);
   const [hoveredNode, setHoveredNode] = useState<string | null>(null);
   const [pressedNode, setPressedNode] = useState<string | null>(null);
   const [pressedIsland, setPressedIsland] = useState<string | null>(null);
-  const [focusedStageId, setFocusedStageId] = useState<string>('primeras-melodias');
+  const [focusedStageId, setFocusedStageId] = useState<string>('acordes');
   const [mounted, setMounted] = useState(false);
   const stripRef = useRef<HTMLDivElement | null>(null);
   const stageRefs = useRef<Record<string, HTMLDivElement | null>>({});
@@ -46,7 +63,6 @@ export function FirstMelodiesIslandScreen({ onBack, onOpenLesson, onOpenPulseIsl
     const id = requestAnimationFrame(() => setMounted(true));
     return () => cancelAnimationFrame(id);
   }, []);
-
 
   const recomputeFocus = useCallback(() => {
     const container = stripRef.current;
@@ -67,8 +83,7 @@ export function FirstMelodiesIslandScreen({ onBack, onOpenLesson, onOpenPulseIsl
   }, []);
 
   useEffect(() => {
-    // Centrar en Primeras Melodías al montar
-    const el = stageRefs.current['primeras-melodias'];
+    const el = stageRefs.current['acordes'];
     const c = stripRef.current;
     if (el && c) {
       const target = el.offsetLeft - (c.clientWidth - el.clientWidth) / 2;
@@ -88,15 +103,18 @@ export function FirstMelodiesIslandScreen({ onBack, onOpenLesson, onOpenPulseIsl
   };
 
   const handleTerritory = (id: string) => {
-    if (id === 'puerto-inicio') { onBack(); return; }
-    if (id === 'primeras-melodias') {
-      window.scrollTo({ top: 0, behavior: 'smooth' });
-      return;
-    }
+    if (id === 'puerto-inicio') { onOpenStartPort(); return; }
+    if (id === 'primeras-melodias') { onOpenFirstMelodiesIsland(); return; }
     if (id === 'pulso') { onOpenPulseIsland(); return; }
     if (id === 'ritmo') { onOpenRhythmIsland(); return; }
     if (id === 'musical') { onOpenMusicIsland(); return; }
     if (id === 'alegria') { onOpenJoyIsland(); return; }
+    if (id === 'rasgueo') { onOpenStrummingIsland(); return; }
+    if (id === 'canciones') { onOpenSongsIsland(); return; }
+    if (id === 'acordes') {
+      window.scrollTo({ top: 0, behavior: 'smooth' });
+      return;
+    }
   };
 
   return (
@@ -106,10 +124,6 @@ export function FirstMelodiesIslandScreen({ onBack, onOpenLesson, onOpenPulseIsl
       transform: mounted ? 'translateY(0)' : 'translateY(8px)',
       transition: 'opacity 260ms ease, transform 260ms ease',
     }}>
-
-
-
-
       {/* Carrusel negro de territorios */}
       <div style={{
         background: 'linear-gradient(135deg, #252b29 0%, #1c2220 100%)',
@@ -170,17 +184,13 @@ export function FirstMelodiesIslandScreen({ onBack, onOpenLesson, onOpenPulseIsl
                     }}
                   >
                     <div style={{ display: 'flex', alignItems: 'center', gap: 8 }}>
-                      <span style={{ fontSize: 18, opacity: isActive || isDone || isPrototype ? 1 : 0.55 }}>
-                        {'🏝'}
-                      </span>
+                      <span style={{ fontSize: 18, opacity: isActive || isDone || isPrototype ? 1 : 0.55 }}>{'🏝'}</span>
                       <div>
                         <div style={{
                           fontFamily: 'Space Grotesk, sans-serif', fontWeight: 800, fontSize: 12,
                           color: isActive ? B.white : isDone || isPrototype ? 'rgba(255,255,255,0.9)' : 'rgba(255,255,255,0.55)',
                           lineHeight: 1.2, whiteSpace: 'nowrap',
-                        }}>
-                          {t.title}
-                        </div>
+                        }}>{t.title}</div>
                         <div style={{
                           fontSize: 9, marginTop: 2, letterSpacing: '0.02em',
                           color: isActive ? 'rgba(46,230,174,0.85)' : isDone ? 'rgba(46,230,174,0.75)' : isPrototype ? 'rgba(46,230,174,0.7)' : 'rgba(255,255,255,0.35)',
@@ -220,9 +230,9 @@ export function FirstMelodiesIslandScreen({ onBack, onOpenLesson, onOpenPulseIsl
 
       {/* Título de sección */}
       <div style={{ display: 'flex', alignItems: 'center', gap: 8, marginTop: 4, marginBottom: 6 }}>
-        <span style={{ fontSize: 15 }}>✨</span>
+        <span style={{ fontSize: 15 }}>🎼</span>
         <span style={{ fontFamily: 'Space Grotesk, sans-serif', fontWeight: 800, fontSize: 15, color: B.dark, letterSpacing: '-0.01em' }}>
-          Navegante, esta es tu nueva ruta
+          Navegante, esta es tu ruta de acordes
         </span>
       </div>
 
@@ -235,7 +245,7 @@ export function FirstMelodiesIslandScreen({ onBack, onOpenLesson, onOpenPulseIsl
         }} />
 
         <div style={{ display: 'flex', flexDirection: 'column', gap: 8 }}>
-          {MELODIES_NODES.map((node) => {
+          {CHORDS_NODES.map((node) => {
             const s = node.status;
             const c = nodeColors[s];
             const isCurrent = s === 'current';
@@ -243,11 +253,7 @@ export function FirstMelodiesIslandScreen({ onBack, onOpenLesson, onOpenPulseIsl
             const isHov = hoveredNode === node.id;
             const isPress = pressedNode === node.id;
             const cardScale = isPress ? 'scale(0.98)' : isHov ? 'scale(1.02)' : 'scale(1)';
-            const cardShadow = isPress
-              ? 'none'
-              : isCurrent
-              ? '0 2px 10px rgba(46,230,174,0.15)'
-              : 'none';
+            const cardShadow = isPress ? 'none' : isCurrent ? '0 2px 10px rgba(46,230,174,0.15)' : 'none';
             const cardBorder = `1.5px solid ${isCurrent ? B.pink : B.grayBorder}`;
 
             return (
@@ -263,14 +269,7 @@ export function FirstMelodiesIslandScreen({ onBack, onOpenLesson, onOpenPulseIsl
                 </div>
 
                 <div
-                  onClick={() => {
-                    if (isCurrent) {
-                      onOpenLesson(node.id);
-                    } else {
-                      setPendingNodeId(node.id);
-                      setModal('locked-node');
-                    }
-                  }}
+                  onClick={() => setModal({ kind: isCurrent ? 'first' : 'locked' })}
                   onMouseEnter={() => setHoveredNode(node.id)}
                   onMouseLeave={() => { setHoveredNode(null); setPressedNode(null); }}
                   onMouseDown={() => setPressedNode(node.id)}
@@ -306,9 +305,6 @@ export function FirstMelodiesIslandScreen({ onBack, onOpenLesson, onOpenPulseIsl
                         {node.type} · {node.time}
                       </div>
                     )}
-                    {isCurrent && (
-                      <div style={{ width: 24, height: 24, borderRadius: 999, background: B.dark, display: 'flex', alignItems: 'center', justifyContent: 'center', fontSize: 9, color: B.white, paddingLeft: 1 }}>▶</div>
-                    )}
                     {isLocked && (
                       <div style={{ color: B.pink, fontSize: 10, fontWeight: 800 }}>Bloqueada</div>
                     )}
@@ -330,34 +326,16 @@ export function FirstMelodiesIslandScreen({ onBack, onOpenLesson, onOpenPulseIsl
           }}
         >
           <div onClick={(e) => e.stopPropagation()} style={{ width: '100%', maxWidth: 420 }}>
-            <Card style={{ border: `1.5px solid ${modal === 'coming-soon' ? B.pink : B.grayBorder}` }}>
+            <Card style={{ border: `1.5px solid ${B.grayBorder}` }}>
               <div style={{ fontSize: 18, fontFamily: 'Space Grotesk, sans-serif', fontWeight: 800, color: B.dark, marginBottom: 8 }}>
-                {modal === 'locked-island' && '🔒 Isla aún bloqueada'}
-                {modal === 'locked-node' && '🔒 Unidad bloqueada'}
-                {modal === 'coming-soon' && '🎸 Clase en preparación'}
+                {modal.kind === 'first' ? '🚧 Lección en preparación' : '🔒 Unidad bloqueada'}
               </div>
               <div style={{ fontSize: 13.5, lineHeight: 1.6, color: B.grayText, marginBottom: 14 }}>
-                {modal === 'locked-island' && 'Para llegar aquí, primero necesitas completar las unidades anteriores. El viaje avanza una isla a la vez.'}
-                {modal === 'locked-node' && 'Esta unidad estará bloqueada cuando activemos el flujo real. Por ahora puedes explorarla para revisar el prototipo completo.'}
-                {modal === 'coming-soon' && 'Esta será la primera clase de la Isla de Primeras Melodías. Pronto conectaremos esta unidad al flujo del curso.'}
+                {modal.kind === 'first'
+                  ? 'Esta será la primera lección de la Isla de los Acordes. Pronto conectaremos esta unidad al flujo del curso.'
+                  : 'Esta unidad se desbloqueará cuando completes los pasos anteriores. Por ahora estamos preparando la ruta de esta isla.'}
               </div>
-              {modal === 'locked-node' && pendingNodeId && (
-                <div style={{ marginBottom: 10 }}>
-                  <Btn
-                    variant="ghost"
-                    fullWidth
-                    onClick={() => {
-                      const id = pendingNodeId;
-                      setModal(null);
-                      setPendingNodeId(null);
-                      onOpenLesson(id);
-                    }}
-                  >
-                    Explorar lección para revisar prototipo
-                  </Btn>
-                </div>
-              )}
-              <Btn onClick={() => { setModal(null); setPendingNodeId(null); }} fullWidth>Entendido</Btn>
+              <Btn onClick={() => setModal(null)} fullWidth>Entendido</Btn>
             </Card>
           </div>
         </div>
