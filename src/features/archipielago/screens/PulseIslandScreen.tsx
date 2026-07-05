@@ -29,11 +29,13 @@ const TERRITORIES = [
 export function PulseIslandScreen({
   onOpenStartPort,
   onOpenFirstMelodiesIsland,
+  onOpenLesson,
 }: {
   onOpenStartPort: () => void;
   onOpenFirstMelodiesIsland: () => void;
+  onOpenLesson: (lessonId: string) => void;
 }) {
-  const [modal, setModal] = useState<null | 'locked-island' | 'locked-node' | 'coming-soon'>(null);
+  const [modal, setModal] = useState<null | { kind: 'locked-island' } | { kind: 'locked-node'; nodeId: string }>(null);
   const [hoveredNode, setHoveredNode] = useState<string | null>(null);
   const [pressedNode, setPressedNode] = useState<string | null>(null);
   const [pressedIsland, setPressedIsland] = useState<string | null>(null);
