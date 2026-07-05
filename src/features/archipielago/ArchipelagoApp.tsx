@@ -16,6 +16,7 @@ import { MissionEightScreen } from "./screens/MissionEightScreen";
 import { FirstMelodiesIslandScreen } from "./screens/FirstMelodiesIslandScreen";
 import { FirstMelodiesLessonScreen } from "./screens/FirstMelodiesLessonScreen";
 import { PulseIslandScreen } from "./screens/PulseIslandScreen";
+import { RhythmIslandScreen } from "./screens/RhythmIslandScreen";
 import { PulseLessonScreen } from "./screens/PulseLessonScreen";
 import { MissionNineScreen } from "./screens/MissionNineScreen";
 import { MissionFourScreen } from "./screens/MissionFourScreen";
