@@ -7,13 +7,18 @@ export function AppHeader({ screen, onHome }: { screen: Screen; onHome?: () => v
   const isOnboarding = ONBOARDING_SCREENS.includes(screen);
   if (screen === 'onboarding' || screen === 'welcome' || screen === 'diagnosis' || screen === 'diagnosis-result') return null;
 
-  const modernHeaderScreens: Screen[] = ['route', 'mission', 'mission-guide', 'mission-two', 'mission-three', 'mission-four', 'celebration', 'first-melodies-island'];
+  const modernHeaderScreens: Screen[] = ['route', 'mission', 'mission-guide', 'mission-two', 'mission-three', 'mission-four', 'celebration', 'first-melodies-island', 'pulse-island'];
   if (modernHeaderScreens.includes(screen)) {
     const isFirstMelodies = screen === 'first-melodies-island';
+    const isPulse = screen === 'pulse-island';
     const active = ROUTE_STAGES.find(s => s.status === 'active') ?? ROUTE_STAGES[0];
-    const pct = isFirstMelodies ? 0 : active.progress;
-    const title = isFirstMelodies ? 'Isla de Primeras Melodías' : active.title;
-    const completionText = isFirstMelodies ? 'completado' : active.completionText;
+    const pct = isFirstMelodies || isPulse ? 0 : active.progress;
+    const title = isFirstMelodies
+      ? 'Isla de Primeras Melodías'
+      : isPulse
+      ? 'Isla del Pulso'
+      : active.title;
+    const completionText = isFirstMelodies || isPulse ? 'completado' : active.completionText;
     return (
       <header style={{
         background: '#FFFFFF',
