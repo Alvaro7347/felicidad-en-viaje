@@ -286,6 +286,10 @@ export function ArchipelagoApp() {
             onOpenJoyIsland={() => setScreen("joy-island")}
             onOpenStrummingIsland={() => setScreen("strumming-island")}
             onOpenSongsIsland={() => setScreen("songs-island")}
+            onOpenLesson={(lessonId) => {
+              setChordsLessonId(lessonId);
+              setScreen("chords-lesson");
+            }}
           />
         )}
         {screen === "strumming-island" && (
@@ -298,6 +302,10 @@ export function ArchipelagoApp() {
             onOpenJoyIsland={() => setScreen("joy-island")}
             onOpenChordsIsland={() => setScreen("chords-island")}
             onOpenSongsIsland={() => setScreen("songs-island")}
+            onOpenLesson={(lessonId) => {
+              setStrummingLessonId(lessonId);
+              setScreen("strumming-lesson");
+            }}
           />
         )}
         {screen === "songs-island" && (
@@ -310,6 +318,28 @@ export function ArchipelagoApp() {
             onOpenJoyIsland={() => setScreen("joy-island")}
             onOpenChordsIsland={() => setScreen("chords-island")}
             onOpenStrummingIsland={() => setScreen("strumming-island")}
+            onOpenLesson={(lessonId) => {
+              setSongsLessonId(lessonId);
+              setScreen("songs-lesson");
+            }}
+          />
+        )}
+        {screen === "chords-lesson" && (
+          <ChordsLessonScreen
+            lessonId={chordsLessonId}
+            onBackToIsland={() => setScreen("chords-island")}
+          />
+        )}
+        {screen === "strumming-lesson" && (
+          <StrummingLessonScreen
+            lessonId={strummingLessonId}
+            onBackToIsland={() => setScreen("strumming-island")}
+          />
+        )}
+        {screen === "songs-lesson" && (
+          <SongsLessonScreen
+            lessonId={songsLessonId}
+            onBackToIsland={() => setScreen("songs-island")}
           />
         )}
         {screen === "joy-lesson" && (
