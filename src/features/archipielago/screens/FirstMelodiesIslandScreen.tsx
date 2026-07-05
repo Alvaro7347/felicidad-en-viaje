@@ -329,10 +329,26 @@ export function FirstMelodiesIslandScreen({ onBack, onOpenLesson }: { onBack: ()
               </div>
               <div style={{ fontSize: 13.5, lineHeight: 1.6, color: B.grayText, marginBottom: 14 }}>
                 {modal === 'locked-island' && 'Para llegar aquí, primero necesitas completar las unidades anteriores. El viaje avanza una isla a la vez.'}
-                {modal === 'locked-node' && 'Esta unidad se desbloqueará cuando completes los pasos anteriores.'}
+                {modal === 'locked-node' && 'Esta unidad estará bloqueada cuando activemos el flujo real. Por ahora puedes explorarla para revisar el prototipo completo.'}
                 {modal === 'coming-soon' && 'Esta será la primera clase de la Isla de Primeras Melodías. Pronto conectaremos esta unidad al flujo del curso.'}
               </div>
-              <Btn onClick={() => setModal(null)} fullWidth>Entendido</Btn>
+              {modal === 'locked-node' && pendingNodeId && (
+                <div style={{ marginBottom: 10 }}>
+                  <Btn
+                    variant="ghost"
+                    fullWidth
+                    onClick={() => {
+                      const id = pendingNodeId;
+                      setModal(null);
+                      setPendingNodeId(null);
+                      onOpenLesson(id);
+                    }}
+                  >
+                    Explorar lección para revisar prototipo
+                  </Btn>
+                </div>
+              )}
+              <Btn onClick={() => { setModal(null); setPendingNodeId(null); }} fullWidth>Entendido</Btn>
             </Card>
           </div>
         </div>
