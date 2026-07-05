@@ -265,8 +265,8 @@ export function MusicIslandScreen({
 
                 <div
                   onClick={() => {
-                    if (isCurrent) setModal({ kind: 'coming-soon' });
-                    else setModal({ kind: 'locked-node' });
+                    if (isCurrent) onOpenLesson(node.id);
+                    else setModal({ kind: 'locked-node', nodeId: node.id });
                   }}
                   onMouseEnter={() => setHoveredNode(node.id)}
                   onMouseLeave={() => { setHoveredNode(null); setPressedNode(null); }}
