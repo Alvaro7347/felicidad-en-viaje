@@ -262,8 +262,8 @@ export function RhythmIslandScreen({
 
                 <div
                   onClick={() => {
-                    if (isCurrent) setModal({ kind: 'coming-soon' });
-                    else setModal({ kind: 'locked-node' });
+                    if (isCurrent) onOpenLesson(node.id);
+                    else setModal({ kind: 'locked-node', lessonId: node.id });
                   }}
                   onMouseEnter={() => setHoveredNode(node.id)}
                   onMouseLeave={() => { setHoveredNode(null); setPressedNode(null); }}
@@ -331,9 +331,25 @@ export function RhythmIslandScreen({
               <div style={{ fontSize: 13.5, lineHeight: 1.6, color: B.grayText, marginBottom: 14 }}>
                 {modal.kind === 'coming-soon'
                   ? 'Esta será la primera lección de la Isla del Ritmo. Pronto conectaremos esta unidad al flujo del curso.'
-                  : 'Esta unidad se desbloqueará cuando completes los pasos anteriores. Por ahora estamos preparando la ruta de esta isla.'}
+                  : 'Esta unidad estará bloqueada cuando activemos el flujo real. Por ahora puedes explorarla para revisar el prototipo completo.'}
               </div>
-              <Btn onClick={() => setModal(null)} fullWidth>Entendido</Btn>
+              {modal.kind === 'locked-node' ? (
+                <div style={{ display: 'flex', flexDirection: 'column', gap: 8 }}>
+                  <Btn
+                    onClick={() => {
+                      const id = modal.lessonId;
+                      setModal(null);
+                      onOpenLesson(id);
+                    }}
+                    fullWidth
+                  >
+                    Explorar lección para revisar prototipo
+                  </Btn>
+                  <Btn onClick={() => setModal(null)} fullWidth variant="ghost">Entendido</Btn>
+                </div>
+              ) : (
+                <Btn onClick={() => setModal(null)} fullWidth>Entendido</Btn>
+              )}
             </Card>
           </div>
         </div>
