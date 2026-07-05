@@ -5,7 +5,7 @@ import { ROUTE_STAGES } from "../data/islands";
 
 export function AppHeader({ screen, onHome }: { screen: Screen; onHome?: () => void }) {
   const isOnboarding = ONBOARDING_SCREENS.includes(screen);
-  if (screen === 'onboarding' || screen === 'welcome' || screen === 'diagnosis' || screen === 'diagnosis-result') return null;
+  if (screen === 'onboarding' || screen === 'welcome' || screen === 'diagnosis' || screen === 'diagnosis-result' || screen === 'first-melodies-island') return null;
 
   const modernHeaderScreens: Screen[] = ['route', 'mission', 'mission-guide', 'mission-two', 'mission-three', 'mission-four', 'celebration'];
   if (modernHeaderScreens.includes(screen)) {

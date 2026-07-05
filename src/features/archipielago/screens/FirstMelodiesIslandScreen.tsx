@@ -3,7 +3,7 @@ import { B } from "../data/brand";
 import type { NodeStatus, RouteNode } from "../types";
 import { Btn } from "../components/Btn";
 import { Card } from "../components/Card";
-import { BackBtn } from "../components/BackBtn";
+
 
 const MELODIES_NODES: RouteNode[] = [
   { id: 'm1', title: 'Tu primer acorde: DO', subtitle: 'Despierta tu mano izquierda y toca tu primer acorde.', icon: '🎸', status: 'current', type: 'Video práctica', time: '4 min' },
@@ -34,8 +34,15 @@ export function FirstMelodiesIslandScreen({ onBack }: { onBack: () => void }) {
   const [pressedNode, setPressedNode] = useState<string | null>(null);
   const [pressedIsland, setPressedIsland] = useState<string | null>(null);
   const [focusedStageId, setFocusedStageId] = useState<string>('primeras-melodias');
+  const [mounted, setMounted] = useState(false);
   const stripRef = useRef<HTMLDivElement | null>(null);
   const stageRefs = useRef<Record<string, HTMLDivElement | null>>({});
+
+  useEffect(() => {
+    const id = requestAnimationFrame(() => setMounted(true));
+    return () => cancelAnimationFrame(id);
+  }, []);
+
 
   const recomputeFocus = useCallback(() => {
     const container = stripRef.current;
@@ -86,8 +93,13 @@ export function FirstMelodiesIslandScreen({ onBack }: { onBack: () => void }) {
   };
 
   return (
-    <div style={{ display: "flex", flexDirection: "column", gap: 14 }}>
-      <BackBtn label="Puerto de Inicio" onClick={onBack} />
+    <div style={{
+      display: "flex", flexDirection: "column", gap: 14,
+      opacity: mounted ? 1 : 0,
+      transform: mounted ? 'translateY(0)' : 'translateY(8px)',
+      transition: 'opacity 260ms ease, transform 260ms ease',
+    }}>
+
 
       {/* Tarjeta superior de progreso */}
       <Card style={{ padding: 18 }}>
