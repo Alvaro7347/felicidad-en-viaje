@@ -18,6 +18,7 @@ import { FirstMelodiesLessonScreen } from "./screens/FirstMelodiesLessonScreen";
 import { PulseIslandScreen } from "./screens/PulseIslandScreen";
 import { RhythmIslandScreen } from "./screens/RhythmIslandScreen";
 import { MusicIslandScreen } from "./screens/MusicIslandScreen";
+import { JoyIslandScreen } from "./screens/JoyIslandScreen";
 import { PulseLessonScreen } from "./screens/PulseLessonScreen";
 import { RhythmLessonScreen } from "./screens/RhythmLessonScreen";
 import { MusicLessonScreen } from "./screens/MusicLessonScreen";
