@@ -2,7 +2,7 @@ import type { Screen } from "../types";
 
 export const ONBOARDING_SCREENS: Screen[] = ['welcome', 'onboarding', 'diagnosis', 'diagnosis-result'];
 
-export type LessonGroup = 'first-melodies' | 'pulse';
+export type LessonGroup = 'first-melodies' | 'pulse' | 'rhythm';
 
 export interface DevScreenEntry {
   label: string;
@@ -49,5 +49,20 @@ export const DEV_SCREENS: DevScreenEntry[] = [
   { label: 'P9 · Cifrado americano',      screen: 'pulse-lesson', lessonId: 'p9', lessonGroup: 'pulse' },
   { label: 'P10 · Despacito',             screen: 'pulse-lesson', lessonId: 'p10', lessonGroup: 'pulse' },
   { label: 'P11 · Calma (Cierre Pulso)',  screen: 'pulse-lesson', lessonId: 'p11', lessonGroup: 'pulse' },
+  { label: 'Isla · Ritmo',                screen: 'rhythm-island' },
+  { label: 'R1 · Primer rasgueo',         screen: 'rhythm-lesson', lessonId: 'r1', lessonGroup: 'rhythm' },
+  { label: 'R2 · LAm y FA rasgueo',       screen: 'rhythm-lesson', lessonId: 'r2', lessonGroup: 'rhythm' },
+  { label: 'R3 · LAm y DO rasgueo',       screen: 'rhythm-lesson', lessonId: 'r3', lessonGroup: 'rhythm' },
+  { label: 'R4 · FA y DO rasgueo',        screen: 'rhythm-lesson', lessonId: 'r4', lessonGroup: 'rhythm' },
+  { label: 'R5 · SOL y DO rasgueo',       screen: 'rhythm-lesson', lessonId: 'r5', lessonGroup: 'rhythm' },
+  { label: 'R6 · Un elefante',            screen: 'rhythm-lesson', lessonId: 'r6', lessonGroup: 'rhythm' },
+  { label: 'R7 · Aprende Calma',          screen: 'rhythm-lesson', lessonId: 'r7', lessonGroup: 'rhythm' },
+  { label: 'R8 · Karaoke Calma',          screen: 'rhythm-lesson', lessonId: 'r8', lessonGroup: 'rhythm' },
+  { label: 'R9 · Feedback canción',       screen: 'rhythm-lesson', lessonId: 'r9', lessonGroup: 'rhythm' },
+  { label: 'R10 · Aprende I Lava You',    screen: 'rhythm-lesson', lessonId: 'r10', lessonGroup: 'rhythm' },
+  { label: 'R11 · Karaoke I Lava You',    screen: 'rhythm-lesson', lessonId: 'r11', lessonGroup: 'rhythm' },
+  { label: 'R12 · Aprende La Bamba',      screen: 'rhythm-lesson', lessonId: 'r12', lessonGroup: 'rhythm' },
+  { label: 'R13 · Karaoke La Bamba',      screen: 'rhythm-lesson', lessonId: 'r13', lessonGroup: 'rhythm' },
+  { label: 'R14 · Cierre Ritmo',          screen: 'rhythm-lesson', lessonId: 'r14', lessonGroup: 'rhythm' },
   { label: '⑦ Celebración',               screen: 'celebration' },
 ];
