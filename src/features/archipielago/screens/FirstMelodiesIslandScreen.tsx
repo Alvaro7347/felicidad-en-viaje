@@ -26,8 +26,8 @@ const TERRITORIES = [
   { id: 'ritmo', title: 'Isla del Ritmo', state: 'locked' as const },
 ];
 
-export function FirstMelodiesIslandScreen({ onBack }: { onBack: () => void }) {
-  const [modal, setModal] = useState<null | 'locked-island' | 'locked-node' | 'coming-soon'>(null);
+export function FirstMelodiesIslandScreen({ onBack, onOpenLesson }: { onBack: () => void; onOpenLesson: (lessonId: string) => void }) {
+  const [modal, setModal] = useState<null | { kind: 'locked-island' } | { kind: 'locked-node'; nodeId: string } | { kind: 'coming-soon'; nodeId: string }>(null);
   const [hoveredNode, setHoveredNode] = useState<string | null>(null);
   const [pressedNode, setPressedNode] = useState<string | null>(null);
   const [pressedIsland, setPressedIsland] = useState<string | null>(null);
