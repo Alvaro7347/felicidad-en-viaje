@@ -213,6 +213,16 @@ export function ArchipelagoApp() {
             onOpenFirstMelodiesIsland={() => setScreen("first-melodies-island")}
             onOpenPulseIsland={() => setScreen("pulse-island")}
             onOpenRhythmIsland={() => setScreen("rhythm-island")}
+            onOpenLesson={(lessonId) => {
+              setMusicLessonId(lessonId);
+              setScreen("music-lesson");
+            }}
+          />
+        )}
+        {screen === "music-lesson" && (
+          <MusicLessonScreen
+            lessonId={musicLessonId}
+            onBackToIsland={() => setScreen("music-island")}
           />
         )}
         {screen === "rhythm-lesson" && (
