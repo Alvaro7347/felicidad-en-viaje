@@ -19,6 +19,7 @@ import { PulseIslandScreen } from "./screens/PulseIslandScreen";
 import { RhythmIslandScreen } from "./screens/RhythmIslandScreen";
 import { MusicIslandScreen } from "./screens/MusicIslandScreen";
 import { JoyIslandScreen } from "./screens/JoyIslandScreen";
+import { JoyLessonScreen } from "./screens/JoyLessonScreen";
 import { PulseLessonScreen } from "./screens/PulseLessonScreen";
 import { RhythmLessonScreen } from "./screens/RhythmLessonScreen";
 import { MusicLessonScreen } from "./screens/MusicLessonScreen";
@@ -75,6 +76,7 @@ export function ArchipelagoApp() {
   const [pulseLessonId, setPulseLessonId] = useState<string>("p1");
   const [rhythmLessonId, setRhythmLessonId] = useState<string>("r1");
   const [musicLessonId, setMusicLessonId] = useState<string>("music1");
+  const [joyLessonId, setJoyLessonId] = useState<string>("joy1");
   
   
 
@@ -106,6 +108,8 @@ export function ArchipelagoApp() {
               setRhythmLessonId(entry.lessonId);
             } else if (entry.lessonGroup === 'music' && entry.lessonId) {
               setMusicLessonId(entry.lessonId);
+            } else if (entry.lessonGroup === 'joy' && entry.lessonId) {
+              setJoyLessonId(entry.lessonId);
             }
             setScreen(entry.screen);
           }}
@@ -232,6 +236,16 @@ export function ArchipelagoApp() {
             onOpenPulseIsland={() => setScreen("pulse-island")}
             onOpenRhythmIsland={() => setScreen("rhythm-island")}
             onOpenMusicIsland={() => setScreen("music-island")}
+            onOpenLesson={(lessonId) => {
+              setJoyLessonId(lessonId);
+              setScreen("joy-lesson");
+            }}
+          />
+        )}
+        {screen === "joy-lesson" && (
+          <JoyLessonScreen
+            lessonId={joyLessonId}
+            onBackToIsland={() => setScreen("joy-island")}
           />
         )}
         {screen === "music-lesson" && (
