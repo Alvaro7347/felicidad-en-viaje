@@ -58,7 +58,7 @@ export function AppHeader({ screen, onHome }: { screen: Screen; onHome?: () => v
             Tu viaje musical
           </div>
           <div style={{ fontSize: 11.5, color: B.grayText, marginTop: 2, lineHeight: 1.3 }}>
-            {active.title} · <span style={{ color: B.greenDark, fontWeight: 700 }}>{pct}% {active.completionText}</span>
+            {title} · <span style={{ color: B.greenDark, fontWeight: 700 }}>{pct}% {completionText}</span>
           </div>
           <div style={{ marginTop: 6, height: 3, background: '#EAF6F0', borderRadius: 999, overflow: 'hidden' }}>
             <div style={{ width: `${pct}%`, height: '100%', background: B.green, borderRadius: 999, transition: 'width 0.4s ease' }} />
