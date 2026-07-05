@@ -20,6 +20,7 @@ import { RhythmIslandScreen } from "./screens/RhythmIslandScreen";
 import { MusicIslandScreen } from "./screens/MusicIslandScreen";
 import { PulseLessonScreen } from "./screens/PulseLessonScreen";
 import { RhythmLessonScreen } from "./screens/RhythmLessonScreen";
+import { MusicLessonScreen } from "./screens/MusicLessonScreen";
 import { MissionNineScreen } from "./screens/MissionNineScreen";
 import { MissionFourScreen } from "./screens/MissionFourScreen";
 import { MissionGuideScreen } from "./screens/MissionGuideScreen";
