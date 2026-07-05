@@ -26,6 +26,9 @@ const TERRITORIES = [
   { id: 'ritmo',             title: 'Isla del Ritmo',             state: 'done' as const },
   { id: 'musical',           title: 'Isla Musical',               state: 'done' as const },
   { id: 'alegria',           title: 'Isla de la Alegría',         state: 'active' as const, progress: 0 },
+  { id: 'acordes',           title: 'Isla de los Acordes',        state: 'prototype' as const },
+  { id: 'rasgueo',           title: 'Isla del Rasgueo',           state: 'prototype' as const },
+  { id: 'canciones',         title: 'Isla de las Canciones',      state: 'prototype' as const },
 ];
 
 export function JoyIslandScreen({
@@ -34,6 +37,9 @@ export function JoyIslandScreen({
   onOpenPulseIsland,
   onOpenRhythmIsland,
   onOpenMusicIsland,
+  onOpenChordsIsland,
+  onOpenStrummingIsland,
+  onOpenSongsIsland,
   onOpenLesson,
 }: {
   onOpenStartPort: () => void;
@@ -41,6 +47,9 @@ export function JoyIslandScreen({
   onOpenPulseIsland: () => void;
   onOpenRhythmIsland: () => void;
   onOpenMusicIsland: () => void;
+  onOpenChordsIsland: () => void;
+  onOpenStrummingIsland: () => void;
+  onOpenSongsIsland: () => void;
   onOpenLesson: (lessonId: string) => void;
 }) {
   const [modal, setModal] = useState<null | { kind: 'locked-node'; nodeId: string }>(null);
@@ -101,6 +110,9 @@ export function JoyIslandScreen({
     if (id === 'pulso') { onOpenPulseIsland(); return; }
     if (id === 'ritmo') { onOpenRhythmIsland(); return; }
     if (id === 'musical') { onOpenMusicIsland(); return; }
+    if (id === 'acordes') { onOpenChordsIsland(); return; }
+    if (id === 'rasgueo') { onOpenStrummingIsland(); return; }
+    if (id === 'canciones') { onOpenSongsIsland(); return; }
     if (id === 'alegria') {
       window.scrollTo({ top: 0, behavior: 'smooth' });
       return;
