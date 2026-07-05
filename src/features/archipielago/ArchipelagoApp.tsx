@@ -121,6 +121,12 @@ export function ArchipelagoApp() {
               setMusicLessonId(entry.lessonId);
             } else if (entry.lessonGroup === 'joy' && entry.lessonId) {
               setJoyLessonId(entry.lessonId);
+            } else if (entry.lessonGroup === 'chords' && entry.lessonId) {
+              setChordsLessonId(entry.lessonId);
+            } else if (entry.lessonGroup === 'strumming' && entry.lessonId) {
+              setStrummingLessonId(entry.lessonId);
+            } else if (entry.lessonGroup === 'songs' && entry.lessonId) {
+              setSongsLessonId(entry.lessonId);
             }
             setScreen(entry.screen);
           }}
