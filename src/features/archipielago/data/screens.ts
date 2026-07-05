@@ -2,7 +2,16 @@ import type { Screen } from "../types";
 
 export const ONBOARDING_SCREENS: Screen[] = ['welcome', 'onboarding', 'diagnosis', 'diagnosis-result'];
 
-export const DEV_SCREENS: { label: string; screen: Screen }[] = [
+export type LessonGroup = 'first-melodies' | 'pulse';
+
+export interface DevScreenEntry {
+  label: string;
+  screen: Screen;
+  lessonId?: string;
+  lessonGroup?: LessonGroup;
+}
+
+export const DEV_SCREENS: DevScreenEntry[] = [
   { label: '① Bienvenida',        screen: 'welcome' },
   { label: '② Onboarding',        screen: 'onboarding' },
   { label: '③ Diagnóstico',       screen: 'diagnosis' },
@@ -18,6 +27,27 @@ export const DEV_SCREENS: { label: string; screen: Screen }[] = [
   { label: 'N8 · Afinación',              screen: 'mission-eight' },
   { label: 'N9 · Listo para zarpar',      screen: 'mission-nine' },
   { label: 'Isla · Primeras Melodías',    screen: 'first-melodies-island' },
-  { label: 'Isla · Lección Primeras Melodías', screen: 'first-melodies-lesson' },
+  { label: 'M1 · Acorde DO',              screen: 'first-melodies-lesson', lessonId: 'm1', lessonGroup: 'first-melodies' },
+  { label: 'M2 · Diagrama DO',            screen: 'first-melodies-lesson', lessonId: 'm2', lessonGroup: 'first-melodies' },
+  { label: 'M3 · LAm y FA',               screen: 'first-melodies-lesson', lessonId: 'm3', lessonGroup: 'first-melodies' },
+  { label: 'M4 · Diagrama LAm/FA',        screen: 'first-melodies-lesson', lessonId: 'm4', lessonGroup: 'first-melodies' },
+  { label: 'M5 · Tren al Sur',            screen: 'first-melodies-lesson', lessonId: 'm5', lessonGroup: 'first-melodies' },
+  { label: 'M6 · Stay With Me',           screen: 'first-melodies-lesson', lessonId: 'm6', lessonGroup: 'first-melodies' },
+  { label: 'M7 · Karaoke Stay',           screen: 'first-melodies-lesson', lessonId: 'm7', lessonGroup: 'first-melodies' },
+  { label: 'M8 · Comunidad',              screen: 'first-melodies-lesson', lessonId: 'm8', lessonGroup: 'first-melodies' },
+  { label: 'M9 · Digitación',             screen: 'first-melodies-lesson', lessonId: 'm9', lessonGroup: 'first-melodies' },
+  { label: 'M10 · Cierre Melodías',       screen: 'first-melodies-lesson', lessonId: 'm10', lessonGroup: 'first-melodies' },
+  { label: 'Isla · Pulso',                screen: 'pulse-island' },
+  { label: 'P1 · Acorde SOL',             screen: 'pulse-lesson', lessonId: 'p1', lessonGroup: 'pulse' },
+  { label: 'P2 · Diagrama SOL',           screen: 'pulse-lesson', lessonId: 'p2', lessonGroup: 'pulse' },
+  { label: 'P3 · Puente SOL-DO',          screen: 'pulse-lesson', lessonId: 'p3', lessonGroup: 'pulse' },
+  { label: 'P4 · Leer acordes',           screen: 'pulse-lesson', lessonId: 'p4', lessonGroup: 'pulse' },
+  { label: 'P5 · Vaca Lola',              screen: 'pulse-lesson', lessonId: 'p5', lessonGroup: 'pulse' },
+  { label: 'P6 · Puente SOL-LAm',         screen: 'pulse-lesson', lessonId: 'p6', lessonGroup: 'pulse' },
+  { label: 'P7 · Puente SOL-FA',          screen: 'pulse-lesson', lessonId: 'p7', lessonGroup: 'pulse' },
+  { label: 'P8 · No se va',               screen: 'pulse-lesson', lessonId: 'p8', lessonGroup: 'pulse' },
+  { label: 'P9 · Cifrado americano',      screen: 'pulse-lesson', lessonId: 'p9', lessonGroup: 'pulse' },
+  { label: 'P10 · Despacito',             screen: 'pulse-lesson', lessonId: 'p10', lessonGroup: 'pulse' },
+  { label: 'P11 · Calma (Cierre Pulso)',  screen: 'pulse-lesson', lessonId: 'p11', lessonGroup: 'pulse' },
   { label: '⑦ Celebración',               screen: 'celebration' },
 ];
