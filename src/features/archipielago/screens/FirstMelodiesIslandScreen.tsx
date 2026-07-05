@@ -163,13 +163,13 @@ export function FirstMelodiesIslandScreen({ onBack, onOpenLesson, onOpenPulseIsl
                     }}
                   >
                     <div style={{ display: 'flex', alignItems: 'center', gap: 8 }}>
-                      <span style={{ fontSize: 18, opacity: isActive || isDone ? 1 : 0.55 }}>
+                      <span style={{ fontSize: 18, opacity: isActive || isDone || isPrototype ? 1 : 0.55 }}>
                         {'🏝'}
                       </span>
                       <div>
                         <div style={{
                           fontFamily: 'Space Grotesk, sans-serif', fontWeight: 800, fontSize: 12,
-                          color: isActive ? B.white : isDone ? 'rgba(255,255,255,0.9)' : 'rgba(255,255,255,0.55)',
+                          color: isActive ? B.white : isDone || isPrototype ? 'rgba(255,255,255,0.9)' : 'rgba(255,255,255,0.55)',
                           lineHeight: 1.2, whiteSpace: 'nowrap',
                         }}>
                           {t.title}
