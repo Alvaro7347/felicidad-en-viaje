@@ -254,7 +254,14 @@ export function FirstMelodiesIslandScreen({ onBack, onOpenLesson }: { onBack: ()
                 </div>
 
                 <div
-                  onClick={() => setModal(isCurrent ? 'coming-soon' : 'locked-node')}
+                  onClick={() => {
+                    if (isCurrent) {
+                      onOpenLesson(node.id);
+                    } else {
+                      setPendingNodeId(node.id);
+                      setModal('locked-node');
+                    }
+                  }}
                   onMouseEnter={() => setHoveredNode(node.id)}
                   onMouseLeave={() => { setHoveredNode(null); setPressedNode(null); }}
                   onMouseDown={() => setPressedNode(node.id)}
