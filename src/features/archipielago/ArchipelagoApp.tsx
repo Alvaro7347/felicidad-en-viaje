@@ -150,6 +150,7 @@ export function ArchipelagoApp() {
             onOpenPulseIsland={() => setScreen("pulse-island")}
             onOpenRhythmIsland={() => setScreen("rhythm-island")}
             onOpenMusicIsland={() => setScreen("music-island")}
+            onOpenJoyIsland={() => setScreen("joy-island")}
           />
         )}
 
@@ -181,6 +182,7 @@ export function ArchipelagoApp() {
             onOpenPulseIsland={() => setScreen("pulse-island")}
             onOpenRhythmIsland={() => setScreen("rhythm-island")}
             onOpenMusicIsland={() => setScreen("music-island")}
+            onOpenJoyIsland={() => setScreen("joy-island")}
           />
         )}
         {screen === "pulse-island" && (
@@ -189,6 +191,7 @@ export function ArchipelagoApp() {
             onOpenFirstMelodiesIsland={() => setScreen("first-melodies-island")}
             onOpenRhythmIsland={() => setScreen("rhythm-island")}
             onOpenMusicIsland={() => setScreen("music-island")}
+            onOpenJoyIsland={() => setScreen("joy-island")}
             onOpenLesson={(lessonId) => {
               setPulseLessonId(lessonId);
               setScreen("pulse-lesson");
@@ -201,6 +204,7 @@ export function ArchipelagoApp() {
             onOpenFirstMelodiesIsland={() => setScreen("first-melodies-island")}
             onOpenPulseIsland={() => setScreen("pulse-island")}
             onOpenMusicIsland={() => setScreen("music-island")}
+            onOpenJoyIsland={() => setScreen("joy-island")}
             onOpenLesson={(lessonId) => {
               setRhythmLessonId(lessonId);
               setScreen("rhythm-lesson");
@@ -213,10 +217,20 @@ export function ArchipelagoApp() {
             onOpenFirstMelodiesIsland={() => setScreen("first-melodies-island")}
             onOpenPulseIsland={() => setScreen("pulse-island")}
             onOpenRhythmIsland={() => setScreen("rhythm-island")}
+            onOpenJoyIsland={() => setScreen("joy-island")}
             onOpenLesson={(lessonId) => {
               setMusicLessonId(lessonId);
               setScreen("music-lesson");
             }}
+          />
+        )}
+        {screen === "joy-island" && (
+          <JoyIslandScreen
+            onOpenStartPort={() => setScreen("route")}
+            onOpenFirstMelodiesIsland={() => setScreen("first-melodies-island")}
+            onOpenPulseIsland={() => setScreen("pulse-island")}
+            onOpenRhythmIsland={() => setScreen("rhythm-island")}
+            onOpenMusicIsland={() => setScreen("music-island")}
           />
         )}
         {screen === "music-lesson" && (
