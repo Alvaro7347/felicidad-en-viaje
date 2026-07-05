@@ -486,7 +486,7 @@ export function RhythmLessonScreen({
       {lesson.kind === 'community' && <CommunityBlock lesson={lesson} />}
       {lesson.kind === 'closure' && <ClosureBlock lesson={lesson} />}
 
-      <Btn onClick={onBackToIsland} fullWidth variant="secondary">
+      <Btn onClick={onBackToIsland} fullWidth variant="ghost">
         Volver a Isla del Ritmo
       </Btn>
     </div>
