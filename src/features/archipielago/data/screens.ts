@@ -18,5 +18,6 @@ export const DEV_SCREENS: { label: string; screen: Screen }[] = [
   { label: 'N8 · Afinación',              screen: 'mission-eight' },
   { label: 'N9 · Listo para zarpar',      screen: 'mission-nine' },
   { label: 'Isla · Primeras Melodías',    screen: 'first-melodies-island' },
+  { label: 'Isla · Lección Primeras Melodías', screen: 'first-melodies-lesson' },
   { label: '⑦ Celebración',               screen: 'celebration' },
 ];

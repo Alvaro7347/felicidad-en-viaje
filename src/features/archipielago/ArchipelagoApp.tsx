@@ -14,6 +14,7 @@ import { DiagnosisScreen } from "./screens/DiagnosisScreen";
 
 import { MissionEightScreen } from "./screens/MissionEightScreen";
 import { FirstMelodiesIslandScreen } from "./screens/FirstMelodiesIslandScreen";
+import { FirstMelodiesLessonScreen } from "./screens/FirstMelodiesLessonScreen";
 import { MissionNineScreen } from "./screens/MissionNineScreen";
 import { MissionFourScreen } from "./screens/MissionFourScreen";
 import { MissionGuideScreen } from "./screens/MissionGuideScreen";
@@ -63,6 +64,7 @@ export function ArchipelagoApp() {
     if (typeof window === "undefined") return "Navegante";
     return window.localStorage.getItem("archipielago_user_name") || "Navegante";
   });
+  const [firstMelodiesLessonId, setFirstMelodiesLessonId] = useState<string>("m1");
   
 
   const goToRoute = () => setScreen("route");
@@ -141,7 +143,19 @@ export function ArchipelagoApp() {
         {screen === "mission-eight" && <MissionEightScreen onBack={() => setScreen("route")} />}
         {screen === "mission-nine" && <MissionNineScreen onBack={() => setScreen("route")} />}
         {screen === "first-melodies-island" && (
-          <FirstMelodiesIslandScreen onBack={() => setScreen("route")} />
+          <FirstMelodiesIslandScreen
+            onBack={() => setScreen("route")}
+            onOpenLesson={(lessonId) => {
+              setFirstMelodiesLessonId(lessonId);
+              setScreen("first-melodies-lesson");
+            }}
+          />
+        )}
+        {screen === "first-melodies-lesson" && (
+          <FirstMelodiesLessonScreen
+            lessonId={firstMelodiesLessonId}
+            onBackToIsland={() => setScreen("first-melodies-island")}
+          />
         )}
         {screen === "mission-guide" && <MissionGuideScreen userName={userName} onBack={() => setScreen("route")} />}
 

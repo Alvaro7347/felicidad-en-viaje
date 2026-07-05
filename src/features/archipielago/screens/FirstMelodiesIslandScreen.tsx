@@ -15,9 +15,7 @@ const MELODIES_NODES: RouteNode[] = [
   { id: 'm7', title: 'Karaoke Stay With Me', subtitle: 'Practica cambios de acordes con guía temporal.', icon: '🎤', status: 'locked', type: 'Karaoke', time: '6 min' },
   { id: 'm8', title: 'Comparte tu primer logro', subtitle: 'Podrás subir tu video de forma opcional para recibir feedback.', icon: '📹', status: 'locked', type: 'Comunidad', time: '5 min' },
   { id: 'm9', title: 'Dedos despiertos', subtitle: 'Entrena coordinación y digitación desde cero.', icon: '🤲', status: 'locked', type: 'Práctica', time: '4 min' },
-  { id: 'm10', title: 'Lo que ya conquistaste', subtitle: 'Revisa acordes, conceptos y logros aprendidos.', icon: '🏆', status: 'locked', type: 'Resumen', time: '3 min' },
-  { id: 'm11', title: 'Tu mapa de Primeras Melodías', subtitle: 'Visualiza el recorrido de esta isla.', icon: '🧭', status: 'locked', type: 'Mapa', time: '3 min' },
-  { id: 'm12', title: '¿Cómo viviste esta isla?', subtitle: 'Cierra con una medición breve de emoción y experiencia.', icon: '💬', status: 'locked', type: 'Encuesta', time: '3 min' },
+  { id: 'm10', title: 'Lo que ya conquistaste', subtitle: 'Resumen, medición breve y premio de cierre.', icon: '🏆', status: 'locked', type: 'Resumen', time: '3 min' },
 ];
 
 // Territorios visibles en el carrusel — la Isla de Primeras Melodías es la activa aquí.
@@ -28,8 +26,9 @@ const TERRITORIES = [
   { id: 'ritmo', title: 'Isla del Ritmo', state: 'locked' as const },
 ];
 
-export function FirstMelodiesIslandScreen({ onBack }: { onBack: () => void }) {
+export function FirstMelodiesIslandScreen({ onBack, onOpenLesson }: { onBack: () => void; onOpenLesson: (lessonId: string) => void }) {
   const [modal, setModal] = useState<null | 'locked-island' | 'locked-node' | 'coming-soon'>(null);
+  const [pendingNodeId, setPendingNodeId] = useState<string | null>(null);
   const [hoveredNode, setHoveredNode] = useState<string | null>(null);
   const [pressedNode, setPressedNode] = useState<string | null>(null);
   const [pressedIsland, setPressedIsland] = useState<string | null>(null);
@@ -255,7 +254,14 @@ export function FirstMelodiesIslandScreen({ onBack }: { onBack: () => void }) {
                 </div>
 
                 <div
-                  onClick={() => setModal(isCurrent ? 'coming-soon' : 'locked-node')}
+                  onClick={() => {
+                    if (isCurrent) {
+                      onOpenLesson(node.id);
+                    } else {
+                      setPendingNodeId(node.id);
+                      setModal('locked-node');
+                    }
+                  }}
                   onMouseEnter={() => setHoveredNode(node.id)}
                   onMouseLeave={() => { setHoveredNode(null); setPressedNode(null); }}
                   onMouseDown={() => setPressedNode(node.id)}
@@ -323,10 +329,26 @@ export function FirstMelodiesIslandScreen({ onBack }: { onBack: () => void }) {
               </div>
               <div style={{ fontSize: 13.5, lineHeight: 1.6, color: B.grayText, marginBottom: 14 }}>
                 {modal === 'locked-island' && 'Para llegar aquí, primero necesitas completar las unidades anteriores. El viaje avanza una isla a la vez.'}
-                {modal === 'locked-node' && 'Esta unidad se desbloqueará cuando completes los pasos anteriores.'}
+                {modal === 'locked-node' && 'Esta unidad estará bloqueada cuando activemos el flujo real. Por ahora puedes explorarla para revisar el prototipo completo.'}
                 {modal === 'coming-soon' && 'Esta será la primera clase de la Isla de Primeras Melodías. Pronto conectaremos esta unidad al flujo del curso.'}
               </div>
-              <Btn onClick={() => setModal(null)} fullWidth>Entendido</Btn>
+              {modal === 'locked-node' && pendingNodeId && (
+                <div style={{ marginBottom: 10 }}>
+                  <Btn
+                    variant="ghost"
+                    fullWidth
+                    onClick={() => {
+                      const id = pendingNodeId;
+                      setModal(null);
+                      setPendingNodeId(null);
+                      onOpenLesson(id);
+                    }}
+                  >
+                    Explorar lección para revisar prototipo
+                  </Btn>
+                </div>
+              )}
+              <Btn onClick={() => { setModal(null); setPendingNodeId(null); }} fullWidth>Entendido</Btn>
             </Card>
           </div>
         </div>
