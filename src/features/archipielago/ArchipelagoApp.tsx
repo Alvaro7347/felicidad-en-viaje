@@ -20,6 +20,7 @@ import { RhythmIslandScreen } from "./screens/RhythmIslandScreen";
 import { MusicIslandScreen } from "./screens/MusicIslandScreen";
 import { PulseLessonScreen } from "./screens/PulseLessonScreen";
 import { RhythmLessonScreen } from "./screens/RhythmLessonScreen";
+import { MusicLessonScreen } from "./screens/MusicLessonScreen";
 import { MissionNineScreen } from "./screens/MissionNineScreen";
 import { MissionFourScreen } from "./screens/MissionFourScreen";
 import { MissionGuideScreen } from "./screens/MissionGuideScreen";
@@ -72,6 +73,8 @@ export function ArchipelagoApp() {
   const [firstMelodiesLessonId, setFirstMelodiesLessonId] = useState<string>("m1");
   const [pulseLessonId, setPulseLessonId] = useState<string>("p1");
   const [rhythmLessonId, setRhythmLessonId] = useState<string>("r1");
+  const [musicLessonId, setMusicLessonId] = useState<string>("music1");
+  
   
 
   const goToRoute = () => setScreen("route");
@@ -100,6 +103,8 @@ export function ArchipelagoApp() {
               setPulseLessonId(entry.lessonId);
             } else if (entry.lessonGroup === 'rhythm' && entry.lessonId) {
               setRhythmLessonId(entry.lessonId);
+            } else if (entry.lessonGroup === 'music' && entry.lessonId) {
+              setMusicLessonId(entry.lessonId);
             }
             setScreen(entry.screen);
           }}
@@ -208,6 +213,16 @@ export function ArchipelagoApp() {
             onOpenFirstMelodiesIsland={() => setScreen("first-melodies-island")}
             onOpenPulseIsland={() => setScreen("pulse-island")}
             onOpenRhythmIsland={() => setScreen("rhythm-island")}
+            onOpenLesson={(lessonId) => {
+              setMusicLessonId(lessonId);
+              setScreen("music-lesson");
+            }}
+          />
+        )}
+        {screen === "music-lesson" && (
+          <MusicLessonScreen
+            lessonId={musicLessonId}
+            onBackToIsland={() => setScreen("music-island")}
           />
         )}
         {screen === "rhythm-lesson" && (
