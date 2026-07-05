@@ -143,7 +143,19 @@ export function ArchipelagoApp() {
         {screen === "mission-eight" && <MissionEightScreen onBack={() => setScreen("route")} />}
         {screen === "mission-nine" && <MissionNineScreen onBack={() => setScreen("route")} />}
         {screen === "first-melodies-island" && (
-          <FirstMelodiesIslandScreen onBack={() => setScreen("route")} />
+          <FirstMelodiesIslandScreen
+            onBack={() => setScreen("route")}
+            onOpenLesson={(lessonId) => {
+              setFirstMelodiesLessonId(lessonId);
+              setScreen("first-melodies-lesson");
+            }}
+          />
+        )}
+        {screen === "first-melodies-lesson" && (
+          <FirstMelodiesLessonScreen
+            lessonId={firstMelodiesLessonId}
+            onBackToIsland={() => setScreen("first-melodies-island")}
+          />
         )}
         {screen === "mission-guide" && <MissionGuideScreen userName={userName} onBack={() => setScreen("route")} />}
 
