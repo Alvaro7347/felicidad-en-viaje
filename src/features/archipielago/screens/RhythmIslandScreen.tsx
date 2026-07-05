@@ -113,6 +113,9 @@ export function RhythmIslandScreen({
     if (id === 'pulso') { onOpenPulseIsland(); return; }
     if (id === 'musical') { onOpenMusicIsland(); return; }
     if (id === 'alegria') { onOpenJoyIsland(); return; }
+    if (id === 'acordes') { onOpenChordsIsland(); return; }
+    if (id === 'rasgueo') { onOpenStrummingIsland(); return; }
+    if (id === 'canciones') { onOpenSongsIsland(); return; }
     if (id === 'ritmo') {
       window.scrollTo({ top: 0, behavior: 'smooth' });
       return;
