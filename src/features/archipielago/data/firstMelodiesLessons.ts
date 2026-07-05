@@ -2,12 +2,15 @@
 // Se consume desde FirstMelodiesLessonScreen (renderer genérico) y desde
 // FirstMelodiesIslandScreen (ruta visual). No hay progreso real todavía.
 
+import acordeDoImg from "@/assets/chords/acorde-do.png";
+import acordesLamFaImg from "@/assets/chords/acordes-lam-fa.png";
+
 export type LessonKind = 'video' | 'diagram' | 'community' | 'closure';
 
 export interface DiagramAsset {
   label: string;         // "Acorde DO"
-  filename: string;      // "acorde-do.pdf"
-  url?: string;          // URL al PDF si está disponible (si no, placeholder)
+  filename: string;      // referencia interna, útil para debug/futuro PDF
+  imageUrl?: string;     // URL/import de imagen renderizable inline
 }
 
 export interface Lesson {
