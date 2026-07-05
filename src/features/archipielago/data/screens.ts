@@ -2,7 +2,7 @@ import type { Screen } from "../types";
 
 export const ONBOARDING_SCREENS: Screen[] = ['welcome', 'onboarding', 'diagnosis', 'diagnosis-result'];
 
-export type LessonGroup = 'first-melodies' | 'pulse' | 'rhythm' | 'music';
+export type LessonGroup = 'first-melodies' | 'pulse' | 'rhythm' | 'music' | 'joy';
 
 export interface DevScreenEntry {
   label: string;
@@ -78,5 +78,18 @@ export const DEV_SCREENS: DevScreenEntry[] = [
   { label: 'MUS11 · Tren al Sur completa',  screen: 'music-lesson', lessonId: 'music11', lessonGroup: 'music' },
   { label: 'MUS12 · Hakuna Matata',         screen: 'music-lesson', lessonId: 'music12', lessonGroup: 'music' },
   { label: 'MUS13 · Cierre Musical',        screen: 'music-lesson', lessonId: 'music13', lessonGroup: 'music' },
+  { label: 'Isla · Alegría',                screen: 'joy-island' },
+  { label: 'JOY1 · Segundo rasgueo',        screen: 'joy-lesson', lessonId: 'joy1',  lessonGroup: 'joy' },
+  { label: 'JOY2 · Cambios seg. rasgueo',   screen: 'joy-lesson', lessonId: 'joy2',  lessonGroup: 'joy' },
+  { label: 'JOY3 · Acordes nuevos',         screen: 'joy-lesson', lessonId: 'joy3',  lessonGroup: 'joy' },
+  { label: 'JOY4 · Diagramas acordes',      screen: 'joy-lesson', lessonId: 'joy4',  lessonGroup: 'joy' },
+  { label: 'JOY5 · Estrellitas y Duendes',  screen: 'joy-lesson', lessonId: 'joy5',  lessonGroup: 'joy' },
+  { label: 'JOY6 · Rasgueo nivel dos',      screen: 'joy-lesson', lessonId: 'joy6',  lessonGroup: 'joy' },
+  { label: 'JOY7 · Loco tu forma de ser',   screen: 'joy-lesson', lessonId: 'joy7',  lessonGroup: 'joy' },
+  { label: 'JOY8 · Lamento boliviano',      screen: 'joy-lesson', lessonId: 'joy8',  lessonGroup: 'joy' },
+  { label: 'JOY9 · Bachata Rosa',           screen: 'joy-lesson', lessonId: 'joy9',  lessonGroup: 'joy' },
+  { label: 'JOY10 · Leer tablaturas',       screen: 'joy-lesson', lessonId: 'joy10', lessonGroup: 'joy' },
+  { label: 'JOY11 · Canciones tablatura',   screen: 'joy-lesson', lessonId: 'joy11', lessonGroup: 'joy' },
+  { label: 'JOY12 · Cierre Alegría',        screen: 'joy-lesson', lessonId: 'joy12', lessonGroup: 'joy' },
   { label: '⑦ Celebración',               screen: 'celebration' },
 ];
