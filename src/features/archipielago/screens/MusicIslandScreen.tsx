@@ -27,6 +27,7 @@ const TERRITORIES = [
   { id: 'pulso',             title: 'Isla del Pulso',             state: 'done' as const },
   { id: 'ritmo',             title: 'Isla del Ritmo',             state: 'done' as const },
   { id: 'musical',           title: 'Isla Musical',               state: 'active' as const, progress: 0 },
+  { id: 'alegria',           title: 'Isla de la Alegría',         state: 'prototype' as const },
 ];
 
 export function MusicIslandScreen({
@@ -34,12 +35,14 @@ export function MusicIslandScreen({
   onOpenFirstMelodiesIsland,
   onOpenPulseIsland,
   onOpenRhythmIsland,
+  onOpenJoyIsland,
   onOpenLesson,
 }: {
   onOpenStartPort: () => void;
   onOpenFirstMelodiesIsland: () => void;
   onOpenPulseIsland: () => void;
   onOpenRhythmIsland: () => void;
+  onOpenJoyIsland: () => void;
   onOpenLesson: (lessonId: string) => void;
 }) {
   const [modal, setModal] = useState<null | { kind: 'locked-node'; nodeId: string }>(null);
@@ -99,6 +102,7 @@ export function MusicIslandScreen({
     if (id === 'primeras-melodias') { onOpenFirstMelodiesIsland(); return; }
     if (id === 'pulso') { onOpenPulseIsland(); return; }
     if (id === 'ritmo') { onOpenRhythmIsland(); return; }
+    if (id === 'alegria') { onOpenJoyIsland(); return; }
     if (id === 'musical') {
       window.scrollTo({ top: 0, behavior: 'smooth' });
       return;
@@ -132,6 +136,7 @@ export function MusicIslandScreen({
           {TERRITORIES.map((t, i) => {
             const isActive = t.state === 'active';
             const isDone = t.state === 'done';
+            const isPrototype = t.state === 'prototype';
             const isFocused = focusedStageId === t.id;
             const isPress = pressedIsland === t.id;
             const focusScale = isFocused ? 1 : 0.96;
@@ -140,12 +145,12 @@ export function MusicIslandScreen({
             const opacity = isFocused ? (isActive ? 1 : 0.85) : (isActive ? 0.78 : 0.55);
             const border = isActive
               ? '1px solid rgba(46,230,174,0.6)'
-              : isDone
+              : isDone || isPrototype
               ? '1px solid rgba(46,230,174,0.35)'
               : '1px solid rgba(255,255,255,0.18)';
             const bg = isActive
               ? 'rgba(46,230,174,0.14)'
-              : isDone
+              : isDone || isPrototype
               ? 'rgba(46,230,174,0.05)'
               : 'rgba(255,255,255,0.02)';
 
@@ -171,22 +176,22 @@ export function MusicIslandScreen({
                     }}
                   >
                     <div style={{ display: 'flex', alignItems: 'center', gap: 8 }}>
-                      <span style={{ fontSize: 18, opacity: isActive || isDone ? 1 : 0.55 }}>
+                      <span style={{ fontSize: 18, opacity: isActive || isDone || isPrototype ? 1 : 0.55 }}>
                         {'🏝'}
                       </span>
                       <div>
                         <div style={{
                           fontFamily: 'Space Grotesk, sans-serif', fontWeight: 800, fontSize: 12,
-                          color: isActive ? B.white : isDone ? 'rgba(255,255,255,0.9)' : 'rgba(255,255,255,0.55)',
+                          color: isActive ? B.white : isDone || isPrototype ? 'rgba(255,255,255,0.9)' : 'rgba(255,255,255,0.55)',
                           lineHeight: 1.2, whiteSpace: 'nowrap',
                         }}>
                           {t.title}
                         </div>
                         <div style={{
                           fontSize: 9, marginTop: 2, letterSpacing: '0.02em',
-                          color: isActive ? 'rgba(46,230,174,0.85)' : isDone ? 'rgba(46,230,174,0.75)' : 'rgba(255,255,255,0.35)',
+                          color: isActive ? 'rgba(46,230,174,0.85)' : isDone ? 'rgba(46,230,174,0.75)' : isPrototype ? 'rgba(46,230,174,0.7)' : 'rgba(255,255,255,0.35)',
                         }}>
-                          {isActive ? 'aquí estás' : isDone ? 'completado' : 'próximamente'}
+                          {isActive ? 'aquí estás' : isDone ? 'completado' : isPrototype ? 'disponible prototipo' : 'próximamente'}
                         </div>
                       </div>
                     </div>

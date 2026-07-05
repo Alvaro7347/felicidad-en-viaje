@@ -25,9 +25,10 @@ const TERRITORIES = [
   { id: 'pulso', title: 'Isla del Pulso', state: 'prototype' as const },
   { id: 'ritmo', title: 'Isla del Ritmo', state: 'prototype' as const },
   { id: 'musical', title: 'Isla Musical', state: 'prototype' as const },
+  { id: 'alegria', title: 'Isla de la Alegría', state: 'prototype' as const },
 ];
 
-export function FirstMelodiesIslandScreen({ onBack, onOpenLesson, onOpenPulseIsland, onOpenRhythmIsland, onOpenMusicIsland }: { onBack: () => void; onOpenLesson: (lessonId: string) => void; onOpenPulseIsland: () => void; onOpenRhythmIsland: () => void; onOpenMusicIsland: () => void }) {
+export function FirstMelodiesIslandScreen({ onBack, onOpenLesson, onOpenPulseIsland, onOpenRhythmIsland, onOpenMusicIsland, onOpenJoyIsland }: { onBack: () => void; onOpenLesson: (lessonId: string) => void; onOpenPulseIsland: () => void; onOpenRhythmIsland: () => void; onOpenMusicIsland: () => void; onOpenJoyIsland: () => void }) {
   const [modal, setModal] = useState<null | 'locked-island' | 'locked-node' | 'coming-soon'>(null);
   const [pendingNodeId, setPendingNodeId] = useState<string | null>(null);
   const [hoveredNode, setHoveredNode] = useState<string | null>(null);
@@ -92,6 +93,7 @@ export function FirstMelodiesIslandScreen({ onBack, onOpenLesson, onOpenPulseIsl
     if (id === 'pulso') { onOpenPulseIsland(); return; }
     if (id === 'ritmo') { onOpenRhythmIsland(); return; }
     if (id === 'musical') { onOpenMusicIsland(); return; }
+    if (id === 'alegria') { onOpenJoyIsland(); return; }
   };
 
   return (
