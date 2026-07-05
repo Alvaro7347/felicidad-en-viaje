@@ -3,7 +3,7 @@ import { B } from "../data/brand";
 import type { NodeStatus, RouteNode } from "../types";
 import { Btn } from "../components/Btn";
 import { Card } from "../components/Card";
-import { BackBtn } from "../components/BackBtn";
+
 
 const MELODIES_NODES: RouteNode[] = [
   { id: 'm1', title: 'Tu primer acorde: DO', subtitle: 'Despierta tu mano izquierda y toca tu primer acorde.', icon: '🎸', status: 'current', type: 'Video práctica', time: '4 min' },
