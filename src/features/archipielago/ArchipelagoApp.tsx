@@ -83,6 +83,11 @@ export function ArchipelagoApp() {
   const [rhythmLessonId, setRhythmLessonId] = useState<string>("r1");
   const [musicLessonId, setMusicLessonId] = useState<string>("music1");
   const [joyLessonId, setJoyLessonId] = useState<string>("joy1");
+  const [chordsLessonId, setChordsLessonId] = useState<string>("chords1");
+  const [strummingLessonId, setStrummingLessonId] = useState<string>("strumming1");
+  const [songsLessonId, setSongsLessonId] = useState<string>("songs1");
+  
+  
   
   
 
