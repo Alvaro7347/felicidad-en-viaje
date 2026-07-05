@@ -7,7 +7,7 @@ import { Btn } from "../components/Btn";
 import { Card } from "../components/Card";
 import { touchLastVisit } from "../data/musicalFuel";
 
-export function RouteScreen({ onStartMission, onReviewMission, onOpenFirstMelodiesIsland, userName }: { onStartMission: () => void; onReviewMission: (id: string) => void; onOpenFirstMelodiesIsland: () => void; userName: string }) {
+export function RouteScreen({ onStartMission, onReviewMission, onOpenFirstMelodiesIsland, onOpenPulseIsland, userName }: { onStartMission: () => void; onReviewMission: (id: string) => void; onOpenFirstMelodiesIsland: () => void; onOpenPulseIsland: () => void; userName: string }) {
   const firstName = (userName ?? '').trim().split(/\s+/)[0] ?? '';
   const routeTitle = firstName ? `${firstName}, esta es tu ruta` : 'Esta es tu ruta';
   // Mantenemos el registro de última visita para futuros usos del combustible musical
@@ -132,6 +132,7 @@ export function RouteScreen({ onStartMission, onReviewMission, onOpenFirstMelodi
                     onClick={() => {
                       if (isl.id === 'puerto-inicio') return;
                       if (isl.id === 'primeras-melodias') { onOpenFirstMelodiesIsland(); return; }
+                      if (isl.id === 'pulso') { onOpenPulseIsland(); return; }
                       setShowLockedIsland(true);
                     }}
                     style={{
