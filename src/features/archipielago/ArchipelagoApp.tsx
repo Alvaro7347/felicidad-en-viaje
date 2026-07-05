@@ -103,6 +103,8 @@ export function ArchipelagoApp() {
               setPulseLessonId(entry.lessonId);
             } else if (entry.lessonGroup === 'rhythm' && entry.lessonId) {
               setRhythmLessonId(entry.lessonId);
+            } else if (entry.lessonGroup === 'music' && entry.lessonId) {
+              setMusicLessonId(entry.lessonId);
             }
             setScreen(entry.screen);
           }}
