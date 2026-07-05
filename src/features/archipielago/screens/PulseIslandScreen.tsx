@@ -24,17 +24,20 @@ const TERRITORIES = [
   { id: 'primeras-melodias', title: 'Isla de Primeras Melodías', state: 'done' as const },
   { id: 'pulso', title: 'Isla del Pulso', state: 'active' as const, progress: 0 },
   { id: 'ritmo', title: 'Isla del Ritmo', state: 'prototype' as const },
+  { id: 'musical', title: 'Isla Musical', state: 'prototype' as const },
 ];
 
 export function PulseIslandScreen({
   onOpenStartPort,
   onOpenFirstMelodiesIsland,
   onOpenRhythmIsland,
+  onOpenMusicIsland,
   onOpenLesson,
 }: {
   onOpenStartPort: () => void;
   onOpenFirstMelodiesIsland: () => void;
   onOpenRhythmIsland: () => void;
+  onOpenMusicIsland: () => void;
   onOpenLesson: (lessonId: string) => void;
 }) {
   const [modal, setModal] = useState<null | { kind: 'locked-island' } | { kind: 'locked-node'; nodeId: string }>(null);
@@ -93,6 +96,7 @@ export function PulseIslandScreen({
     if (id === 'puerto-inicio') { onOpenStartPort(); return; }
     if (id === 'primeras-melodias') { onOpenFirstMelodiesIsland(); return; }
     if (id === 'ritmo') { onOpenRhythmIsland(); return; }
+    if (id === 'musical') { onOpenMusicIsland(); return; }
     if (id === 'pulso') {
       window.scrollTo({ top: 0, behavior: 'smooth' });
       return;
