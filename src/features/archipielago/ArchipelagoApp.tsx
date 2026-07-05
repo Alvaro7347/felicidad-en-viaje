@@ -138,6 +138,7 @@ export function ArchipelagoApp() {
             onReviewMission={(id) => setScreen(REVIEW_MISSION_BY_NODE[id] ?? "mission-two")}
             onOpenFirstMelodiesIsland={() => setScreen("first-melodies-island")}
             onOpenPulseIsland={() => setScreen("pulse-island")}
+            onOpenRhythmIsland={() => setScreen("rhythm-island")}
           />
         )}
 
