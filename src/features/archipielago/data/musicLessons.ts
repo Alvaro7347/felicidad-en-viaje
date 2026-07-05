@@ -2,6 +2,10 @@
 // Se consume desde MusicLessonScreen (renderer genérico) y desde
 // MusicIslandScreen. No hay progreso real todavía.
 
+import chordMiMenor from '@/assets/chords/acorde-mi-menor.png';
+import chordSi7 from '@/assets/chords/acorde-si7.png';
+import chordRe from '@/assets/chords/acorde-re.png';
+
 export type MusicLessonKind = 'video' | 'diagram' | 'multiVideo' | 'community' | 'closure';
 
 export interface MusicVideo {
