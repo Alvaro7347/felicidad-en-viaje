@@ -93,8 +93,13 @@ export function FirstMelodiesIslandScreen({ onBack }: { onBack: () => void }) {
   };
 
   return (
-    <div style={{ display: "flex", flexDirection: "column", gap: 14 }}>
-      <BackBtn label="Puerto de Inicio" onClick={onBack} />
+    <div style={{
+      display: "flex", flexDirection: "column", gap: 14,
+      opacity: mounted ? 1 : 0,
+      transform: mounted ? 'translateY(0)' : 'translateY(8px)',
+      transition: 'opacity 260ms ease, transform 260ms ease',
+    }}>
+
 
       {/* Tarjeta superior de progreso */}
       <Card style={{ padding: 18 }}>
