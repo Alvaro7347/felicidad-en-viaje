@@ -17,5 +17,6 @@ export const DEV_SCREENS: { label: string; screen: Screen }[] = [
   { label: 'N7 · Toma ukelele',           screen: 'mission-seven' },
   { label: 'N8 · Afinación',              screen: 'mission-eight' },
   { label: 'N9 · Listo para zarpar',      screen: 'mission-nine' },
+  { label: 'Isla · Primeras Melodías',    screen: 'first-melodies-island' },
   { label: '⑦ Celebración',               screen: 'celebration' },
 ];
