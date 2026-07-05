@@ -67,8 +67,8 @@ export const MUSIC_LESSONS: MusicLesson[] = [
     microVictory: 'Ya tienes tu mapa visual de MI menor y SI7.',
     antiFrustrationCopy: 'Vuelve al diagrama cada vez que tus dedos necesiten orientarse.',
     diagramAssets: [
-      { label: 'MI menor' },
-      { label: 'SI7' },
+      { label: 'MI menor', src: chordMiMenor },
+      { label: 'SI7', src: chordSi7 },
     ],
     diagramPlaceholder: 'Imagen de acordes pendiente de adjuntar',
   },
