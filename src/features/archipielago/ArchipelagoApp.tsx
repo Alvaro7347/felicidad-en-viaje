@@ -73,6 +73,8 @@ export function ArchipelagoApp() {
   const [firstMelodiesLessonId, setFirstMelodiesLessonId] = useState<string>("m1");
   const [pulseLessonId, setPulseLessonId] = useState<string>("p1");
   const [rhythmLessonId, setRhythmLessonId] = useState<string>("r1");
+  const [musicLessonId, setMusicLessonId] = useState<string>("music1");
+  
   
 
   const goToRoute = () => setScreen("route");
