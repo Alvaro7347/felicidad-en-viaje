@@ -103,6 +103,7 @@ export function RhythmIslandScreen({
     if (id === 'primeras-melodias') { onOpenFirstMelodiesIsland(); return; }
     if (id === 'pulso') { onOpenPulseIsland(); return; }
     if (id === 'musical') { onOpenMusicIsland(); return; }
+    if (id === 'alegria') { onOpenJoyIsland(); return; }
     if (id === 'ritmo') {
       window.scrollTo({ top: 0, behavior: 'smooth' });
       return;
