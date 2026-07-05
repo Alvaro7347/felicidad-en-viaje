@@ -7,7 +7,7 @@ import { Btn } from "../components/Btn";
 import { Card } from "../components/Card";
 import { touchLastVisit } from "../data/musicalFuel";
 
-export function RouteScreen({ onStartMission, onReviewMission, userName }: { onStartMission: () => void; onReviewMission: (id: string) => void; userName: string }) {
+export function RouteScreen({ onStartMission, onReviewMission, onOpenFirstMelodiesIsland, userName }: { onStartMission: () => void; onReviewMission: (id: string) => void; onOpenFirstMelodiesIsland: () => void; userName: string }) {
   const firstName = (userName ?? '').trim().split(/\s+/)[0] ?? '';
   const routeTitle = firstName ? `${firstName}, esta es tu ruta` : 'Esta es tu ruta';
   // Mantenemos el registro de última visita para futuros usos del combustible musical
@@ -15,6 +15,7 @@ export function RouteScreen({ onStartMission, onReviewMission, userName }: { onS
   useEffect(() => { touchLastVisit(); }, []);
 
   const [exploringNode, setExploringNode] = useState<string | null>(null);
+  const [showLockedIsland, setShowLockedIsland] = useState(false);
   const [hoveredNode, setHoveredNode] = useState<string | null>(null);
   const [pressedNode, setPressedNode] = useState<string | null>(null);
   const [pressedIsland, setPressedIsland] = useState<string | null>(null);
