@@ -16,6 +16,7 @@ import { MissionEightScreen } from "./screens/MissionEightScreen";
 import { FirstMelodiesIslandScreen } from "./screens/FirstMelodiesIslandScreen";
 import { FirstMelodiesLessonScreen } from "./screens/FirstMelodiesLessonScreen";
 import { PulseIslandScreen } from "./screens/PulseIslandScreen";
+import { RhythmIslandScreen } from "./screens/RhythmIslandScreen";
 import { PulseLessonScreen } from "./screens/PulseLessonScreen";
 import { MissionNineScreen } from "./screens/MissionNineScreen";
 import { MissionFourScreen } from "./screens/MissionFourScreen";
@@ -137,6 +138,7 @@ export function ArchipelagoApp() {
             onReviewMission={(id) => setScreen(REVIEW_MISSION_BY_NODE[id] ?? "mission-two")}
             onOpenFirstMelodiesIsland={() => setScreen("first-melodies-island")}
             onOpenPulseIsland={() => setScreen("pulse-island")}
+            onOpenRhythmIsland={() => setScreen("rhythm-island")}
           />
         )}
 
@@ -166,16 +168,25 @@ export function ArchipelagoApp() {
               setScreen("first-melodies-lesson");
             }}
             onOpenPulseIsland={() => setScreen("pulse-island")}
+            onOpenRhythmIsland={() => setScreen("rhythm-island")}
           />
         )}
         {screen === "pulse-island" && (
           <PulseIslandScreen
             onOpenStartPort={() => setScreen("route")}
             onOpenFirstMelodiesIsland={() => setScreen("first-melodies-island")}
+            onOpenRhythmIsland={() => setScreen("rhythm-island")}
             onOpenLesson={(lessonId) => {
               setPulseLessonId(lessonId);
               setScreen("pulse-lesson");
             }}
+          />
+        )}
+        {screen === "rhythm-island" && (
+          <RhythmIslandScreen
+            onOpenStartPort={() => setScreen("route")}
+            onOpenFirstMelodiesIsland={() => setScreen("first-melodies-island")}
+            onOpenPulseIsland={() => setScreen("pulse-island")}
           />
         )}
         {screen === "pulse-lesson" && (

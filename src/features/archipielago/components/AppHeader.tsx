@@ -7,18 +7,21 @@ export function AppHeader({ screen, onHome }: { screen: Screen; onHome?: () => v
   const isOnboarding = ONBOARDING_SCREENS.includes(screen);
   if (screen === 'onboarding' || screen === 'welcome' || screen === 'diagnosis' || screen === 'diagnosis-result') return null;
 
-  const modernHeaderScreens: Screen[] = ['route', 'mission', 'mission-guide', 'mission-two', 'mission-three', 'mission-four', 'celebration', 'first-melodies-island', 'first-melodies-lesson', 'pulse-island', 'pulse-lesson'];
+  const modernHeaderScreens: Screen[] = ['route', 'mission', 'mission-guide', 'mission-two', 'mission-three', 'mission-four', 'celebration', 'first-melodies-island', 'first-melodies-lesson', 'pulse-island', 'pulse-lesson', 'rhythm-island'];
   if (modernHeaderScreens.includes(screen)) {
     const isFirstMelodies = screen === 'first-melodies-island' || screen === 'first-melodies-lesson';
     const isPulse = screen === 'pulse-island' || screen === 'pulse-lesson';
+    const isRhythm = screen === 'rhythm-island';
     const active = ROUTE_STAGES.find(s => s.status === 'active') ?? ROUTE_STAGES[0];
-    const pct = isFirstMelodies || isPulse ? 0 : active.progress;
+    const pct = isFirstMelodies || isPulse || isRhythm ? 0 : active.progress;
     const title = isFirstMelodies
       ? 'Isla de Primeras Melodías'
       : isPulse
       ? 'Isla del Pulso'
+      : isRhythm
+      ? 'Isla del Ritmo'
       : active.title;
-    const completionText = isFirstMelodies || isPulse ? 'completado' : active.completionText;
+    const completionText = isFirstMelodies || isPulse || isRhythm ? 'completado' : active.completionText;
     return (
       <header style={{
         background: '#FFFFFF',

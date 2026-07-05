@@ -23,16 +23,18 @@ const TERRITORIES = [
   { id: 'puerto-inicio', title: 'Puerto de Inicio', state: 'done' as const },
   { id: 'primeras-melodias', title: 'Isla de Primeras Melodías', state: 'done' as const },
   { id: 'pulso', title: 'Isla del Pulso', state: 'active' as const, progress: 0 },
-  { id: 'ritmo', title: 'Isla del Ritmo', state: 'locked' as const },
+  { id: 'ritmo', title: 'Isla del Ritmo', state: 'done' as const },
 ];
 
 export function PulseIslandScreen({
   onOpenStartPort,
   onOpenFirstMelodiesIsland,
+  onOpenRhythmIsland,
   onOpenLesson,
 }: {
   onOpenStartPort: () => void;
   onOpenFirstMelodiesIsland: () => void;
+  onOpenRhythmIsland: () => void;
   onOpenLesson: (lessonId: string) => void;
 }) {
   const [modal, setModal] = useState<null | { kind: 'locked-island' } | { kind: 'locked-node'; nodeId: string }>(null);
@@ -90,6 +92,7 @@ export function PulseIslandScreen({
   const handleTerritory = (id: string) => {
     if (id === 'puerto-inicio') { onOpenStartPort(); return; }
     if (id === 'primeras-melodias') { onOpenFirstMelodiesIsland(); return; }
+    if (id === 'ritmo') { onOpenRhythmIsland(); return; }
     if (id === 'pulso') {
       window.scrollTo({ top: 0, behavior: 'smooth' });
       return;
@@ -164,7 +167,7 @@ export function PulseIslandScreen({
                   >
                     <div style={{ display: 'flex', alignItems: 'center', gap: 8 }}>
                       <span style={{ fontSize: 18, opacity: isActive || isDone ? 1 : 0.55 }}>
-                        {t.state === 'locked' ? '🔒' : '🏝'}
+                        {'🏝'}
                       </span>
                       <div>
                         <div style={{
