@@ -24,9 +24,10 @@ const TERRITORIES = [
   { id: 'primeras-melodias', title: 'Isla de Primeras Melodías', state: 'active' as const, progress: 0 },
   { id: 'pulso', title: 'Isla del Pulso', state: 'prototype' as const },
   { id: 'ritmo', title: 'Isla del Ritmo', state: 'prototype' as const },
+  { id: 'musical', title: 'Isla Musical', state: 'prototype' as const },
 ];
 
-export function FirstMelodiesIslandScreen({ onBack, onOpenLesson, onOpenPulseIsland, onOpenRhythmIsland }: { onBack: () => void; onOpenLesson: (lessonId: string) => void; onOpenPulseIsland: () => void; onOpenRhythmIsland: () => void }) {
+export function FirstMelodiesIslandScreen({ onBack, onOpenLesson, onOpenPulseIsland, onOpenRhythmIsland, onOpenMusicIsland }: { onBack: () => void; onOpenLesson: (lessonId: string) => void; onOpenPulseIsland: () => void; onOpenRhythmIsland: () => void; onOpenMusicIsland: () => void }) {
   const [modal, setModal] = useState<null | 'locked-island' | 'locked-node' | 'coming-soon'>(null);
   const [pendingNodeId, setPendingNodeId] = useState<string | null>(null);
   const [hoveredNode, setHoveredNode] = useState<string | null>(null);
