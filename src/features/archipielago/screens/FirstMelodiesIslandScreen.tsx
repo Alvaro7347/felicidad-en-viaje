@@ -27,7 +27,8 @@ const TERRITORIES = [
 ];
 
 export function FirstMelodiesIslandScreen({ onBack, onOpenLesson }: { onBack: () => void; onOpenLesson: (lessonId: string) => void }) {
-  const [modal, setModal] = useState<null | { kind: 'locked-island' } | { kind: 'locked-node'; nodeId: string } | { kind: 'coming-soon'; nodeId: string }>(null);
+  const [modal, setModal] = useState<null | 'locked-island' | 'locked-node' | 'coming-soon'>(null);
+  const [pendingNodeId, setPendingNodeId] = useState<string | null>(null);
   const [hoveredNode, setHoveredNode] = useState<string | null>(null);
   const [pressedNode, setPressedNode] = useState<string | null>(null);
   const [pressedIsland, setPressedIsland] = useState<string | null>(null);
