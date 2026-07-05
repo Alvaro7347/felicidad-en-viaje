@@ -2,6 +2,10 @@
 // Se consume desde MusicLessonScreen (renderer genérico) y desde
 // MusicIslandScreen. No hay progreso real todavía.
 
+import chordMiMenor from '@/assets/chords/acorde-mi-menor.png';
+import chordSi7 from '@/assets/chords/acorde-si7.png';
+import chordRe from '@/assets/chords/acorde-re.png';
+
 export type MusicLessonKind = 'video' | 'diagram' | 'multiVideo' | 'community' | 'closure';
 
 export interface MusicVideo {
@@ -63,8 +67,8 @@ export const MUSIC_LESSONS: MusicLesson[] = [
     microVictory: 'Ya tienes tu mapa visual de MI menor y SI7.',
     antiFrustrationCopy: 'Vuelve al diagrama cada vez que tus dedos necesiten orientarse.',
     diagramAssets: [
-      { label: 'MI menor' },
-      { label: 'SI7' },
+      { label: 'MI menor', src: chordMiMenor },
+      { label: 'SI7', src: chordSi7 },
     ],
     diagramPlaceholder: 'Imagen de acordes pendiente de adjuntar',
   },
@@ -126,7 +130,7 @@ export const MUSIC_LESSONS: MusicLesson[] = [
     microVictory: 'Ya tienes tu mapa visual del RE.',
     antiFrustrationCopy: 'Cuando la mano se confunda, vuelve al mapa y respira.',
     diagramAssets: [
-      { label: 'RE' },
+      { label: 'RE', src: chordRe },
     ],
     diagramPlaceholder: 'Imagen del acorde RE pendiente de adjuntar',
   },
