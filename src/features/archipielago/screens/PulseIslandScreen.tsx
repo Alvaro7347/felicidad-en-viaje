@@ -23,7 +23,7 @@ const TERRITORIES = [
   { id: 'puerto-inicio', title: 'Puerto de Inicio', state: 'done' as const },
   { id: 'primeras-melodias', title: 'Isla de Primeras Melodías', state: 'done' as const },
   { id: 'pulso', title: 'Isla del Pulso', state: 'active' as const, progress: 0 },
-  { id: 'ritmo', title: 'Isla del Ritmo', state: 'done' as const },
+  { id: 'ritmo', title: 'Isla del Ritmo', state: 'prototype' as const },
 ];
 
 export function PulseIslandScreen({
