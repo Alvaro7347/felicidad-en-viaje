@@ -174,11 +174,14 @@ export function RouteScreen({ onStartMission, onReviewMission, onOpenFirstMelodi
                         }}>
                           {isl.title}
                         </div>
-                        {!isActive && (
-                          <div style={{ fontSize: 9, color: isl.id === 'primeras-melodias' ? 'rgba(46,230,174,0.85)' : (isFocused ? 'rgba(255,255,255,0.45)' : 'rgba(255,255,255,0.25)'), marginTop: 2, letterSpacing: '0.02em' }}>
-                            {isl.id === 'primeras-melodias' ? 'disponible' : 'próximamente'}
-                          </div>
-                        )}
+                        {!isActive && (() => {
+                          const isPrototype = isl.id === 'primeras-melodias' || isl.id === 'pulso' || isl.id === 'ritmo';
+                          return (
+                            <div style={{ fontSize: 9, color: isPrototype ? 'rgba(46,230,174,0.85)' : (isFocused ? 'rgba(255,255,255,0.45)' : 'rgba(255,255,255,0.25)'), marginTop: 2, letterSpacing: '0.02em' }}>
+                              {isPrototype ? 'disponible prototipo' : 'próximamente'}
+                            </div>
+                          );
+                        })()}
                       </div>
                     </div>
 
