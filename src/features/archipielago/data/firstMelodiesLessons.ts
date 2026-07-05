@@ -67,7 +67,7 @@ export const FIRST_MELODIES_LESSONS: Lesson[] = [
     microVictory: 'Ya reconoces el DO al verlo.',
     antiFrustrationCopy: 'Vuelve a este mapa cada vez que lo necesites.',
     pdfAssets: [
-      { label: 'Acorde DO', filename: 'acorde-do.pdf' },
+      { label: 'Acorde DO', filename: 'acorde-do.png', imageUrl: acordeDoImg },
     ],
   },
   {
