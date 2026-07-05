@@ -86,7 +86,19 @@ export function ArchipelagoApp() {
       {showSplash && <SplashScreen fading={splashFading} />}
 
       {/* Panel de navegación interna — solo visible en desarrollo */}
-      {SHOW_DEV_NAV && <DevNav current={screen} onGo={setScreen} />}
+      {SHOW_DEV_NAV && (
+        <DevNav
+          current={screen}
+          onGo={(entry) => {
+            if (entry.lessonGroup === 'first-melodies' && entry.lessonId) {
+              setFirstMelodiesLessonId(entry.lessonId);
+            } else if (entry.lessonGroup === 'pulse' && entry.lessonId) {
+              setPulseLessonId(entry.lessonId);
+            }
+            setScreen(entry.screen);
+          }}
+        />
+      )}
 
       <div style={{ maxWidth: 640, margin: "0 auto" }}>
         <AppHeader screen={screen} onHome={isOnboarding ? undefined : goToRoute} />
