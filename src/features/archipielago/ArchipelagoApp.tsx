@@ -16,6 +16,7 @@ import { MissionEightScreen } from "./screens/MissionEightScreen";
 import { FirstMelodiesIslandScreen } from "./screens/FirstMelodiesIslandScreen";
 import { FirstMelodiesLessonScreen } from "./screens/FirstMelodiesLessonScreen";
 import { PulseIslandScreen } from "./screens/PulseIslandScreen";
+import { PulseLessonScreen } from "./screens/PulseLessonScreen";
 import { MissionNineScreen } from "./screens/MissionNineScreen";
 import { MissionFourScreen } from "./screens/MissionFourScreen";
 import { MissionGuideScreen } from "./screens/MissionGuideScreen";
@@ -66,6 +67,7 @@ export function ArchipelagoApp() {
     return window.localStorage.getItem("archipielago_user_name") || "Navegante";
   });
   const [firstMelodiesLessonId, setFirstMelodiesLessonId] = useState<string>("m1");
+  const [pulseLessonId, setPulseLessonId] = useState<string>("p1");
   
 
   const goToRoute = () => setScreen("route");
@@ -84,7 +86,19 @@ export function ArchipelagoApp() {
       {showSplash && <SplashScreen fading={splashFading} />}
 
       {/* Panel de navegación interna — solo visible en desarrollo */}
-      {SHOW_DEV_NAV && <DevNav current={screen} onGo={setScreen} />}
+      {SHOW_DEV_NAV && (
+        <DevNav
+          current={screen}
+          onGo={(entry) => {
+            if (entry.lessonGroup === 'first-melodies' && entry.lessonId) {
+              setFirstMelodiesLessonId(entry.lessonId);
+            } else if (entry.lessonGroup === 'pulse' && entry.lessonId) {
+              setPulseLessonId(entry.lessonId);
+            }
+            setScreen(entry.screen);
+          }}
+        />
+      )}
 
       <div style={{ maxWidth: 640, margin: "0 auto" }}>
         <AppHeader screen={screen} onHome={isOnboarding ? undefined : goToRoute} />
@@ -158,6 +172,16 @@ export function ArchipelagoApp() {
           <PulseIslandScreen
             onOpenStartPort={() => setScreen("route")}
             onOpenFirstMelodiesIsland={() => setScreen("first-melodies-island")}
+            onOpenLesson={(lessonId) => {
+              setPulseLessonId(lessonId);
+              setScreen("pulse-lesson");
+            }}
+          />
+        )}
+        {screen === "pulse-lesson" && (
+          <PulseLessonScreen
+            lessonId={pulseLessonId}
+            onBackToIsland={() => setScreen("pulse-island")}
           />
         )}
         {screen === "first-melodies-lesson" && (
