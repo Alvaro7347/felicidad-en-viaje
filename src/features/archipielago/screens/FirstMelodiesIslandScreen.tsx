@@ -26,9 +26,12 @@ const TERRITORIES = [
   { id: 'ritmo', title: 'Isla del Ritmo', state: 'prototype' as const },
   { id: 'musical', title: 'Isla Musical', state: 'prototype' as const },
   { id: 'alegria', title: 'Isla de la Alegría', state: 'prototype' as const },
+  { id: 'acordes', title: 'Isla de los Acordes', state: 'prototype' as const },
+  { id: 'rasgueo', title: 'Isla del Rasgueo', state: 'prototype' as const },
+  { id: 'canciones', title: 'Isla de las Canciones', state: 'prototype' as const },
 ];
 
-export function FirstMelodiesIslandScreen({ onBack, onOpenLesson, onOpenPulseIsland, onOpenRhythmIsland, onOpenMusicIsland, onOpenJoyIsland }: { onBack: () => void; onOpenLesson: (lessonId: string) => void; onOpenPulseIsland: () => void; onOpenRhythmIsland: () => void; onOpenMusicIsland: () => void; onOpenJoyIsland: () => void }) {
+export function FirstMelodiesIslandScreen({ onBack, onOpenLesson, onOpenPulseIsland, onOpenRhythmIsland, onOpenMusicIsland, onOpenJoyIsland, onOpenChordsIsland, onOpenStrummingIsland, onOpenSongsIsland }: { onBack: () => void; onOpenLesson: (lessonId: string) => void; onOpenPulseIsland: () => void; onOpenRhythmIsland: () => void; onOpenMusicIsland: () => void; onOpenJoyIsland: () => void; onOpenChordsIsland: () => void; onOpenStrummingIsland: () => void; onOpenSongsIsland: () => void }) {
   const [modal, setModal] = useState<null | 'locked-island' | 'locked-node' | 'coming-soon'>(null);
   const [pendingNodeId, setPendingNodeId] = useState<string | null>(null);
   const [hoveredNode, setHoveredNode] = useState<string | null>(null);
