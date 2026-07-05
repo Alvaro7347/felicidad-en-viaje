@@ -144,6 +144,7 @@ export function ArchipelagoApp() {
             onOpenFirstMelodiesIsland={() => setScreen("first-melodies-island")}
             onOpenPulseIsland={() => setScreen("pulse-island")}
             onOpenRhythmIsland={() => setScreen("rhythm-island")}
+            onOpenMusicIsland={() => setScreen("music-island")}
           />
         )}
 
