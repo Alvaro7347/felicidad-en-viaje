@@ -129,6 +129,11 @@ export function RouteScreen({ onStartMission, onReviewMission, onOpenFirstMelodi
                     onTouchStart={() => setPressedIsland(isl.id)}
                     onTouchEnd={() => setPressedIsland(null)}
                     onTouchCancel={() => setPressedIsland(null)}
+                    onClick={() => {
+                      if (isl.id === 'puerto-inicio') return;
+                      if (isl.id === 'primeras-melodias') { onOpenFirstMelodiesIsland(); return; }
+                      setShowLockedIsland(true);
+                    }}
                     style={{
                     background: islBg,
                     border: islBorder,
