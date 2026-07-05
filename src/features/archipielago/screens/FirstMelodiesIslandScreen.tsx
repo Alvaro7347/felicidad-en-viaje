@@ -93,6 +93,7 @@ export function FirstMelodiesIslandScreen({ onBack, onOpenLesson, onOpenPulseIsl
     if (id === 'pulso') { onOpenPulseIsland(); return; }
     if (id === 'ritmo') { onOpenRhythmIsland(); return; }
     if (id === 'musical') { onOpenMusicIsland(); return; }
+    if (id === 'alegria') { onOpenJoyIsland(); return; }
   };
 
   return (
