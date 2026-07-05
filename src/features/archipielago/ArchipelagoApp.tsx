@@ -117,7 +117,12 @@ export function ArchipelagoApp() {
       )}
 
       <div style={{ maxWidth: 640, margin: "0 auto" }}>
-        <AppHeader screen={screen} onHome={isOnboarding ? undefined : goToRoute} />
+        <AppHeader
+          screen={screen}
+          onHome={isOnboarding ? undefined : goToRoute}
+          onOpenGuide={() => setScreen("mission-guide")}
+          userName={userName}
+        />
 
         {screen === "welcome" && <WelcomeScreen onStart={() => setScreen("onboarding")} />}
 
