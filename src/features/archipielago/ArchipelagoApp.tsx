@@ -151,6 +151,13 @@ export function ArchipelagoApp() {
               setFirstMelodiesLessonId(lessonId);
               setScreen("first-melodies-lesson");
             }}
+            onOpenPulseIsland={() => setScreen("pulse-island")}
+          />
+        )}
+        {screen === "pulse-island" && (
+          <PulseIslandScreen
+            onOpenStartPort={() => setScreen("route")}
+            onOpenFirstMelodiesIsland={() => setScreen("first-melodies-island")}
           />
         )}
         {screen === "first-melodies-lesson" && (
