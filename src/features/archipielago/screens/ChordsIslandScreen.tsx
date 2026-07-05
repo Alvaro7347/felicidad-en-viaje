@@ -40,6 +40,7 @@ export function ChordsIslandScreen({
   onOpenJoyIsland,
   onOpenStrummingIsland,
   onOpenSongsIsland,
+  onOpenLesson,
 }: {
   onOpenStartPort: () => void;
   onOpenFirstMelodiesIsland: () => void;
@@ -49,8 +50,9 @@ export function ChordsIslandScreen({
   onOpenJoyIsland: () => void;
   onOpenStrummingIsland: () => void;
   onOpenSongsIsland: () => void;
+  onOpenLesson: (lessonId: string) => void;
 }) {
-  const [modal, setModal] = useState<null | { kind: 'first' } | { kind: 'locked' }>(null);
+  const [modal, setModal] = useState<null | { kind: 'locked'; lessonId: string }>(null);
   const [hoveredNode, setHoveredNode] = useState<string | null>(null);
   const [pressedNode, setPressedNode] = useState<string | null>(null);
   const [pressedIsland, setPressedIsland] = useState<string | null>(null);
