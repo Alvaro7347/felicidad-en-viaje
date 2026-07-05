@@ -18,16 +18,18 @@ const SONGS_NODES: RouteNode[] = [
   { id: 'songs11', title: 'Toca Estrellitas y Duendes',                      subtitle: 'Cierra esta isla con una canción cálida de Juan Luis Guerra.',   icon: '🏆', status: 'locked',  type: 'Cierre de isla', time: '6 min' },
 ];
 
-const TERRITORIES = [
-  { id: 'puerto-inicio',     title: 'Puerto de Inicio',           state: 'done' as const },
-  { id: 'primeras-melodias', title: 'Isla de Primeras Melodías',  state: 'done' as const },
-  { id: 'pulso',             title: 'Isla del Pulso',             state: 'done' as const },
-  { id: 'ritmo',             title: 'Isla del Ritmo',             state: 'done' as const },
-  { id: 'musical',           title: 'Isla Musical',               state: 'done' as const },
-  { id: 'alegria',           title: 'Isla de la Alegría',         state: 'done' as const },
-  { id: 'acordes',           title: 'Isla de los Acordes',        state: 'done' as const },
-  { id: 'rasgueo',           title: 'Isla del Rasgueo',           state: 'done' as const },
-  { id: 'canciones',         title: 'Isla de las Canciones',      state: 'active' as const, progress: 0 },
+type TerritoryState = 'done' | 'active' | 'prototype';
+interface Territory { id: string; title: string; state: TerritoryState; progress?: number }
+const TERRITORIES: Territory[] = [
+  { id: 'puerto-inicio',     title: 'Puerto de Inicio',           state: 'done' },
+  { id: 'primeras-melodias', title: 'Isla de Primeras Melodías',  state: 'done' },
+  { id: 'pulso',             title: 'Isla del Pulso',             state: 'done' },
+  { id: 'ritmo',             title: 'Isla del Ritmo',             state: 'done' },
+  { id: 'musical',           title: 'Isla Musical',               state: 'done' },
+  { id: 'alegria',           title: 'Isla de la Alegría',         state: 'done' },
+  { id: 'acordes',           title: 'Isla de los Acordes',        state: 'done' },
+  { id: 'rasgueo',           title: 'Isla del Rasgueo',           state: 'done' },
+  { id: 'canciones',         title: 'Isla de las Canciones',      state: 'active', progress: 0 },
 ];
 
 export function SongsIslandScreen({
