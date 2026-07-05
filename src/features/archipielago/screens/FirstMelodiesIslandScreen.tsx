@@ -15,9 +15,7 @@ const MELODIES_NODES: RouteNode[] = [
   { id: 'm7', title: 'Karaoke Stay With Me', subtitle: 'Practica cambios de acordes con guía temporal.', icon: '🎤', status: 'locked', type: 'Karaoke', time: '6 min' },
   { id: 'm8', title: 'Comparte tu primer logro', subtitle: 'Podrás subir tu video de forma opcional para recibir feedback.', icon: '📹', status: 'locked', type: 'Comunidad', time: '5 min' },
   { id: 'm9', title: 'Dedos despiertos', subtitle: 'Entrena coordinación y digitación desde cero.', icon: '🤲', status: 'locked', type: 'Práctica', time: '4 min' },
-  { id: 'm10', title: 'Lo que ya conquistaste', subtitle: 'Revisa acordes, conceptos y logros aprendidos.', icon: '🏆', status: 'locked', type: 'Resumen', time: '3 min' },
-  { id: 'm11', title: 'Tu mapa de Primeras Melodías', subtitle: 'Visualiza el recorrido de esta isla.', icon: '🧭', status: 'locked', type: 'Mapa', time: '3 min' },
-  { id: 'm12', title: '¿Cómo viviste esta isla?', subtitle: 'Cierra con una medición breve de emoción y experiencia.', icon: '💬', status: 'locked', type: 'Encuesta', time: '3 min' },
+  { id: 'm10', title: 'Lo que ya conquistaste', subtitle: 'Resumen, medición breve y premio de cierre.', icon: '🏆', status: 'locked', type: 'Resumen', time: '3 min' },
 ];
 
 // Territorios visibles en el carrusel — la Isla de Primeras Melodías es la activa aquí.
