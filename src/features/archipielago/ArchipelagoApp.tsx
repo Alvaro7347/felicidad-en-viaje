@@ -35,6 +35,7 @@ const REVIEW_MISSION_BY_NODE: Record<string, Screen> = {
   n6: "mission-six",
   n7: "mission-seven",
   n8: "mission-eight",
+  n9: "mission-nine",
 };
 
 const SPLASH_FADE_MS = 1050;
