@@ -13,6 +13,7 @@ import { DiagnosisResultScreen } from "./screens/DiagnosisResultScreen";
 import { DiagnosisScreen } from "./screens/DiagnosisScreen";
 
 import { MissionEightScreen } from "./screens/MissionEightScreen";
+import { MissionNineScreen } from "./screens/MissionNineScreen";
 import { MissionFourScreen } from "./screens/MissionFourScreen";
 import { MissionGuideScreen } from "./screens/MissionGuideScreen";
 import { MissionScreen } from "./screens/MissionScreen";
