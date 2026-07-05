@@ -7,7 +7,7 @@ import { Btn } from "../components/Btn";
 import { Card } from "../components/Card";
 import { touchLastVisit } from "../data/musicalFuel";
 
-export function RouteScreen({ onStartMission, onReviewMission, userName }: { onStartMission: () => void; onReviewMission: (id: string) => void; userName: string }) {
+export function RouteScreen({ onStartMission, onReviewMission, onOpenFirstMelodiesIsland, userName }: { onStartMission: () => void; onReviewMission: (id: string) => void; onOpenFirstMelodiesIsland: () => void; userName: string }) {
   const firstName = (userName ?? '').trim().split(/\s+/)[0] ?? '';
   const routeTitle = firstName ? `${firstName}, esta es tu ruta` : 'Esta es tu ruta';
   // Mantenemos el registro de última visita para futuros usos del combustible musical
@@ -15,6 +15,7 @@ export function RouteScreen({ onStartMission, onReviewMission, userName }: { onS
   useEffect(() => { touchLastVisit(); }, []);
 
   const [exploringNode, setExploringNode] = useState<string | null>(null);
+  const [showLockedIsland, setShowLockedIsland] = useState(false);
   const [hoveredNode, setHoveredNode] = useState<string | null>(null);
   const [pressedNode, setPressedNode] = useState<string | null>(null);
   const [pressedIsland, setPressedIsland] = useState<string | null>(null);
@@ -128,6 +129,11 @@ export function RouteScreen({ onStartMission, onReviewMission, userName }: { onS
                     onTouchStart={() => setPressedIsland(isl.id)}
                     onTouchEnd={() => setPressedIsland(null)}
                     onTouchCancel={() => setPressedIsland(null)}
+                    onClick={() => {
+                      if (isl.id === 'puerto-inicio') return;
+                      if (isl.id === 'primeras-melodias') { onOpenFirstMelodiesIsland(); return; }
+                      setShowLockedIsland(true);
+                    }}
                     style={{
                     background: islBg,
                     border: islBorder,
@@ -167,8 +173,8 @@ export function RouteScreen({ onStartMission, onReviewMission, userName }: { onS
                           {isl.title}
                         </div>
                         {!isActive && (
-                          <div style={{ fontSize: 9, color: isFocused ? 'rgba(255,255,255,0.45)' : 'rgba(255,255,255,0.25)', marginTop: 2, letterSpacing: '0.02em' }}>
-                            próximamente
+                          <div style={{ fontSize: 9, color: isl.id === 'primeras-melodias' ? 'rgba(46,230,174,0.85)' : (isFocused ? 'rgba(255,255,255,0.45)' : 'rgba(255,255,255,0.25)'), marginTop: 2, letterSpacing: '0.02em' }}>
+                            {isl.id === 'primeras-melodias' ? 'disponible' : 'próximamente'}
                           </div>
                         )}
                       </div>
@@ -236,6 +242,23 @@ export function RouteScreen({ onStartMission, onReviewMission, userName }: { onS
                 Volver a la ruta
               </Btn>
             </div>
+          </Card>
+        </div>
+      )}
+
+      {showLockedIsland && (
+        <div style={{
+          position: 'fixed', inset: 0, background: 'rgba(60,60,59,0.45)', zIndex: 60,
+          display: 'flex', alignItems: 'center', justifyContent: 'center', padding: 16,
+        }}>
+          <Card style={{ width: '100%', maxWidth: 420, border: `1.5px solid ${B.grayBorder}` }}>
+            <div style={{ fontSize: 18, fontFamily: 'Space Grotesk, sans-serif', fontWeight: 800, color: B.dark, marginBottom: 8 }}>
+              🔒 Isla aún bloqueada
+            </div>
+            <div style={{ fontSize: 13.5, lineHeight: 1.6, color: B.grayText, marginBottom: 14 }}>
+              Para llegar aquí, primero necesitas completar las unidades anteriores. El viaje avanza una isla a la vez.
+            </div>
+            <Btn onClick={() => setShowLockedIsland(false)} fullWidth>Entendido</Btn>
           </Card>
         </div>
       )}
