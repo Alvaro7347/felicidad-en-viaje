@@ -64,6 +64,7 @@ export function ArchipelagoApp() {
     if (typeof window === "undefined") return "Navegante";
     return window.localStorage.getItem("archipielago_user_name") || "Navegante";
   });
+  const [firstMelodiesLessonId, setFirstMelodiesLessonId] = useState<string>("m1");
   
 
   const goToRoute = () => setScreen("route");
