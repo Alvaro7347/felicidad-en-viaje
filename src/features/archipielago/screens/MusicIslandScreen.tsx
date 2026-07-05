@@ -34,13 +34,15 @@ export function MusicIslandScreen({
   onOpenFirstMelodiesIsland,
   onOpenPulseIsland,
   onOpenRhythmIsland,
+  onOpenLesson,
 }: {
   onOpenStartPort: () => void;
   onOpenFirstMelodiesIsland: () => void;
   onOpenPulseIsland: () => void;
   onOpenRhythmIsland: () => void;
+  onOpenLesson: (lessonId: string) => void;
 }) {
-  const [modal, setModal] = useState<null | { kind: 'coming-soon' } | { kind: 'locked-node' }>(null);
+  const [modal, setModal] = useState<null | { kind: 'locked-node'; nodeId: string }>(null);
   const [hoveredNode, setHoveredNode] = useState<string | null>(null);
   const [pressedNode, setPressedNode] = useState<string | null>(null);
   const [pressedIsland, setPressedIsland] = useState<string | null>(null);
