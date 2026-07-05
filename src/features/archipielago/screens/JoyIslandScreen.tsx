@@ -146,6 +146,7 @@ export function JoyIslandScreen({
           {TERRITORIES.map((t, i) => {
             const isActive = t.state === 'active';
             const isDone = t.state === 'done';
+            const isPrototype = t.state === 'prototype';
             const isFocused = focusedStageId === t.id;
             const isPress = pressedIsland === t.id;
             const focusScale = isFocused ? 1 : 0.96;
@@ -154,12 +155,12 @@ export function JoyIslandScreen({
             const opacity = isFocused ? (isActive ? 1 : 0.85) : (isActive ? 0.78 : 0.55);
             const border = isActive
               ? '1px solid rgba(46,230,174,0.6)'
-              : isDone
+              : isDone || isPrototype
               ? '1px solid rgba(46,230,174,0.35)'
               : '1px solid rgba(255,255,255,0.18)';
             const bg = isActive
               ? 'rgba(46,230,174,0.14)'
-              : isDone
+              : isDone || isPrototype
               ? 'rgba(46,230,174,0.05)'
               : 'rgba(255,255,255,0.02)';
 
