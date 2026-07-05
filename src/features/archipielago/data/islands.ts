@@ -10,6 +10,7 @@ export const START_PORT_NODES: RouteNode[] = [
   { id: 'n7', title: 'Toma tu ukelele sin tensión', subtitle: 'Postura, agarre y respiración', icon: '🎸', status: 'locked', type: 'Microclase', time: '4 min' },
   // Nota: "Sello desbloqueado / Guardián del Silencio" queda pendiente de reubicación futura.
   { id: 'n8', title: 'Afina tu primer sonido', subtitle: 'Aprende a usar el afinador', icon: '🎵', status: 'locked', type: 'Práctica', time: '5 min' },
+  { id: 'n9', title: 'Listo para zarpar', subtitle: 'Cierra el Puerto de Inicio y recibe tu insignia.', icon: '⛵', status: 'locked', type: 'Cierre', time: '3 min' },
 ];
 
 export const ROUTE_STAGES = [

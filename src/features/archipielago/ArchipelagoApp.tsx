@@ -13,6 +13,7 @@ import { DiagnosisResultScreen } from "./screens/DiagnosisResultScreen";
 import { DiagnosisScreen } from "./screens/DiagnosisScreen";
 
 import { MissionEightScreen } from "./screens/MissionEightScreen";
+import { MissionNineScreen } from "./screens/MissionNineScreen";
 import { MissionFourScreen } from "./screens/MissionFourScreen";
 import { MissionGuideScreen } from "./screens/MissionGuideScreen";
 import { MissionScreen } from "./screens/MissionScreen";
@@ -34,6 +35,7 @@ const REVIEW_MISSION_BY_NODE: Record<string, Screen> = {
   n6: "mission-six",
   n7: "mission-seven",
   n8: "mission-eight",
+  n9: "mission-nine",
 };
 
 const SPLASH_FADE_MS = 1050;
@@ -135,6 +137,7 @@ export function ArchipelagoApp() {
         {screen === "mission-six" && <MissionSixScreen onBack={() => setScreen("route")} />}
         {screen === "mission-seven" && <MissionSevenScreen onBack={() => setScreen("route")} />}
         {screen === "mission-eight" && <MissionEightScreen onBack={() => setScreen("route")} />}
+        {screen === "mission-nine" && <MissionNineScreen onBack={() => setScreen("route")} />}
         {screen === "mission-guide" && <MissionGuideScreen userName={userName} onBack={() => setScreen("route")} />}
 
         {screen === "celebration" && <CelebrationScreen onHome={goToRoute} />}
