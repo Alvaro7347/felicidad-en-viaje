@@ -59,8 +59,6 @@ function UserMenu({
     return () => document.removeEventListener("keydown", onKey);
   }, [infoModal]);
 
-  const initial = userName?.trim()?.[0]?.toUpperCase();
-
   const items: Array<{ key: string; label: string; icon: string; onClick: () => void; disabled?: boolean }> = [
     { key: "trip", label: "Mi viaje", icon: "👤", onClick: () => { setOpen(false); onHome?.(); }, disabled: !onHome },
     { key: "guide", label: "Tu guía", icon: "📖", onClick: () => { setOpen(false); onOpenGuide?.(); }, disabled: !onOpenGuide },
@@ -73,7 +71,7 @@ function UserMenu({
     <div ref={wrapRef} style={{ position: "relative", flexShrink: 0 }}>
       <button
         onClick={() => setOpen(v => !v)}
-        aria-label="Menú de usuario"
+        aria-label="Abrir menú"
         aria-haspopup="menu"
         aria-expanded={open}
         style={{
@@ -83,9 +81,6 @@ function UserMenu({
           border: `1px solid rgba(46,230,174,0.35)`,
           background: "#F5FBF8",
           color: B.greenDark,
-          fontFamily: "Space Grotesk, sans-serif",
-          fontWeight: 800,
-          fontSize: 15,
           display: "flex",
           alignItems: "center",
           justifyContent: "center",
@@ -93,12 +88,11 @@ function UserMenu({
           padding: 0,
         }}
       >
-          {initial ?? (
-            <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round" aria-hidden="true">
-              <circle cx="12" cy="8" r="4" />
-              <path d="M4 21c1.5-4 5-6 8-6s6.5 2 8 6" />
-            </svg>
-          )}
+        <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round" aria-hidden="true">
+          <line x1="3" y1="6" x2="21" y2="6" />
+          <line x1="3" y1="12" x2="21" y2="12" />
+          <line x1="3" y1="18" x2="21" y2="18" />
+        </svg>
       </button>
 
       {open && (
