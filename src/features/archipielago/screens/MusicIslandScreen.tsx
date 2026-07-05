@@ -102,6 +102,7 @@ export function MusicIslandScreen({
     if (id === 'primeras-melodias') { onOpenFirstMelodiesIsland(); return; }
     if (id === 'pulso') { onOpenPulseIsland(); return; }
     if (id === 'ritmo') { onOpenRhythmIsland(); return; }
+    if (id === 'alegria') { onOpenJoyIsland(); return; }
     if (id === 'musical') {
       window.scrollTo({ top: 0, behavior: 'smooth' });
       return;
