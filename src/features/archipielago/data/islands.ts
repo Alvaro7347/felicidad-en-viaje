@@ -19,4 +19,5 @@ export const ROUTE_STAGES = [
   { id: 'pulso', title: 'Isla del Pulso', status: 'locked' as const, progress: 0, completionText: 'completada' },
   { id: 'ritmo', title: 'Isla del Ritmo', status: 'locked' as const, progress: 0, completionText: 'completada' },
   { id: 'musical', title: 'Isla Musical', status: 'locked' as const, progress: 0, completionText: 'completada' },
+  { id: 'alegria', title: 'Isla de la Alegría', status: 'locked' as const, progress: 0, completionText: 'completada' },
 ];
