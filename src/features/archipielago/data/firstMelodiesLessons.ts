@@ -100,8 +100,7 @@ export const FIRST_MELODIES_LESSONS: Lesson[] = [
     microVictory: 'Ya puedes volver a tus mapas cuando lo necesites.',
     antiFrustrationCopy: 'Memorizar toma tiempo; los mapas están para acompañarte.',
     pdfAssets: [
-      { label: 'Acorde LAm', filename: 'acorde-lam.pdf' },
-      { label: 'Acorde FA', filename: 'acorde-fa.pdf' },
+      { label: 'Acordes LAm y FA', filename: 'acordes-lam-fa.png', imageUrl: acordesLamFaImg },
     ],
   },
   {
