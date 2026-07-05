@@ -176,9 +176,9 @@ export function FirstMelodiesIslandScreen({ onBack, onOpenLesson, onOpenPulseIsl
                         </div>
                         <div style={{
                           fontSize: 9, marginTop: 2, letterSpacing: '0.02em',
-                          color: isActive ? 'rgba(46,230,174,0.85)' : isDone ? 'rgba(46,230,174,0.75)' : 'rgba(255,255,255,0.35)',
+                          color: isActive ? 'rgba(46,230,174,0.85)' : isDone ? 'rgba(46,230,174,0.75)' : isPrototype ? 'rgba(46,230,174,0.7)' : 'rgba(255,255,255,0.35)',
                         }}>
-                          {isActive ? 'aquí estás' : isDone ? 'completado' : 'próximamente'}
+                          {isActive ? 'aquí estás' : isDone ? 'completado' : isPrototype ? 'disponible prototipo' : 'próximamente'}
                         </div>
                       </div>
                     </div>
