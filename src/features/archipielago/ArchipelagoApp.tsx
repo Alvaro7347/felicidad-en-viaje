@@ -15,6 +15,7 @@ import { DiagnosisScreen } from "./screens/DiagnosisScreen";
 import { MissionEightScreen } from "./screens/MissionEightScreen";
 import { FirstMelodiesIslandScreen } from "./screens/FirstMelodiesIslandScreen";
 import { FirstMelodiesLessonScreen } from "./screens/FirstMelodiesLessonScreen";
+import { PulseIslandScreen } from "./screens/PulseIslandScreen";
 import { MissionNineScreen } from "./screens/MissionNineScreen";
 import { MissionFourScreen } from "./screens/MissionFourScreen";
 import { MissionGuideScreen } from "./screens/MissionGuideScreen";
@@ -121,6 +122,7 @@ export function ArchipelagoApp() {
             onStartMission={() => setScreen("mission")}
             onReviewMission={(id) => setScreen(REVIEW_MISSION_BY_NODE[id] ?? "mission-two")}
             onOpenFirstMelodiesIsland={() => setScreen("first-melodies-island")}
+            onOpenPulseIsland={() => setScreen("pulse-island")}
           />
         )}
 
