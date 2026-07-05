@@ -5,12 +5,15 @@ import { ROUTE_STAGES } from "../data/islands";
 
 export function AppHeader({ screen, onHome }: { screen: Screen; onHome?: () => void }) {
   const isOnboarding = ONBOARDING_SCREENS.includes(screen);
-  if (screen === 'onboarding' || screen === 'welcome' || screen === 'diagnosis' || screen === 'diagnosis-result' || screen === 'first-melodies-island') return null;
+  if (screen === 'onboarding' || screen === 'welcome' || screen === 'diagnosis' || screen === 'diagnosis-result') return null;
 
-  const modernHeaderScreens: Screen[] = ['route', 'mission', 'mission-guide', 'mission-two', 'mission-three', 'mission-four', 'celebration'];
+  const modernHeaderScreens: Screen[] = ['route', 'mission', 'mission-guide', 'mission-two', 'mission-three', 'mission-four', 'celebration', 'first-melodies-island'];
   if (modernHeaderScreens.includes(screen)) {
+    const isFirstMelodies = screen === 'first-melodies-island';
     const active = ROUTE_STAGES.find(s => s.status === 'active') ?? ROUTE_STAGES[0];
-    const pct = active.progress;
+    const pct = isFirstMelodies ? 0 : active.progress;
+    const title = isFirstMelodies ? 'Isla de Primeras Melodías' : active.title;
+    const completionText = isFirstMelodies ? 'completado' : active.completionText;
     return (
       <header style={{
         background: '#FFFFFF',
@@ -55,7 +58,7 @@ export function AppHeader({ screen, onHome }: { screen: Screen; onHome?: () => v
             Tu viaje musical
           </div>
           <div style={{ fontSize: 11.5, color: B.grayText, marginTop: 2, lineHeight: 1.3 }}>
-            {active.title} · <span style={{ color: B.greenDark, fontWeight: 700 }}>{pct}% {active.completionText}</span>
+            {title} · <span style={{ color: B.greenDark, fontWeight: 700 }}>{pct}% {completionText}</span>
           </div>
           <div style={{ marginTop: 6, height: 3, background: '#EAF6F0', borderRadius: 999, overflow: 'hidden' }}>
             <div style={{ width: `${pct}%`, height: '100%', background: B.green, borderRadius: 999, transition: 'width 0.4s ease' }} />
