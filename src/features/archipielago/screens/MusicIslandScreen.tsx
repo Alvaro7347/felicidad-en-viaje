@@ -27,6 +27,7 @@ const TERRITORIES = [
   { id: 'pulso',             title: 'Isla del Pulso',             state: 'done' as const },
   { id: 'ritmo',             title: 'Isla del Ritmo',             state: 'done' as const },
   { id: 'musical',           title: 'Isla Musical',               state: 'active' as const, progress: 0 },
+  { id: 'alegria',           title: 'Isla de la Alegría',         state: 'prototype' as const },
 ];
 
 export function MusicIslandScreen({
@@ -34,12 +35,14 @@ export function MusicIslandScreen({
   onOpenFirstMelodiesIsland,
   onOpenPulseIsland,
   onOpenRhythmIsland,
+  onOpenJoyIsland,
   onOpenLesson,
 }: {
   onOpenStartPort: () => void;
   onOpenFirstMelodiesIsland: () => void;
   onOpenPulseIsland: () => void;
   onOpenRhythmIsland: () => void;
+  onOpenJoyIsland: () => void;
   onOpenLesson: (lessonId: string) => void;
 }) {
   const [modal, setModal] = useState<null | { kind: 'locked-node'; nodeId: string }>(null);
