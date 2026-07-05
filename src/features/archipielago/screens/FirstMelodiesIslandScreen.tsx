@@ -22,8 +22,8 @@ const MELODIES_NODES: RouteNode[] = [
 const TERRITORIES = [
   { id: 'puerto-inicio', title: 'Puerto de Inicio', state: 'done' as const },
   { id: 'primeras-melodias', title: 'Isla de Primeras Melodías', state: 'active' as const, progress: 0 },
-  { id: 'pulso', title: 'Isla del Pulso', state: 'locked' as const },
-  { id: 'ritmo', title: 'Isla del Ritmo', state: 'locked' as const },
+  { id: 'pulso', title: 'Isla del Pulso', state: 'done' as const },
+  { id: 'ritmo', title: 'Isla del Ritmo', state: 'done' as const },
 ];
 
 export function FirstMelodiesIslandScreen({ onBack, onOpenLesson, onOpenPulseIsland, onOpenRhythmIsland }: { onBack: () => void; onOpenLesson: (lessonId: string) => void; onOpenPulseIsland: () => void; onOpenRhythmIsland: () => void }) {
