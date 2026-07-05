@@ -135,55 +135,88 @@ function VideoBlock({ lesson }: { lesson: Lesson }) {
 // ─────────────────────────────────────────────────────────────
 function DiagramBlock({ lesson }: { lesson: Lesson }) {
   const assets = lesson.pdfAssets ?? [];
+  const [zoomed, setZoomed] = useState<string | null>(null);
   return (
-    <Card>
-      <div style={{ fontSize: 11, fontWeight: 800, color: B.greenDark, letterSpacing: '1.2px', textTransform: 'uppercase', marginBottom: 10 }}>
-        Diagrama · {lesson.estimatedTime}
-      </div>
-      <p style={{ margin: '0 0 12px', color: '#666', fontSize: 13, lineHeight: 1.6 }}>
-        Usa este mapa como referencia: mira la posición de cada dedo y compárala con tu ukelele.
-      </p>
-      <div style={{ display: 'grid', gap: 10 }}>
-        {assets.map((a) => (
-          <div
-            key={a.filename}
+    <>
+      <Card>
+        <div style={{ fontSize: 11, fontWeight: 800, color: B.greenDark, letterSpacing: '1.2px', textTransform: 'uppercase', marginBottom: 10 }}>
+          Diagrama · {lesson.estimatedTime}
+        </div>
+        <p style={{ margin: '0 0 12px', color: '#666', fontSize: 13, lineHeight: 1.6 }}>
+          Usa este mapa como referencia: mira la posición de cada dedo y compárala con tu ukelele. Toca la imagen para verla en grande.
+        </p>
+        <div style={{ display: 'grid', gap: 12 }}>
+          {assets.map((a) => (
+            <div
+              key={a.filename}
+              style={{
+                background: B.white, border: `1px solid ${B.grayBorder}`,
+                borderRadius: 14, padding: 10, display: 'flex', flexDirection: 'column', gap: 8,
+              }}
+            >
+              <div style={{ fontWeight: 800, fontSize: 13, color: B.dark }}>{a.label}</div>
+              {a.imageUrl ? (
+                <button
+                  type="button"
+                  onClick={() => a.imageUrl && setZoomed(a.imageUrl)}
+                  aria-label={`Ampliar diagrama: ${a.label}`}
+                  style={{
+                    border: 'none', padding: 0, background: 'transparent',
+                    cursor: 'zoom-in', borderRadius: 10, overflow: 'hidden',
+                  }}
+                >
+                  <img
+                    src={a.imageUrl}
+                    alt={`Diagrama del ${a.label}`}
+                    style={{ display: 'block', width: '100%', height: 'auto', borderRadius: 10 }}
+                  />
+                </button>
+              ) : (
+                <div style={{
+                  background: B.gray, border: `1px dashed ${B.grayBorder}`,
+                  borderRadius: 10, padding: '14px 12px', fontSize: 12, color: B.grayText,
+                }}>
+                  Diagrama del {a.label.toLowerCase()} pendiente de adjuntar.
+                </div>
+              )}
+            </div>
+          ))}
+        </div>
+      </Card>
+
+      {zoomed && (
+        <div
+          role="dialog"
+          aria-modal="true"
+          aria-label="Diagrama ampliado"
+          onClick={() => setZoomed(null)}
+          style={{
+            position: 'fixed', inset: 0, background: 'rgba(0,0,0,0.85)',
+            display: 'flex', alignItems: 'center', justifyContent: 'center',
+            padding: 16, zIndex: 1000,
+          }}
+        >
+          <img
+            src={zoomed}
+            alt="Diagrama ampliado"
+            onClick={(e) => e.stopPropagation()}
+            style={{ maxWidth: '100%', maxHeight: '100%', borderRadius: 12, boxShadow: '0 20px 60px rgba(0,0,0,0.5)' }}
+          />
+          <button
+            type="button"
+            onClick={() => setZoomed(null)}
+            aria-label="Cerrar"
             style={{
-              background: B.gray, border: `1px dashed ${B.grayBorder}`,
-              borderRadius: 12, padding: '12px 14px',
-              display: 'flex', flexDirection: 'column', gap: 8,
+              position: 'absolute', top: 14, right: 14,
+              background: B.white, border: 'none', borderRadius: 999,
+              padding: '8px 14px', fontWeight: 800, fontSize: 12, color: B.dark, cursor: 'pointer',
             }}
           >
-            <div style={{ display: 'flex', alignItems: 'center', gap: 10 }}>
-              <div style={{
-                width: 34, height: 34, borderRadius: 10, background: B.white,
-                border: `1px solid ${B.grayBorder}`, display: 'flex',
-                alignItems: 'center', justifyContent: 'center', fontSize: 16,
-              }}>📄</div>
-              <div style={{ flex: 1, minWidth: 0 }}>
-                <div style={{ fontWeight: 800, fontSize: 13, color: B.dark }}>{a.label}</div>
-                <div style={{ fontSize: 11, color: B.grayText, marginTop: 2 }}>
-                  {a.url ? `${a.filename}` : `PDF del ${a.label.toLowerCase()} pendiente de adjuntar`}
-                </div>
-              </div>
-            </div>
-            {a.url ? (
-              <a
-                href={a.url}
-                target="_blank"
-                rel="noreferrer"
-                style={{
-                  alignSelf: 'flex-start', textDecoration: 'none',
-                  background: B.dark, color: B.white, fontWeight: 800, fontSize: 12,
-                  padding: '8px 14px', borderRadius: 999,
-                }}
-              >
-                Abrir diagrama
-              </a>
-            ) : null}
-          </div>
-        ))}
-      </div>
-    </Card>
+            Cerrar
+          </button>
+        </div>
+      )}
+    </>
   );
 }
 
