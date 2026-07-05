@@ -94,7 +94,7 @@ export function PulseIslandScreen({
       window.scrollTo({ top: 0, behavior: 'smooth' });
       return;
     }
-    setModal('locked-island');
+    setModal({ kind: 'locked-island' });
   };
 
   return (
@@ -257,8 +257,8 @@ export function PulseIslandScreen({
 
                 <div
                   onClick={() => {
-                    if (isCurrent) setModal('coming-soon');
-                    else setModal('locked-node');
+                    if (isCurrent) onOpenLesson(node.id);
+                    else setModal({ kind: 'locked-node', nodeId: node.id });
                   }}
                   onMouseEnter={() => setHoveredNode(node.id)}
                   onMouseLeave={() => { setHoveredNode(null); setPressedNode(null); }}
@@ -319,18 +319,30 @@ export function PulseIslandScreen({
           }}
         >
           <div onClick={(e) => e.stopPropagation()} style={{ width: '100%', maxWidth: 420 }}>
-            <Card style={{ border: `1.5px solid ${modal === 'coming-soon' ? B.pink : B.grayBorder}` }}>
+            <Card style={{ border: `1.5px solid ${modal.kind === 'locked-node' ? B.pink : B.grayBorder}` }}>
               <div style={{ fontSize: 18, fontFamily: 'Space Grotesk, sans-serif', fontWeight: 800, color: B.dark, marginBottom: 8 }}>
-                {modal === 'locked-island' && '🔒 Isla aún bloqueada'}
-                {modal === 'locked-node' && '🔒 Unidad bloqueada'}
-                {modal === 'coming-soon' && '💓 Lección en preparación'}
+                {modal.kind === 'locked-island' && '🔒 Isla aún bloqueada'}
+                {modal.kind === 'locked-node' && '🔒 Unidad bloqueada'}
               </div>
               <div style={{ fontSize: 13.5, lineHeight: 1.6, color: B.grayText, marginBottom: 14 }}>
-                {modal === 'locked-island' && 'Para llegar aquí, primero necesitas completar las unidades anteriores. El viaje avanza una isla a la vez.'}
-                {modal === 'locked-node' && 'Esta unidad se desbloqueará cuando completes los pasos anteriores. Por ahora estamos preparando la ruta de esta isla.'}
-                {modal === 'coming-soon' && 'Esta será la primera lección de la Isla del Pulso. Pronto conectaremos esta unidad al flujo del curso.'}
+                {modal.kind === 'locked-island' && 'Para llegar aquí, primero necesitas completar las unidades anteriores. El viaje avanza una isla a la vez.'}
+                {modal.kind === 'locked-node' && 'Esta unidad estará bloqueada cuando activemos el flujo real. Por ahora puedes explorarla para revisar el prototipo completo.'}
               </div>
-              <Btn onClick={() => setModal(null)} fullWidth>Entendido</Btn>
+              <div style={{ display: 'flex', flexDirection: 'column', gap: 8 }}>
+                {modal.kind === 'locked-node' && (
+                  <Btn
+                    onClick={() => {
+                      const nodeId = modal.nodeId;
+                      setModal(null);
+                      onOpenLesson(nodeId);
+                    }}
+                    fullWidth
+                  >
+                    Explorar lección para revisar prototipo
+                  </Btn>
+                )}
+                <Btn onClick={() => setModal(null)} fullWidth variant="ghost">Entendido</Btn>
+              </div>
             </Card>
           </div>
         </div>
