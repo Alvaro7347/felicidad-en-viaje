@@ -97,6 +97,9 @@ export function FirstMelodiesIslandScreen({ onBack, onOpenLesson, onOpenPulseIsl
     if (id === 'ritmo') { onOpenRhythmIsland(); return; }
     if (id === 'musical') { onOpenMusicIsland(); return; }
     if (id === 'alegria') { onOpenJoyIsland(); return; }
+    if (id === 'acordes') { onOpenChordsIsland(); return; }
+    if (id === 'rasgueo') { onOpenStrummingIsland(); return; }
+    if (id === 'canciones') { onOpenSongsIsland(); return; }
   };
 
   return (
