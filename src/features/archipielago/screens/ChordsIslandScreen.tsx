@@ -40,6 +40,7 @@ export function ChordsIslandScreen({
   onOpenJoyIsland,
   onOpenStrummingIsland,
   onOpenSongsIsland,
+  onOpenLesson,
 }: {
   onOpenStartPort: () => void;
   onOpenFirstMelodiesIsland: () => void;
@@ -49,8 +50,9 @@ export function ChordsIslandScreen({
   onOpenJoyIsland: () => void;
   onOpenStrummingIsland: () => void;
   onOpenSongsIsland: () => void;
+  onOpenLesson: (lessonId: string) => void;
 }) {
-  const [modal, setModal] = useState<null | { kind: 'first' } | { kind: 'locked' }>(null);
+  const [modal, setModal] = useState<null | { kind: 'locked'; lessonId: string }>(null);
   const [hoveredNode, setHoveredNode] = useState<string | null>(null);
   const [pressedNode, setPressedNode] = useState<string | null>(null);
   const [pressedIsland, setPressedIsland] = useState<string | null>(null);
@@ -269,7 +271,10 @@ export function ChordsIslandScreen({
                 </div>
 
                 <div
-                  onClick={() => setModal({ kind: isCurrent ? 'first' : 'locked' })}
+                  onClick={() => {
+                    if (isCurrent) onOpenLesson(node.id);
+                    else setModal({ kind: 'locked', lessonId: node.id });
+                  }}
                   onMouseEnter={() => setHoveredNode(node.id)}
                   onMouseLeave={() => { setHoveredNode(null); setPressedNode(null); }}
                   onMouseDown={() => setPressedNode(node.id)}
@@ -328,14 +333,17 @@ export function ChordsIslandScreen({
           <div onClick={(e) => e.stopPropagation()} style={{ width: '100%', maxWidth: 420 }}>
             <Card style={{ border: `1.5px solid ${B.grayBorder}` }}>
               <div style={{ fontSize: 18, fontFamily: 'Space Grotesk, sans-serif', fontWeight: 800, color: B.dark, marginBottom: 8 }}>
-                {modal.kind === 'first' ? '🚧 Lección en preparación' : '🔒 Unidad bloqueada'}
+                🔒 Unidad bloqueada
               </div>
               <div style={{ fontSize: 13.5, lineHeight: 1.6, color: B.grayText, marginBottom: 14 }}>
-                {modal.kind === 'first'
-                  ? 'Esta será la primera lección de la Isla de los Acordes. Pronto conectaremos esta unidad al flujo del curso.'
-                  : 'Esta unidad se desbloqueará cuando completes los pasos anteriores. Por ahora estamos preparando la ruta de esta isla.'}
+                Esta unidad estará bloqueada cuando activemos el flujo real. Por ahora puedes explorarla para revisar el prototipo completo.
               </div>
-              <Btn onClick={() => setModal(null)} fullWidth>Entendido</Btn>
+              <div style={{ display: 'flex', flexDirection: 'column', gap: 8 }}>
+                <Btn onClick={() => { const id = modal.lessonId; setModal(null); onOpenLesson(id); }} fullWidth>
+                  Explorar lección para revisar prototipo
+                </Btn>
+                <Btn onClick={() => setModal(null)} fullWidth variant="ghost">Entendido</Btn>
+              </div>
             </Card>
           </div>
         </div>

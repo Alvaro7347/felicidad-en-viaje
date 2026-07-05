@@ -2,7 +2,7 @@ import type { Screen } from "../types";
 
 export const ONBOARDING_SCREENS: Screen[] = ['welcome', 'onboarding', 'diagnosis', 'diagnosis-result'];
 
-export type LessonGroup = 'first-melodies' | 'pulse' | 'rhythm' | 'music' | 'joy';
+export type LessonGroup = 'first-melodies' | 'pulse' | 'rhythm' | 'music' | 'joy' | 'chords' | 'strumming' | 'songs';
 
 export interface DevScreenEntry {
   label: string;
@@ -91,5 +91,42 @@ export const DEV_SCREENS: DevScreenEntry[] = [
   { label: 'JOY10 · Leer tablaturas',       screen: 'joy-lesson', lessonId: 'joy10', lessonGroup: 'joy' },
   { label: 'JOY11 · Canciones tablatura',   screen: 'joy-lesson', lessonId: 'joy11', lessonGroup: 'joy' },
   { label: 'JOY12 · Cierre Alegría',        screen: 'joy-lesson', lessonId: 'joy12', lessonGroup: 'joy' },
+  { label: 'Isla · Acordes',                screen: 'chords-island' },
+  { label: 'CH1 · Qué es un acorde',        screen: 'chords-lesson', lessonId: 'chords1',  lessonGroup: 'chords' },
+  { label: 'CH2 · Acordes Mayores',         screen: 'chords-lesson', lessonId: 'chords2',  lessonGroup: 'chords' },
+  { label: 'CH3 · Diagramas Mayores',       screen: 'chords-lesson', lessonId: 'chords3',  lessonGroup: 'chords' },
+  { label: 'CH4 · Cejillo',                 screen: 'chords-lesson', lessonId: 'chords4',  lessonGroup: 'chords' },
+  { label: 'CH5 · Sostenidos Mayores',      screen: 'chords-lesson', lessonId: 'chords5',  lessonGroup: 'chords' },
+  { label: 'CH6 · Diagramas Sostenidos',    screen: 'chords-lesson', lessonId: 'chords6',  lessonGroup: 'chords' },
+  { label: 'CH7 · Acordes Menores',         screen: 'chords-lesson', lessonId: 'chords7',  lessonGroup: 'chords' },
+  { label: 'CH8 · Diagramas Menores',       screen: 'chords-lesson', lessonId: 'chords8',  lessonGroup: 'chords' },
+  { label: 'CH9 · Séptima / Maj7',          screen: 'chords-lesson', lessonId: 'chords9',  lessonGroup: 'chords' },
+  { label: 'CH10 · Diagramas Séptima',      screen: 'chords-lesson', lessonId: 'chords10', lessonGroup: 'chords' },
+  { label: 'CH11 · Transportar acordes',    screen: 'chords-lesson', lessonId: 'chords11', lessonGroup: 'chords' },
+  { label: 'CH12 · Cierre Acordes',         screen: 'chords-lesson', lessonId: 'chords12', lessonGroup: 'chords' },
+  { label: 'Isla · Rasgueo',                screen: 'strumming-island' },
+  { label: 'STR1 · Apagado',                screen: 'strumming-lesson', lessonId: 'strumming1',  lessonGroup: 'strumming' },
+  { label: 'STR2 · Despacito',              screen: 'strumming-lesson', lessonId: 'strumming2',  lessonGroup: 'strumming' },
+  { label: 'STR3 · Corazón',                screen: 'strumming-lesson', lessonId: 'strumming3',  lessonGroup: 'strumming' },
+  { label: 'STR4 · Balada 1',               screen: 'strumming-lesson', lessonId: 'strumming4',  lessonGroup: 'strumming' },
+  { label: 'STR5 · Creep',                  screen: 'strumming-lesson', lessonId: 'strumming5',  lessonGroup: 'strumming' },
+  { label: 'STR6 · One',                    screen: 'strumming-lesson', lessonId: 'strumming6',  lessonGroup: 'strumming' },
+  { label: 'STR7 · The Reason',             screen: 'strumming-lesson', lessonId: 'strumming7',  lessonGroup: 'strumming' },
+  { label: 'STR8 · Balada 2',               screen: 'strumming-lesson', lessonId: 'strumming8',  lessonGroup: 'strumming' },
+  { label: 'STR9 · Miénteme una vez',       screen: 'strumming-lesson', lessonId: 'strumming9',  lessonGroup: 'strumming' },
+  { label: 'STR10 · A Thousand Years',      screen: 'strumming-lesson', lessonId: 'strumming10', lessonGroup: 'strumming' },
+  { label: 'STR11 · Mi eterno amor secreto', screen: 'strumming-lesson', lessonId: 'strumming11', lessonGroup: 'strumming' },
+  { label: 'Isla · Canciones',              screen: 'songs-island' },
+  { label: 'SONG1 · Shivers',               screen: 'songs-lesson', lessonId: 'songs1',  lessonGroup: 'songs' },
+  { label: 'SONG2 · Arrancacorazones',      screen: 'songs-lesson', lessonId: 'songs2',  lessonGroup: 'songs' },
+  { label: 'SONG3 · Uso del cejillo',       screen: 'songs-lesson', lessonId: 'songs3',  lessonGroup: 'songs' },
+  { label: 'SONG4 · Fuentes de Ortiz',      screen: 'songs-lesson', lessonId: 'songs4',  lessonGroup: 'songs' },
+  { label: 'SONG5 · Tu cárcel',             screen: 'songs-lesson', lessonId: 'songs5',  lessonGroup: 'songs' },
+  { label: 'SONG6 · Antología',             screen: 'songs-lesson', lessonId: 'songs6',  lessonGroup: 'songs' },
+  { label: 'SONG7 · Quiero ser',            screen: 'songs-lesson', lessonId: 'songs7',  lessonGroup: 'songs' },
+  { label: 'SONG8 · Andar conmigo',         screen: 'songs-lesson', lessonId: 'songs8',  lessonGroup: 'songs' },
+  { label: 'SONG9 · Miel',                  screen: 'songs-lesson', lessonId: 'songs9',  lessonGroup: 'songs' },
+  { label: 'SONG10 · Eso que tú me das',    screen: 'songs-lesson', lessonId: 'songs10', lessonGroup: 'songs' },
+  { label: 'SONG11 · Estrellitas y Duendes', screen: 'songs-lesson', lessonId: 'songs11', lessonGroup: 'songs' },
   { label: '⑦ Celebración',               screen: 'celebration' },
 ];
