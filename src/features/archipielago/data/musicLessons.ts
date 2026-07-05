@@ -130,7 +130,7 @@ export const MUSIC_LESSONS: MusicLesson[] = [
     microVictory: 'Ya tienes tu mapa visual del RE.',
     antiFrustrationCopy: 'Cuando la mano se confunda, vuelve al mapa y respira.',
     diagramAssets: [
-      { label: 'RE' },
+      { label: 'RE', src: chordRe },
     ],
     diagramPlaceholder: 'Imagen del acorde RE pendiente de adjuntar',
   },
