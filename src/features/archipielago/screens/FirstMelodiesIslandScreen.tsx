@@ -124,6 +124,9 @@ export function FirstMelodiesIslandScreen({ onBack, onOpenLesson, onOpenPulseIsl
       window.scrollTo({ top: 0, behavior: 'smooth' });
       return;
     }
+    const islandId = STAGE_TO_ISLAND[id] as IslandId | undefined;
+    const state = islandId ? getIslandState(islandId) : 'locked';
+    if (state === 'locked') { setModal('locked-island'); return; }
     if (id === 'pulso') { onOpenPulseIsland(); return; }
     if (id === 'ritmo') { onOpenRhythmIsland(); return; }
     if (id === 'musical') { onOpenMusicIsland(); return; }
