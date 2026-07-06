@@ -3,12 +3,9 @@ import { supabase } from "@/integrations/supabase/client";
 import { B } from "../data/brand";
 import { Btn } from "../components/Btn";
 
-type Stage = "email" | "sent";
+type Stage = "email" | "code";
 
 const EMAIL_RE = /^[^\s@]+@[^\s@]+\.[^\s@]+$/;
-
-// No usar window.location.origin aquí: en preview puede redirigir a lovable.dev.
-const AUTH_REDIRECT_URL = "https://soundkeleles-archipielago-journey.lovable.app";
 
 const LOGO_SRC = "/isologo-soundkeleles.jpg";
 
@@ -28,11 +25,14 @@ async function logEvent(name: string, data?: Record<string, unknown>) {
 export function AuthScreen() {
   const [stage, setStage] = useState<Stage>("email");
   const [email, setEmail] = useState("");
+  const [code, setCode] = useState("");
   const [loading, setLoading] = useState(false);
   const [error, setError] = useState<string | null>(null);
+  const [info, setInfo] = useState<string | null>(null);
 
-  const sendLink = async (targetEmail?: string) => {
+  const sendCode = async (targetEmail?: string) => {
     setError(null);
+    setInfo(null);
     const clean = (targetEmail ?? email).trim().toLowerCase();
     if (!clean) {
       setError("Ingresa tu correo.");
@@ -43,27 +43,59 @@ export function AuthScreen() {
       return;
     }
     setLoading(true);
+    // signInWithOtp SIN emailRedirectTo → Supabase envía el código OTP en el correo.
     const { error: err } = await supabase.auth.signInWithOtp({
       email: clean,
       options: {
         shouldCreateUser: true,
-        emailRedirectTo: AUTH_REDIRECT_URL,
       },
     });
     setLoading(false);
     if (err) {
       const msg = err.message?.toLowerCase() ?? "";
       if (msg.includes("rate") || msg.includes("seconds")) {
-        setError("Espera un momento antes de pedir otro enlace.");
+        setError("Espera un momento antes de pedir otro código.");
       } else {
-        setError("No pudimos enviar el enlace. Intenta nuevamente.");
+        setError("No pudimos enviar el código. Intenta nuevamente.");
       }
-      logEvent("auth_magic_link_error", { message: err.message });
+      logEvent("auth_otp_send_error", { message: err.message });
       return;
     }
     setEmail(clean);
-    setStage("sent");
-    logEvent("auth_magic_link_requested", { email: clean });
+    setCode("");
+    setStage("code");
+    logEvent("auth_otp_requested", { email: clean });
+  };
+
+  const verifyCode = async () => {
+    setError(null);
+    setInfo(null);
+    const token = code.trim().replace(/\s+/g, "");
+    if (!/^\d{6}$/.test(token)) {
+      setError("Ingresa el código de 6 dígitos.");
+      return;
+    }
+    setLoading(true);
+    const { error: err } = await supabase.auth.verifyOtp({
+      email,
+      token,
+      type: "email",
+    });
+    setLoading(false);
+    if (err) {
+      const msg = err.message?.toLowerCase() ?? "";
+      if (msg.includes("expired")) {
+        setError("Código vencido. Pide uno nuevo.");
+      } else if (msg.includes("invalid") || msg.includes("token")) {
+        setError("Código incorrecto. Revisa tu correo.");
+      } else {
+        setError("No pudimos verificar el código. Intenta nuevamente.");
+      }
+      logEvent("auth_otp_verify_error", { message: err.message });
+      return;
+    }
+    logEvent("auth_otp_verified", { email });
+    // onAuthStateChange en el resto de la app tomará la sesión.
   };
 
   const labelStyle: React.CSSProperties = {
@@ -86,6 +118,24 @@ export function AuthScreen() {
     outline: "none",
     boxSizing: "border-box",
   };
+  const codeInputStyle: React.CSSProperties = {
+    ...inputStyle,
+    textAlign: "center",
+    fontSize: 24,
+    letterSpacing: 8,
+    fontFamily: "Space Grotesk, sans-serif",
+    fontWeight: 700,
+  };
+  const linkBtn: React.CSSProperties = {
+    background: "transparent",
+    border: "none",
+    color: B.pink,
+    fontFamily: "Quicksand, sans-serif",
+    fontWeight: 700,
+    fontSize: 14,
+    cursor: "pointer",
+    padding: "6px 10px",
+  };
 
   return (
     <div
@@ -99,7 +149,6 @@ export function AuthScreen() {
         overflow: "hidden",
       }}
     >
-      {/* decorative blobs */}
       <div
         aria-hidden
         style={{
@@ -179,12 +228,9 @@ export function AuthScreen() {
           >
             Tu viaje musical comienza aquí
           </div>
-          <div style={{ fontSize: 12, color: B.grayText, marginTop: 2 }}>
-            Toca la felicidad, paso a paso.
-          </div>
         </div>
 
-        {/* Login card */}
+        {/* Card */}
         <div
           style={{
             background: B.white,
@@ -196,7 +242,7 @@ export function AuthScreen() {
         >
           {stage === "email" ? (
             <>
-              <h1
+              <h2
                 style={{
                   fontFamily: "Space Grotesk, sans-serif",
                   fontWeight: 800,
@@ -206,9 +252,9 @@ export function AuthScreen() {
                 }}
               >
                 Ingresa al Archipiélago
-              </h1>
+              </h2>
               <p style={{ fontSize: 14, color: B.dark, marginTop: 8, lineHeight: 1.5 }}>
-                Escribe tu correo y te enviaremos un enlace mágico para entrar a tu viaje musical.
+                Escribe tu correo y te enviaremos un código de acceso.
               </p>
 
               <div style={{ marginTop: 18 }}>
@@ -233,8 +279,8 @@ export function AuthScreen() {
               )}
 
               <div style={{ marginTop: 18 }}>
-                <Btn variant="primary" fullWidth onClick={() => sendLink()} disabled={loading}>
-                  {loading ? "Enviando enlace..." : "Enviar enlace de acceso"}
+                <Btn variant="primary" fullWidth onClick={() => sendCode()} disabled={loading}>
+                  {loading ? "Enviando código..." : "Enviar código de acceso"}
                 </Btn>
               </div>
 
@@ -244,7 +290,7 @@ export function AuthScreen() {
             </>
           ) : (
             <>
-              <h1
+              <h2
                 style={{
                   fontFamily: "Space Grotesk, sans-serif",
                   fontWeight: 800,
@@ -254,42 +300,74 @@ export function AuthScreen() {
                 }}
               >
                 Revisa tu correo 💌
-              </h1>
+              </h2>
               <p style={{ fontSize: 14, color: B.dark, marginTop: 8, lineHeight: 1.5 }}>
-                Te enviamos un enlace mágico a <strong>{email}</strong>. Ábrelo y toca el
-                botón para entrar al Archipiélago.
+                Te enviamos un código de acceso a <strong>{email}</strong>.
               </p>
-              <p style={{ fontSize: 13, color: B.grayText, marginTop: 10, lineHeight: 1.5 }}>
-                Si no lo ves, revisa spam o promociones. Si sigue sin llegar, espera un
-                minuto e intenta enviarlo nuevamente.
-              </p>
+
+              <div style={{ marginTop: 18 }}>
+                <label htmlFor="code" style={labelStyle}>
+                  Código de acceso
+                </label>
+                <input
+                  id="code"
+                  type="text"
+                  autoComplete="one-time-code"
+                  inputMode="numeric"
+                  pattern="[0-9]*"
+                  maxLength={6}
+                  value={code}
+                  onChange={(e) => setCode(e.target.value.replace(/\D/g, "").slice(0, 6))}
+                  placeholder="123456"
+                  style={codeInputStyle}
+                  disabled={loading}
+                />
+              </div>
 
               {error && (
                 <div style={{ color: B.pink, fontSize: 13, marginTop: 10 }}>{error}</div>
               )}
+              {info && (
+                <div style={{ color: B.greenDark, fontSize: 13, marginTop: 10 }}>{info}</div>
+              )}
 
               <div style={{ marginTop: 18 }}>
-                <Btn variant="primary" fullWidth onClick={() => sendLink(email)} disabled={loading}>
-                  {loading ? "Enviando..." : "Reenviar enlace"}
+                <Btn variant="primary" fullWidth onClick={verifyCode} disabled={loading}>
+                  {loading ? "Verificando..." : "Entrar al Archipiélago"}
                 </Btn>
               </div>
 
-              <div style={{ marginTop: 12, textAlign: "center" }}>
+              <div
+                style={{
+                  marginTop: 12,
+                  display: "flex",
+                  justifyContent: "space-between",
+                  alignItems: "center",
+                  gap: 8,
+                }}
+              >
+                <button
+                  type="button"
+                  onClick={async () => {
+                    if (loading) return;
+                    await sendCode(email);
+                    setInfo("Te enviamos un nuevo código.");
+                  }}
+                  style={linkBtn}
+                  disabled={loading}
+                >
+                  Reenviar código
+                </button>
                 <button
                   type="button"
                   onClick={() => {
+                    if (loading) return;
                     setStage("email");
+                    setCode("");
                     setError(null);
+                    setInfo(null);
                   }}
-                  style={{
-                    background: "transparent",
-                    border: "none",
-                    color: B.pink,
-                    fontFamily: "Quicksand, sans-serif",
-                    fontWeight: 700,
-                    fontSize: 14,
-                    cursor: "pointer",
-                  }}
+                  style={linkBtn}
                   disabled={loading}
                 >
                   Cambiar correo
@@ -299,7 +377,6 @@ export function AuthScreen() {
           )}
         </div>
 
-        {/* Emotional microcopy */}
         <p
           style={{
             textAlign: "center",
