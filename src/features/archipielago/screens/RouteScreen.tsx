@@ -1,13 +1,53 @@
-import { useState, useRef, useEffect, useCallback } from "react";
+import { useState, useRef, useEffect, useCallback, useMemo } from "react";
 import { B } from "../data/brand";
-import { START_PORT_NODES, ROUTE_STAGES } from "../data/islands";
+import { START_PORT_NODES, ROUTE_STAGES, STAGE_TO_ISLAND } from "../data/islands";
+import { MVP1_LESSON_SEQUENCE, MVP1_LOCKED_ISLANDS, findMvp1Lesson, type IslandId } from "../data/mvp1Progress";
+import { useMvp1Progress } from "../hooks/useMvp1Progress";
 
 import type { NodeStatus } from "../types";
 import { Btn } from "../components/Btn";
 import { Card } from "../components/Card";
 import { touchLastVisit } from "../data/musicalFuel";
 
-export function RouteScreen({ onStartMission, onReviewMission, onOpenFirstMelodiesIsland, onOpenPulseIsland, onOpenRhythmIsland, onOpenMusicIsland, onOpenJoyIsland, onOpenChordsIsland, onOpenStrummingIsland, onOpenSongsIsland, userName }: { onStartMission: () => void; onReviewMission: (id: string) => void; onOpenFirstMelodiesIsland: () => void; onOpenPulseIsland: () => void; onOpenRhythmIsland: () => void; onOpenMusicIsland: () => void; onOpenJoyIsland: () => void; onOpenChordsIsland: () => void; onOpenStrummingIsland: () => void; onOpenSongsIsland: () => void; userName: string }) {
+export function RouteScreen({ onStartMission, onReviewMission, onOpenFirstMelodiesIsland, onOpenPulseIsland, onOpenRhythmIsland, onOpenMusicIsland, onOpenJoyIsland, onOpenChordsIsland, onOpenStrummingIsland, onOpenSongsIsland, userName }: { onStartMission: (lessonId: string) => void; onReviewMission: (id: string) => void; onOpenFirstMelodiesIsland: () => void; onOpenPulseIsland: () => void; onOpenRhythmIsland: () => void; onOpenMusicIsland: () => void; onOpenJoyIsland: () => void; onOpenChordsIsland: () => void; onOpenStrummingIsland: () => void; onOpenSongsIsland: () => void; userName: string }) {
+  const progress = useMvp1Progress();
+
+  // Estado real de cada nodo del Puerto = derivado de Supabase (lesson_progress).
+  const nodeStatusById = useMemo(() => {
+    const map: Record<string, NodeStatus> = {};
+    for (const node of START_PORT_NODES) {
+      const s = progress.getLessonStatus(node.id);
+      map[node.id] = s === "done" ? "done" : s === "current" ? "current" : "locked";
+    }
+    return map;
+  }, [progress]);
+
+  // Estado y progreso real por isla (stage) = derivado de Supabase.
+  const stageStateById = useMemo(() => {
+    const currentLessonId = progress.getCurrentLessonId();
+    const currentIslandId = currentLessonId ? findMvp1Lesson(currentLessonId)?.islandId ?? null : null;
+    const map: Record<string, { status: 'active' | 'locked'; progress: number }> = {};
+    for (const stage of ROUTE_STAGES) {
+      const islandId = STAGE_TO_ISLAND[stage.id] as IslandId | undefined;
+      if (!islandId || MVP1_LOCKED_ISLANDS.includes(islandId)) {
+        map[stage.id] = { status: 'locked', progress: 0 };
+        continue;
+      }
+      const lessons = MVP1_LESSON_SEQUENCE.filter((l) => l.islandId === islandId);
+      const done = lessons.filter((l) => progress.isLessonCompleted(l.lessonId)).length;
+      const pct = lessons.length === 0 ? 0 : Math.round((done / lessons.length) * 100);
+      const isActive = currentIslandId === islandId || (currentIslandId === null && stage.id === 'puerto-inicio' && done === lessons.length && lessons.length > 0);
+      // Para usuario nuevo sin progreso, currentIslandId = 'start-port' → puerto activo.
+      map[stage.id] = { status: isActive ? 'active' : (done > 0 && done === lessons.length ? 'active' : 'locked'), progress: pct };
+    }
+    // Garantía: si no hay progreso, sólo puerto-inicio queda activo.
+    if (!currentLessonId) {
+      // Todos los MVP1 completos: dejar como están (todas activas).
+    }
+    return map;
+  }, [progress]);
+
+
   const firstName = (userName ?? '').trim().split(/\s+/)[0] ?? '';
   const routeTitle = firstName ? `${firstName}, esta es tu ruta` : 'Esta es tu ruta';
   // Mantenemos el registro de última visita para futuros usos del combustible musical
@@ -82,7 +122,8 @@ export function RouteScreen({ onStartMission, onReviewMission, onOpenFirstMelodi
           minHeight: 84,
         }}>
           {ROUTE_STAGES.map((isl, i) => {
-            const isActive = isl.status === 'active';
+            const stageState = stageStateById[isl.id] ?? { status: isl.status, progress: 0 };
+            const isActive = stageState.status === 'active';
             const isFocused = focusedStageId === isl.id;
             const isIslPress = pressedIsland === isl.id;
 
@@ -195,10 +236,10 @@ export function RouteScreen({ onStartMission, onReviewMission, onOpenFirstMelodi
                       {isActive ? (
                         <>
                           <div style={{ height: 3, background: 'rgba(255,255,255,0.08)', borderRadius: 999, overflow: 'hidden', width: 120 }}>
-                            <div style={{ width: `${isl.progress}%`, height: '100%', background: B.green, borderRadius: 999 }} />
+                           <div style={{ width: `${stageState.progress}%`, height: '100%', background: B.green, borderRadius: 999 }} />
                           </div>
                           <div style={{ fontSize: 9, fontWeight: 800, color: B.green, marginTop: 3, opacity: 0.85 }}>
-                            {isl.progress}% completado
+                            {stageState.progress}% completado
                           </div>
                         </>
                       ) : null}
@@ -294,7 +335,7 @@ export function RouteScreen({ onStartMission, onReviewMission, onOpenFirstMelodi
 
         <div style={{ display: 'flex', flexDirection: 'column', gap: 8 }}>
           {START_PORT_NODES.map((node) => {
-            const s = node.status;
+            const s = nodeStatusById[node.id] ?? 'locked';
             const c = nodeColors[s];
             const isCurrent = s === 'current';
             const isLocked = s === 'locked';
@@ -354,7 +395,7 @@ export function RouteScreen({ onStartMission, onReviewMission, onOpenFirstMelodi
                 {/* Node card */}
                 <div
                   onClick={() => {
-                    if (isCurrent) onStartMission();
+                    if (isCurrent) onStartMission(node.id);
                     else if (isLocked) setExploringNode(node.id);
                     else if (s === 'done') onReviewMission(node.id);
                   }}
