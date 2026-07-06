@@ -46,7 +46,7 @@ export function AuthScreen() {
       email: clean,
       options: {
         shouldCreateUser: true,
-        emailRedirectTo: window.location.origin,
+        emailRedirectTo: AUTH_REDIRECT_URL,
       },
     });
     setLoading(false);
