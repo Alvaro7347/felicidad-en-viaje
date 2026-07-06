@@ -66,6 +66,7 @@ function UserMenu({
     { key: "settings", label: "Configuración", icon: "⚙️", onClick: () => { setOpen(false); setInfoModal("settings"); } },
     { key: "help", label: "Ayuda", icon: "❔", onClick: () => { setOpen(false); setInfoModal("help"); } },
     { key: "policies", label: "Políticas", icon: "🛡️", onClick: () => { setOpen(false); setInfoModal("policies"); } },
+    { key: "signout", label: "Cerrar sesión", icon: "🚪", onClick: async () => { setOpen(false); await supabase.auth.signOut(); } },
   ];
 
   return (
