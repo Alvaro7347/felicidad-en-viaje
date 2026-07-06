@@ -215,7 +215,7 @@ export function ArchipelagoApp() {
 
 
   // ── Compuerta de sesión ────────────────────────────────────────
-  if (authChecking) {
+  if (authChecking || (session && (onboardingChecking || hasOnboarding === null))) {
     return (
       <main
         style={{
@@ -229,7 +229,9 @@ export function ArchipelagoApp() {
         }}
       >
         {showSplash && <SplashScreen fading={splashFading} />}
-        <div style={{ fontSize: 14, color: B.grayText }}>Cargando…</div>
+        <div style={{ fontSize: 14, color: B.grayText }}>
+          {session ? "Preparando tu viaje…" : "Cargando…"}
+        </div>
       </main>
     );
   }
