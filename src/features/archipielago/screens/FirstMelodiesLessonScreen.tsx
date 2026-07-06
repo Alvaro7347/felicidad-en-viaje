@@ -4,6 +4,7 @@ import { Btn } from "../components/Btn";
 import { Card } from "../components/Card";
 import { BackBtn } from "../components/BackBtn";
 import { MissionIntroHeader } from "../components/MissionIntroHeader";
+import { LessonCompletionBox } from "../components/LessonCompletionBox";
 import {
   findLesson,
   FIRST_MELODIES_LESSONS,
@@ -515,6 +516,12 @@ export function FirstMelodiesLessonScreen({
           </p>
         </Card>
       )}
+
+      <LessonCompletionBox
+        lessonId={lessonId}
+        islandId="first-melodies"
+        onCompleted={onBackToIsland}
+      />
 
       <Btn onClick={onBackToIsland} fullWidth>Volver a la Isla de Primeras Melodías</Btn>
     </div>

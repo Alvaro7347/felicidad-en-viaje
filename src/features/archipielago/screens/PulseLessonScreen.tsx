@@ -4,6 +4,8 @@ import { Btn } from "../components/Btn";
 import { Card } from "../components/Card";
 import { BackBtn } from "../components/BackBtn";
 import { MissionIntroHeader } from "../components/MissionIntroHeader";
+import { LessonCompletionBox } from "../components/LessonCompletionBox";
+import { MVP1_LAST_UNLOCKED_LESSON_ID } from "../data/mvp1Progress";
 import {
   findPulseLesson,
   PULSE_LESSONS,
@@ -410,6 +412,27 @@ export function PulseLessonScreen({
           <p style={{ margin: 0, color: '#666', fontSize: 13, lineHeight: 1.6 }}>
             {lesson.description}
           </p>
+        </Card>
+      )}
+
+      <LessonCompletionBox
+        lessonId={lessonId}
+        islandId="pulse"
+        onCompleted={onBackToIsland}
+      />
+
+      {lessonId === MVP1_LAST_UNLOCKED_LESSON_ID && (
+        <Card style={{ background: B.pinkLight, border: `1.5px solid ${B.pink}` }}>
+          <div style={{ fontFamily: 'Space Grotesk, sans-serif', fontWeight: 800, fontSize: 15, color: B.dark, marginBottom: 8 }}>
+            🎉 Fin del recorrido MVP1
+          </div>
+          <div style={{ fontSize: 13, color: B.dark, lineHeight: 1.6 }}>
+            Has completado el contenido disponible para esta etapa.
+            <br /><br />
+            Por ahora, repasa los acordes DO, LAm, FA y SOL, especialmente los cambios con SOL.
+            <br /><br />
+            Las próximas islas se abrirán más adelante en el taller.
+          </div>
         </Card>
       )}
 

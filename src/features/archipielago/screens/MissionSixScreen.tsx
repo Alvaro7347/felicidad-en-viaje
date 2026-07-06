@@ -4,6 +4,7 @@ import { Btn } from "../components/Btn";
 import { Card } from "../components/Card";
 import { BackBtn } from "../components/BackBtn";
 import { MissionIntroHeader } from "../components/MissionIntroHeader";
+import { LessonCompletionBox } from "../components/LessonCompletionBox";
 
 type Question = {
   question: string;
@@ -271,6 +272,7 @@ export function MissionSixScreen({ onBack }: { onBack: () => void }) {
           </div>
         </>
       )}
+      <LessonCompletionBox lessonId="n6" islandId="start-port" onCompleted={onBack} />
     </div>
   );
 }

@@ -4,6 +4,7 @@ import { Btn } from "../components/Btn";
 import { Card } from "../components/Card";
 import { BackBtn } from "../components/BackBtn";
 import { MissionIntroHeader } from "../components/MissionIntroHeader";
+import { LessonCompletionBox } from "../components/LessonCompletionBox";
 
 const LS = {
   motivation: "archipielago_user_motivation",
@@ -296,6 +297,7 @@ export function MissionTwoScreen({
           Guardar mi motivo
         </Btn>
       </Card>
+      <LessonCompletionBox lessonId="n2" islandId="start-port" onCompleted={onBack} />
     </div>
   );
 }

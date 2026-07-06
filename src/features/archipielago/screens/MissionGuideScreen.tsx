@@ -4,6 +4,7 @@ import { Btn } from "../components/Btn";
 import { Card } from "../components/Card";
 import { BackBtn } from "../components/BackBtn";
 import { MissionIntroHeader } from "../components/MissionIntroHeader";
+import { LessonCompletionBox } from "../components/LessonCompletionBox";
 import alvaroAsset from "../../../assets/alvaro-campos.jpeg.asset.json";
 import { supabase } from "@/integrations/supabase/client";
 
@@ -392,6 +393,7 @@ export function MissionGuideScreen({ onBack, userName }: { onBack: () => void; u
           </div>
         </div>
       )}
+      <LessonCompletionBox lessonId="n1" islandId="start-port" onCompleted={onBack} />
     </div>
   );
 }
