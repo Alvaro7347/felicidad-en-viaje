@@ -95,7 +95,7 @@ export function ReturnWelcomeScreen({ userName, onEnter }: Props) {
 
         <div style={{ width: "100%", marginTop: 6 }}>
           <Btn onClick={onEnter} fullWidth>
-            Entrar a mi Archipiélago 🌊
+            Entrar a mi Archipiélago
           </Btn>
         </div>
 
