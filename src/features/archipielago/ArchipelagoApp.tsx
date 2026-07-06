@@ -400,12 +400,12 @@ export function ArchipelagoApp() {
             onReviewMission={(id) => openMissionGuarded(id)}
             onOpenFirstMelodiesIsland={() => setScreen("first-melodies-island")}
             onOpenPulseIsland={() => setScreen("pulse-island")}
-            onOpenRhythmIsland={openLockedIsland}
-            onOpenMusicIsland={openLockedIsland}
-            onOpenJoyIsland={openLockedIsland}
-            onOpenChordsIsland={openLockedIsland}
-            onOpenStrummingIsland={openLockedIsland}
-            onOpenSongsIsland={openLockedIsland}
+            onOpenRhythmIsland={() => openLockedIsland("rhythm")}
+            onOpenMusicIsland={() => openLockedIsland("music")}
+            onOpenJoyIsland={() => openLockedIsland("joy")}
+            onOpenChordsIsland={() => openLockedIsland("chords")}
+            onOpenStrummingIsland={() => openLockedIsland("strumming")}
+            onOpenSongsIsland={() => openLockedIsland("songs")}
           />
         )}
 
@@ -434,24 +434,24 @@ export function ArchipelagoApp() {
               openLessonGuarded(lessonId, "first-melodies-lesson", setFirstMelodiesLessonId)
             }
             onOpenPulseIsland={() => setScreen("pulse-island")}
-            onOpenRhythmIsland={openLockedIsland}
-            onOpenMusicIsland={openLockedIsland}
-            onOpenJoyIsland={openLockedIsland}
-            onOpenChordsIsland={openLockedIsland}
-            onOpenStrummingIsland={openLockedIsland}
-            onOpenSongsIsland={openLockedIsland}
+            onOpenRhythmIsland={() => openLockedIsland("rhythm")}
+            onOpenMusicIsland={() => openLockedIsland("music")}
+            onOpenJoyIsland={() => openLockedIsland("joy")}
+            onOpenChordsIsland={() => openLockedIsland("chords")}
+            onOpenStrummingIsland={() => openLockedIsland("strumming")}
+            onOpenSongsIsland={() => openLockedIsland("songs")}
           />
         )}
         {screen === "pulse-island" && (
           <PulseIslandScreen
             onOpenStartPort={() => setScreen("route")}
             onOpenFirstMelodiesIsland={() => setScreen("first-melodies-island")}
-            onOpenRhythmIsland={openLockedIsland}
-            onOpenMusicIsland={openLockedIsland}
-            onOpenJoyIsland={openLockedIsland}
-            onOpenChordsIsland={openLockedIsland}
-            onOpenStrummingIsland={openLockedIsland}
-            onOpenSongsIsland={openLockedIsland}
+            onOpenRhythmIsland={() => openLockedIsland("rhythm")}
+            onOpenMusicIsland={() => openLockedIsland("music")}
+            onOpenJoyIsland={() => openLockedIsland("joy")}
+            onOpenChordsIsland={() => openLockedIsland("chords")}
+            onOpenStrummingIsland={() => openLockedIsland("strumming")}
+            onOpenSongsIsland={() => openLockedIsland("songs")}
             onOpenLesson={(lessonId) =>
               openLessonGuarded(lessonId, "pulse-lesson", setPulseLessonId)
             }
