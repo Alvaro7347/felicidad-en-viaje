@@ -183,7 +183,10 @@ export function ArchipelagoApp() {
   const isOnboarding = ONBOARDING_SCREENS.includes(screen);
 
   // Intento de abrir isla bloqueada (Ritmo en adelante durante MVP1)
-  const openLockedIsland = () => setBlockedModal("island");
+  const openLockedIsland = (islandId: string) => {
+    setBlockedModal("island");
+    progress.logEvent("blocked_island_clicked", { island_id: islandId });
+  };
 
   // Intento de abrir lección: valida contra el progreso MVP1
   const openLessonGuarded = (
