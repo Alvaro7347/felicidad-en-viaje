@@ -127,13 +127,46 @@ export function ArchipelagoApp() {
   const [chordsLessonId, setChordsLessonId] = useState<string>("chords1");
   const [strummingLessonId, setStrummingLessonId] = useState<string>("strumming1");
   const [songsLessonId, setSongsLessonId] = useState<string>("songs1");
-  
-  
-  
-  
+
+  // ── Progreso MVP1 ──────────────────────────────────────────────
+  const progress = useMvp1Progress();
+  const [blockedModal, setBlockedModal] = useState<null | "island" | "lesson">(null);
 
   const goToRoute = () => setScreen("route");
   const isOnboarding = ONBOARDING_SCREENS.includes(screen);
+
+  // Intento de abrir isla bloqueada (Ritmo en adelante durante MVP1)
+  const openLockedIsland = () => setBlockedModal("island");
+
+  // Intento de abrir lección: valida contra el progreso MVP1
+  const openLessonGuarded = (
+    lessonId: string,
+    lessonScreen: Screen,
+    setLessonId: (id: string) => void,
+  ) => {
+    if (!progress.isLessonUnlocked(lessonId)) {
+      setBlockedModal("lesson");
+      progress.logEvent("blocked_lesson_clicked", { lesson_id: lessonId });
+      return;
+    }
+    setLessonId(lessonId);
+    setScreen(lessonScreen);
+    progress.logEvent("lesson_opened", { lesson_id: lessonId });
+  };
+
+  // Ir a la pantalla de una misión (Puerto) sólo si está desbloqueada.
+  const openMissionGuarded = (lessonId: string) => {
+    const entry = findMvp1Lesson(lessonId);
+    if (!entry) return;
+    if (!progress.isLessonUnlocked(lessonId)) {
+      setBlockedModal("lesson");
+      progress.logEvent("blocked_lesson_clicked", { lesson_id: lessonId });
+      return;
+    }
+    setScreen(entry.screen);
+    progress.logEvent("lesson_opened", { lesson_id: lessonId });
+  };
+
 
   // ── Compuerta de sesión ────────────────────────────────────────
   if (authChecking) {
