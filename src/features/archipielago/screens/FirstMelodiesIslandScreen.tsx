@@ -41,9 +41,33 @@ export function FirstMelodiesIslandScreen({ onBack, onOpenLesson, onOpenPulseIsl
     const status: NodeStatus = s === 'done' ? 'done' : s === 'current' ? 'current' : 'locked';
     return { ...n, status };
   });
+
+  const getIslandState = (islandId: IslandId): TerritoryState => {
+    if (MVP1_LOCKED_ISLANDS.includes(islandId)) return 'locked';
+    const lessons = MVP1_LESSON_SEQUENCE.filter((l) => l.islandId === islandId);
+    if (lessons.length === 0) return 'locked';
+    const doneCount = lessons.filter((l) => progress.isLessonCompleted(l.lessonId)).length;
+    const current = progress.getCurrentLessonId();
+    const currentIsland = current ? findMvp1Lesson(current)?.islandId ?? null : null;
+    if (doneCount === lessons.length) return 'done';
+    if (currentIsland === islandId) return 'active';
+    return 'locked';
+  };
+
+  const TERRITORIES = TERRITORY_META.map((t) => {
+    const islandId = STAGE_TO_ISLAND[t.id] as IslandId | undefined;
+    const state: TerritoryState = islandId ? getIslandState(islandId) : 'locked';
+    const lessons = islandId ? MVP1_LESSON_SEQUENCE.filter((l) => l.islandId === islandId) : [];
+    const done = lessons.filter((l) => progress.isLessonCompleted(l.lessonId)).length;
+    const pct = lessons.length === 0 ? 0 : Math.round((done / lessons.length) * 100);
+    return { ...t, state, progress: pct, islandId };
+  });
+
   const [modal, setModal] = useState<null | 'locked-island' | 'locked-node' | 'coming-soon'>(null);
   const [pendingNodeId, setPendingNodeId] = useState<string | null>(null);
   const [hoveredNode, setHoveredNode] = useState<string | null>(null);
+  const [pressedNode, setPressedNode] = useState<string | null>(null);
+  const [pressedIsland, setPressedIsland] = useState<string | null>(null);
   const [pressedNode, setPressedNode] = useState<string | null>(null);
   const [pressedIsland, setPressedIsland] = useState<string | null>(null);
   const [focusedStageId, setFocusedStageId] = useState<string>('primeras-melodias');
