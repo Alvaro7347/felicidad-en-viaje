@@ -335,7 +335,7 @@ export function RouteScreen({ onStartMission, onReviewMission, onOpenFirstMelodi
 
         <div style={{ display: 'flex', flexDirection: 'column', gap: 8 }}>
           {START_PORT_NODES.map((node) => {
-            const s = node.status;
+            const s = nodeStatusById[node.id] ?? 'locked';
             const c = nodeColors[s];
             const isCurrent = s === 'current';
             const isLocked = s === 'locked';
