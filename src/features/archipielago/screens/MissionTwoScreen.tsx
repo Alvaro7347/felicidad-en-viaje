@@ -4,7 +4,7 @@ import { Btn } from "../components/Btn";
 import { Card } from "../components/Card";
 import { BackBtn } from "../components/BackBtn";
 import { MissionIntroHeader } from "../components/MissionIntroHeader";
-import { useMvp1Progress } from "../hooks/useMvp1Progress";
+import { useMvp1ProgressContext } from "../context/Mvp1ProgressContext";
 
 const LS = {
   motivation: "archipielago_user_motivation",
@@ -104,7 +104,7 @@ export function MissionTwoScreen({
   const [saved, setSaved] = useState(Boolean(initialMotivation && initialEmotions.length > 0));
   const [saving, setSaving] = useState(false);
   const [saveError, setSaveError] = useState<string | null>(null);
-  const { completeLesson } = useMvp1Progress();
+  const { completeLesson } = useMvp1ProgressContext();
 
   function toggleEmotion(em: string) {
     setSelected((prev) => (prev.includes(em) ? prev.filter((x) => x !== em) : [...prev, em]));

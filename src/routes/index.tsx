@@ -1,5 +1,6 @@
 import { createFileRoute } from "@tanstack/react-router";
 import { ArchipelagoApp } from "@/components/ArchipelagoApp";
+import { Mvp1ProgressProvider } from "@/features/archipielago/context/Mvp1ProgressContext";
 
 export const Route = createFileRoute("/")({
   head: () => ({
@@ -20,5 +21,9 @@ export const Route = createFileRoute("/")({
       { name: "twitter:card", content: "summary_large_image" },
     ],
   }),
-  component: ArchipelagoApp,
+  component: () => (
+    <Mvp1ProgressProvider>
+      <ArchipelagoApp />
+    </Mvp1ProgressProvider>
+  ),
 });

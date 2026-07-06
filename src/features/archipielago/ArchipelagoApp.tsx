@@ -7,7 +7,7 @@ import { ONBOARDING_SCREENS } from "./data/screens";
 import type { DiagAnswers, Screen } from "./types";
 import { AuthScreen } from "./screens/AuthScreen";
 import { BlockedIslandModal } from "./components/BlockedIslandModal";
-import { useMvp1Progress } from "./hooks/useMvp1Progress";
+import { useMvp1ProgressContext } from "./context/Mvp1ProgressContext";
 import { findMvp1Lesson } from "./data/mvp1Progress";
 
 import { AppHeader } from "./components/AppHeader";
@@ -132,7 +132,7 @@ export function ArchipelagoApp() {
   const [songsLessonId, setSongsLessonId] = useState<string>("songs1");
 
   // ── Progreso MVP1 ──────────────────────────────────────────────
-  const progress = useMvp1Progress();
+  const progress = useMvp1ProgressContext();
   const [blockedModal, setBlockedModal] = useState<null | "island" | "lesson">(null);
 
   // ── Onboarding: leer desde Supabase (fuente de verdad) ─────────
