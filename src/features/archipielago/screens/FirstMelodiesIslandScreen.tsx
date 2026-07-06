@@ -33,6 +33,12 @@ const TERRITORIES = [
 ];
 
 export function FirstMelodiesIslandScreen({ onBack, onOpenLesson, onOpenPulseIsland, onOpenRhythmIsland, onOpenMusicIsland, onOpenJoyIsland, onOpenChordsIsland, onOpenStrummingIsland, onOpenSongsIsland }: { onBack: () => void; onOpenLesson: (lessonId: string) => void; onOpenPulseIsland: () => void; onOpenRhythmIsland: () => void; onOpenMusicIsland: () => void; onOpenJoyIsland: () => void; onOpenChordsIsland: () => void; onOpenStrummingIsland: () => void; onOpenSongsIsland: () => void }) {
+  const progress = useMvp1Progress();
+  const MELODIES_NODES: RouteNode[] = MELODIES_NODES_BASE.map((n) => {
+    const s = progress.getLessonStatus(n.id);
+    const status: NodeStatus = s === 'done' ? 'done' : s === 'current' ? 'current' : 'locked';
+    return { ...n, status };
+  });
   const [modal, setModal] = useState<null | 'locked-island' | 'locked-node' | 'coming-soon'>(null);
   const [pendingNodeId, setPendingNodeId] = useState<string | null>(null);
   const [hoveredNode, setHoveredNode] = useState<string | null>(null);
