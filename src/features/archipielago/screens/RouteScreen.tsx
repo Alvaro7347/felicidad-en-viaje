@@ -404,7 +404,7 @@ export function RouteScreen({ onStartMission, onReviewMission, onOpenFirstMelodi
                 <div
                   onClick={() => {
                     if (isCurrent) onStartMission(node.id);
-                    else if (isLocked) setExploringNode(node.id);
+                    else if (isLocked) setShowLockedNode(true);
                     else if (s === 'done') onReviewMission(node.id);
                   }}
                   onMouseEnter={() => setHoveredNode(node.id)}
