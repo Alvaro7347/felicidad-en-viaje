@@ -132,6 +132,44 @@ export function ArchipelagoApp() {
   const goToRoute = () => setScreen("route");
   const isOnboarding = ONBOARDING_SCREENS.includes(screen);
 
+  // ── Compuerta de sesión ────────────────────────────────────────
+  if (authChecking) {
+    return (
+      <main
+        style={{
+          minHeight: "100vh",
+          background: B.gray,
+          color: B.dark,
+          fontFamily: "Quicksand, Arial, sans-serif",
+          display: "flex",
+          alignItems: "center",
+          justifyContent: "center",
+        }}
+      >
+        {showSplash && <SplashScreen fading={splashFading} />}
+        <div style={{ fontSize: 14, color: B.grayText }}>Cargando…</div>
+      </main>
+    );
+  }
+
+  if (!session) {
+    return (
+      <main
+        style={{
+          minHeight: "100vh",
+          background: B.gray,
+          color: B.dark,
+          fontFamily: "Quicksand, Arial, sans-serif",
+          padding: "16px 16px 48px",
+        }}
+      >
+        <div style={{ maxWidth: 480, margin: "0 auto" }}>
+          <AuthScreen />
+        </div>
+      </main>
+    );
+  }
+
   return (
     <main
       style={{
