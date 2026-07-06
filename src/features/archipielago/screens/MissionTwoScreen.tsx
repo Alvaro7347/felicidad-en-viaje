@@ -121,7 +121,7 @@ export function MissionTwoScreen({
     [firstName, motivation]
   );
 
-  function handleSave() {
+  async function handleSave() {
     const e: typeof errors = {};
     if (!motivation.trim()) e.motivation = "Cuéntanos por qué quieres aprender ukelele.";
     if (selected.length === 0) e.emotion = "Elige al menos una emoción para acompañar tu viaje.";
@@ -129,9 +129,17 @@ export function MissionTwoScreen({
     setErrors(e);
     if (Object.keys(e).length > 0) return;
 
+    setSaving(true);
+    setSaveError(null);
     writeLS(LS.motivation, motivation.trim());
     writeLS(LS.emotions, JSON.stringify(finalEmotions));
     writeLS(LS.phrase, fuelPhrase);
+    const res = await completeLesson("n2", { islandId: "start-port" });
+    setSaving(false);
+    if (!res.ok) {
+      setSaveError(res.error ?? "No pudimos guardar tu avance. Intenta nuevamente.");
+      return;
+    }
     setSaved(true);
   }
 
