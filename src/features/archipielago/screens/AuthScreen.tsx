@@ -234,7 +234,7 @@ export function AuthScreen() {
 
               <div style={{ marginTop: 18 }}>
                 <Btn variant="primary" fullWidth onClick={() => sendLink()} disabled={loading}>
-                  {loading ? "Enviando enlace..." : "Enviar enlace de acceso ✨"}
+                  {loading ? "Enviando enlace..." : "Enviar enlace de acceso"}
                 </Btn>
               </div>
 
