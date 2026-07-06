@@ -8,6 +8,9 @@ type Stage = "email" | "sent";
 
 const EMAIL_RE = /^[^\s@]+@[^\s@]+\.[^\s@]+$/;
 
+// No usar window.location.origin aquí: en preview puede redirigir a lovable.dev.
+const AUTH_REDIRECT_URL = "https://soundkeleles-archipielago-journey.lovable.app";
+
 async function logEvent(name: string, data?: Record<string, unknown>) {
   try {
     const { data: sess } = await supabase.auth.getSession();
