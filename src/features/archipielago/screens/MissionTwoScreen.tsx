@@ -101,10 +101,11 @@ export function MissionTwoScreen({
   const [selected, setSelected] = useState<string[]>(initialSelected);
   const [otherEmotion, setOtherEmotion] = useState(customInitial);
   const [errors, setErrors] = useState<{ motivation?: string; emotion?: string; other?: string }>({});
-  const [saved, setSaved] = useState(Boolean(initialMotivation && initialEmotions.length > 0));
+  const [editing, setEditing] = useState(false);
   const [saving, setSaving] = useState(false);
   const [saveError, setSaveError] = useState<string | null>(null);
-  const { completeLesson } = useMvp1ProgressContext();
+  const { completeLesson, isLessonCompleted } = useMvp1ProgressContext();
+  const saved = isLessonCompleted("n2") && !editing;
 
   function toggleEmotion(em: string) {
     setSelected((prev) => (prev.includes(em) ? prev.filter((x) => x !== em) : [...prev, em]));
@@ -140,7 +141,7 @@ export function MissionTwoScreen({
       setSaveError(res.error ?? "No pudimos guardar tu avance. Intenta nuevamente.");
       return;
     }
-    setSaved(true);
+    setEditing(false);
   }
 
   useEffect(() => {
@@ -181,7 +182,7 @@ export function MissionTwoScreen({
             Guardaremos este motivo para recordártelo cuando avances, completes misiones o necesites volver a conectar con tu sonido.
           </p>
           <div style={{ display: "flex", gap: 10, flexWrap: "wrap" }}>
-            <Btn variant="ghost" onClick={() => setSaved(false)}>Editar mi motivo</Btn>
+            <Btn variant="ghost" onClick={() => setEditing(true)}>Editar mi motivo</Btn>
             <Btn onClick={onNext}>Continuar mi viaje</Btn>
           </div>
         </Card>
