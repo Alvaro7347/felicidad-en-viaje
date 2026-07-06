@@ -179,6 +179,30 @@ export function ArchipelagoApp() {
     return () => { cancelled = true; };
   }, [session?.user.id]);
 
+  // ── Medición: app_opened + return_visit (una vez por carga con sesión) ──
+  const appOpenedLoggedRef = useRef(false);
+  useEffect(() => {
+    if (appOpenedLoggedRef.current) return;
+    if (!session?.user.id) return;
+    if (progress.loading) return;
+    if (hasOnboarding === null) return;
+    appOpenedLoggedRef.current = true;
+    const cur = progress.getCurrentLessonId();
+    const entry = cur ? findMvp1Lesson(cur) : null;
+    const current_island_id = entry?.islandId ?? null;
+    progress.logEvent("app_opened", {
+      current_lesson_id: cur,
+      current_island_id,
+      has_onboarding: !!hasOnboarding,
+    });
+    if (hasOnboarding && cur && cur !== "n1") {
+      progress.logEvent("return_visit", {
+        current_lesson_id: cur,
+        current_island_id,
+      });
+    }
+  }, [session?.user.id, progress.loading, hasOnboarding, progress]);
+
   const goToRoute = () => setScreen("route");
   const isOnboarding = ONBOARDING_SCREENS.includes(screen);
 
