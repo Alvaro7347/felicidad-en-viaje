@@ -53,6 +53,12 @@ export function PulseIslandScreen({
   onOpenSongsIsland: () => void;
   onOpenLesson: (lessonId: string) => void;
 }) {
+  const progress = useMvp1Progress();
+  const PULSE_NODES: RouteNode[] = PULSE_NODES_BASE.map((n) => {
+    const s = progress.getLessonStatus(n.id);
+    const status: NodeStatus = s === 'done' ? 'done' : s === 'current' ? 'current' : 'locked';
+    return { ...n, status };
+  });
   const [modal, setModal] = useState<null | { kind: 'locked-island' } | { kind: 'locked-node'; nodeId: string }>(null);
   const [hoveredNode, setHoveredNode] = useState<string | null>(null);
   const [pressedNode, setPressedNode] = useState<string | null>(null);
