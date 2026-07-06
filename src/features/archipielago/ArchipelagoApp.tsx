@@ -393,7 +393,7 @@ export function ArchipelagoApp() {
           <MissionTwoScreen
             userName={userName}
             onBack={() => setScreen("route")}
-            onNext={() => openMissionGuarded("n3")}
+            onNext={() => setScreen("mission-three")}
           />
         )}
 
