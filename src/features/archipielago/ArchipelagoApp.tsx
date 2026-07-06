@@ -134,6 +134,50 @@ export function ArchipelagoApp() {
   const progress = useMvp1Progress();
   const [blockedModal, setBlockedModal] = useState<null | "island" | "lesson">(null);
 
+  // ── Onboarding: leer desde Supabase (fuente de verdad) ─────────
+  useEffect(() => {
+    const uid = session?.user.id;
+    if (!uid) {
+      setHasOnboarding(null);
+      return;
+    }
+    let cancelled = false;
+    setOnboardingChecking(true);
+    (async () => {
+      const { data: onb } = await supabase
+        .from("user_onboarding")
+        .select("answers")
+        .eq("user_id", uid)
+        .maybeSingle();
+      if (cancelled) return;
+      if (onb) {
+        // Recuperar nombre desde answers.name o profiles.name
+        const answers = (onb.answers ?? {}) as { name?: string; answers?: DiagAnswers };
+        let name = answers.name ?? "";
+        if (!name) {
+          const { data: prof } = await supabase
+            .from("profiles")
+            .select("name")
+            .eq("id", uid)
+            .maybeSingle();
+          if (cancelled) return;
+          name = prof?.name ?? "Navegante";
+        }
+        setUserName(name || "Navegante");
+        if (typeof window !== "undefined") {
+          try { window.localStorage.setItem("archipielago_user_name", name || "Navegante"); } catch {}
+        }
+        setHasOnboarding(true);
+        setScreen("route");
+      } else {
+        setHasOnboarding(false);
+        setScreen("welcome");
+      }
+      setOnboardingChecking(false);
+    })();
+    return () => { cancelled = true; };
+  }, [session?.user.id]);
+
   const goToRoute = () => setScreen("route");
   const isOnboarding = ONBOARDING_SCREENS.includes(screen);
 
