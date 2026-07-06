@@ -4,6 +4,7 @@ import { Btn } from "../components/Btn";
 import { Card } from "../components/Card";
 import { BackBtn } from "../components/BackBtn";
 import { MissionIntroHeader } from "../components/MissionIntroHeader";
+import { LessonCompletionBox } from "../components/LessonCompletionBox";
 
 const MILESTONES = [
   { icon: "🧭", text: "Conocer a tu guía y entender cómo será el viaje." },
@@ -349,6 +350,7 @@ export function MissionNineScreen({ onBack }: { onBack: () => void }) {
       <Btn variant="primary" fullWidth disabled={!canClose} onClick={handleClose}>
         {canClose ? "Cerrar Puerto de Inicio" : "Responde estas 3 preguntas para cerrar el puerto"}
       </Btn>
+      <LessonCompletionBox lessonId="n9" islandId="start-port" onCompleted={onBack} />
     </div>
   );
 }
