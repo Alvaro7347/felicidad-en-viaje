@@ -1,8 +1,11 @@
 import { useEffect, useState } from "react";
+import type { Session } from "@supabase/supabase-js";
 
+import { supabase } from "@/integrations/supabase/client";
 import { B } from "./data/brand";
 import { ONBOARDING_SCREENS } from "./data/screens";
 import type { DiagAnswers, Screen } from "./types";
+import { AuthScreen } from "./screens/AuthScreen";
 
 import { AppHeader } from "./components/AppHeader";
 import { DevNav, SHOW_DEV_NAV } from "./components/DevNav";
