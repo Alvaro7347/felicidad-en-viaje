@@ -464,8 +464,8 @@ export function RouteScreen({ onStartMission, onReviewMission, onOpenFirstMelodi
                       </div>
                     )}
                     {isLocked && (
-                      <div style={{ color: B.pink, fontSize: 10, fontWeight: 800 }}>
-                        Explorar →
+                      <div style={{ color: B.grayText, fontSize: 10, fontWeight: 800 }}>
+                        Bloqueada
                       </div>
                     )}
                   </div>
