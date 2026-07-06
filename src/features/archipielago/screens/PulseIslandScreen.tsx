@@ -288,7 +288,7 @@ export function PulseIslandScreen({
 
                 <div
                   onClick={() => {
-                    if (isCurrent) onOpenLesson(node.id);
+                    if (isCurrent || node.status === 'done') onOpenLesson(node.id);
                     else setModal({ kind: 'locked-node', nodeId: node.id });
                   }}
                   onMouseEnter={() => setHoveredNode(node.id)}
