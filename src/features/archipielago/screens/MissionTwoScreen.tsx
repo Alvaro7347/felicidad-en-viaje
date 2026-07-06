@@ -4,7 +4,7 @@ import { Btn } from "../components/Btn";
 import { Card } from "../components/Card";
 import { BackBtn } from "../components/BackBtn";
 import { MissionIntroHeader } from "../components/MissionIntroHeader";
-import { LessonCompletionBox } from "../components/LessonCompletionBox";
+import { useMvp1Progress } from "../hooks/useMvp1Progress";
 
 const LS = {
   motivation: "archipielago_user_motivation",
