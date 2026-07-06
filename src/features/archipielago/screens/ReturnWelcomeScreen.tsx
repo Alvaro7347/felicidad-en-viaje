@@ -4,10 +4,13 @@ import { Btn } from "../components/Btn";
 interface Props {
   userName: string;
   onEnter: () => void;
+  loading?: boolean;
+  ctaLabel?: string;
 }
 
-export function ReturnWelcomeScreen({ userName, onEnter }: Props) {
+export function ReturnWelcomeScreen({ userName, onEnter, loading = false, ctaLabel }: Props) {
   const firstName = (userName ?? "").trim().split(/\s+/)[0] || "Navegante";
+
 
   return (
     <div
@@ -94,10 +97,11 @@ export function ReturnWelcomeScreen({ userName, onEnter }: Props) {
         </p>
 
         <div style={{ width: "100%", marginTop: 6 }}>
-          <Btn onClick={onEnter} fullWidth>
-            Entrar a mi Archipiélago
+          <Btn onClick={onEnter} fullWidth disabled={loading}>
+            {ctaLabel ?? "Entrar a mi Archipiélago"}
           </Btn>
         </div>
+
 
         <div
           style={{

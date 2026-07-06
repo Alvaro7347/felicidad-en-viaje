@@ -307,8 +307,29 @@ export function ArchipelagoApp() {
         )}
 
         {screen === "return-welcome" && (
-          <ReturnWelcomeScreen userName={userName} onEnter={() => setScreen("route")} />
+          <ReturnWelcomeScreen
+            userName={userName}
+            loading={progress.loading}
+            ctaLabel={(() => {
+              if (progress.loading) return "Preparando tu viaje…";
+              const cur = progress.getCurrentLessonId();
+              if (cur?.startsWith("m")) return "Continuar en Primeras Melodías";
+              if (cur?.startsWith("p")) return "Continuar en Isla del Pulso";
+              return "Entrar a mi Archipiélago";
+            })()}
+            onEnter={() => {
+              if (progress.loading) return;
+              const cur = progress.getCurrentLessonId();
+              // cur === null → completó todo MVP1 (hasta p11). Mostrar Isla del Pulso.
+              if (!cur) { setScreen("pulse-island"); return; }
+              if (cur.startsWith("m")) { setScreen("first-melodies-island"); return; }
+              if (cur.startsWith("p")) { setScreen("pulse-island"); return; }
+              // n1..n9 o cualquier otro caso → Puerto / RouteScreen.
+              setScreen("route");
+            }}
+          />
         )}
+
 
         {screen === "welcome" && <WelcomeScreen onStart={() => setScreen("onboarding")} />}
 
