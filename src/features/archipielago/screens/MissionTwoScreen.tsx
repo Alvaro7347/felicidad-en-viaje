@@ -141,7 +141,7 @@ export function MissionTwoScreen({
       setSaveError(res.error ?? "No pudimos guardar tu avance. Intenta nuevamente.");
       return;
     }
-    setSaved(true);
+    setEditing(false);
   }
 
   useEffect(() => {
