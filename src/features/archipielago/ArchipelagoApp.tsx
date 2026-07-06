@@ -392,6 +392,7 @@ export function ArchipelagoApp() {
                   return;
                 }
                 setHasOnboarding(true);
+                progress.logEvent("onboarding_completed", { source: "diagnosis" });
                 const { error: profError } = await supabase
                   .from("profiles")
                   .upsert(
