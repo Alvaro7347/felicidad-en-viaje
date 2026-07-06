@@ -3,19 +3,20 @@ import { B } from "../data/brand";
 import type { NodeStatus, RouteNode } from "../types";
 import { Btn } from "../components/Btn";
 import { Card } from "../components/Card";
+import { useMvp1Progress } from "../hooks/useMvp1Progress";
 
 
-const MELODIES_NODES: RouteNode[] = [
-  { id: 'm1', title: 'Tu primer acorde: DO', subtitle: 'Despierta tu mano izquierda y toca tu primer acorde.', icon: '🎸', status: 'current', type: 'Video práctica', time: '4 min' },
-  { id: 'm2', title: 'Mapa visual del DO', subtitle: 'Aprende a reconocer el acorde DO al verlo.', icon: '🗺️', status: 'locked', type: 'Diagrama', time: '2 min' },
-  { id: 'm3', title: 'Dos nuevos amigos: LAm y FA', subtitle: 'Suma dos acordes nuevos sin abrumarte.', icon: '✨', status: 'locked', type: 'Video práctica', time: '5 min' },
-  { id: 'm4', title: 'Mapas visuales LAm y FA', subtitle: 'Refuerza los acordes con apoyo visual.', icon: '🗺️', status: 'locked', type: 'Diagrama', time: '3 min' },
-  { id: 'm5', title: 'Tu primera estrofa: Tren al Sur', subtitle: 'Usa DO, LAm y FA para sentir música real.', icon: '🎶', status: 'locked', type: 'Karaoke', time: '6 min' },
-  { id: 'm6', title: 'Stay With Me en acordes', subtitle: 'Consolida tus primeros acordes en una canción conocida.', icon: '🎵', status: 'locked', type: 'Video práctica', time: '5 min' },
-  { id: 'm7', title: 'Karaoke Stay With Me', subtitle: 'Practica cambios de acordes con guía temporal.', icon: '🎤', status: 'locked', type: 'Karaoke', time: '6 min' },
-  { id: 'm8', title: 'Comparte tu primer logro', subtitle: 'Podrás subir tu video de forma opcional para recibir feedback.', icon: '📹', status: 'locked', type: 'Comunidad', time: '5 min' },
-  { id: 'm9', title: 'Dedos despiertos', subtitle: 'Entrena coordinación y digitación desde cero.', icon: '🤲', status: 'locked', type: 'Práctica', time: '4 min' },
-  { id: 'm10', title: 'Lo que ya conquistaste', subtitle: 'Resumen, medición breve y premio de cierre.', icon: '🏆', status: 'locked', type: 'Resumen', time: '3 min' },
+const MELODIES_NODES_BASE: Omit<RouteNode, 'status'>[] = [
+  { id: 'm1', title: 'Tu primer acorde: DO', subtitle: 'Despierta tu mano izquierda y toca tu primer acorde.', icon: '🎸', type: 'Video práctica', time: '4 min' },
+  { id: 'm2', title: 'Mapa visual del DO', subtitle: 'Aprende a reconocer el acorde DO al verlo.', icon: '🗺️', type: 'Diagrama', time: '2 min' },
+  { id: 'm3', title: 'Dos nuevos amigos: LAm y FA', subtitle: 'Suma dos acordes nuevos sin abrumarte.', icon: '✨', type: 'Video práctica', time: '5 min' },
+  { id: 'm4', title: 'Mapas visuales LAm y FA', subtitle: 'Refuerza los acordes con apoyo visual.', icon: '🗺️', type: 'Diagrama', time: '3 min' },
+  { id: 'm5', title: 'Tu primera estrofa: Tren al Sur', subtitle: 'Usa DO, LAm y FA para sentir música real.', icon: '🎶', type: 'Karaoke', time: '6 min' },
+  { id: 'm6', title: 'Stay With Me en acordes', subtitle: 'Consolida tus primeros acordes en una canción conocida.', icon: '🎵', type: 'Video práctica', time: '5 min' },
+  { id: 'm7', title: 'Karaoke Stay With Me', subtitle: 'Practica cambios de acordes con guía temporal.', icon: '🎤', type: 'Karaoke', time: '6 min' },
+  { id: 'm8', title: 'Comparte tu primer logro', subtitle: 'Podrás subir tu video de forma opcional para recibir feedback.', icon: '📹', type: 'Comunidad', time: '5 min' },
+  { id: 'm9', title: 'Dedos despiertos', subtitle: 'Entrena coordinación y digitación desde cero.', icon: '🤲', type: 'Práctica', time: '4 min' },
+  { id: 'm10', title: 'Lo que ya conquistaste', subtitle: 'Resumen, medición breve y premio de cierre.', icon: '🏆', type: 'Resumen', time: '3 min' },
 ];
 
 // Territorios visibles en el carrusel — la Isla de Primeras Melodías es la activa aquí.
