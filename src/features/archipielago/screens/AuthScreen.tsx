@@ -14,7 +14,7 @@ async function logEvent(name: string, data?: Record<string, unknown>) {
     await supabase.from("app_events").insert({
       user_id: sess.session?.user.id ?? null,
       event_name: name,
-      event_data: data ?? null,
+      event_data: (data ?? null) as never,
     });
   } catch {
     /* silencioso */

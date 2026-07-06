@@ -74,6 +74,41 @@ export function ArchipelagoApp() {
     };
   }, []);
 
+  // ── Sesión (Supabase Auth OTP) ─────────────────────────────────
+  const [session, setSession] = useState<Session | null>(null);
+  const [authChecking, setAuthChecking] = useState(true);
+
+  useEffect(() => {
+    let mounted = true;
+    supabase.auth.getSession().then(({ data }) => {
+      if (!mounted) return;
+      setSession(data.session);
+      setAuthChecking(false);
+    });
+    const { data: sub } = supabase.auth.onAuthStateChange((_event, s) => {
+      setSession(s);
+      setAuthChecking(false);
+      if (s?.user) {
+        supabase
+          .from("profiles")
+          .upsert(
+            {
+              id: s.user.id,
+              email: s.user.email ?? null,
+              updated_at: new Date().toISOString(),
+            },
+            { onConflict: "id" },
+          )
+          .then(() => {});
+      }
+    });
+    return () => {
+      mounted = false;
+      sub.subscription.unsubscribe();
+    };
+  }, []);
+
+
   // ── Estado del viaje ───────────────────────────────────────────
   const [screen, setScreen] = useState<Screen>("welcome");
   const [diagAnswers, setDiagAnswers] = useState<DiagAnswers>({});
