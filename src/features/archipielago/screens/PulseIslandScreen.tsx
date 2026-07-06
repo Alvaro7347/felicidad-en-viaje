@@ -357,23 +357,9 @@ export function PulseIslandScreen({
               </div>
               <div style={{ fontSize: 13.5, lineHeight: 1.6, color: B.grayText, marginBottom: 14 }}>
                 {modal.kind === 'locked-island' && 'Para llegar aquí, primero necesitas completar las unidades anteriores. El viaje avanza una isla a la vez.'}
-                {modal.kind === 'locked-node' && 'Esta unidad estará bloqueada cuando activemos el flujo real. Por ahora puedes explorarla para revisar el prototipo completo.'}
+                {modal.kind === 'locked-node' && 'Para abrir esta clase, primero necesitas completar la clase anterior. Tu viaje avanza una clase a la vez.'}
               </div>
-              <div style={{ display: 'flex', flexDirection: 'column', gap: 8 }}>
-                {modal.kind === 'locked-node' && (
-                  <Btn
-                    onClick={() => {
-                      const nodeId = modal.nodeId;
-                      setModal(null);
-                      onOpenLesson(nodeId);
-                    }}
-                    fullWidth
-                  >
-                    Explorar lección para revisar prototipo
-                  </Btn>
-                )}
-                <Btn onClick={() => setModal(null)} fullWidth variant="ghost">Entendido</Btn>
-              </div>
+              <Btn onClick={() => setModal(null)} fullWidth>Entendido</Btn>
             </Card>
           </div>
         </div>
