@@ -4,10 +4,13 @@ import { Btn } from "../components/Btn";
 interface Props {
   userName: string;
   onEnter: () => void;
+  loading?: boolean;
+  ctaLabel?: string;
 }
 
-export function ReturnWelcomeScreen({ userName, onEnter }: Props) {
+export function ReturnWelcomeScreen({ userName, onEnter, loading = false, ctaLabel }: Props) {
   const firstName = (userName ?? "").trim().split(/\s+/)[0] || "Navegante";
+
 
   return (
     <div
