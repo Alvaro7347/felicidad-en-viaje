@@ -4,7 +4,7 @@ import { Btn } from "../components/Btn";
 import { Card } from "../components/Card";
 import { BackBtn } from "../components/BackBtn";
 import { MissionIntroHeader } from "../components/MissionIntroHeader";
-import { LessonCompletionBox } from "../components/LessonCompletionBox";
+import { useMvp1Progress } from "../hooks/useMvp1Progress";
 
 const LS = {
   motivation: "archipielago_user_motivation",
@@ -102,6 +102,9 @@ export function MissionTwoScreen({
   const [otherEmotion, setOtherEmotion] = useState(customInitial);
   const [errors, setErrors] = useState<{ motivation?: string; emotion?: string; other?: string }>({});
   const [saved, setSaved] = useState(Boolean(initialMotivation && initialEmotions.length > 0));
+  const [saving, setSaving] = useState(false);
+  const [saveError, setSaveError] = useState<string | null>(null);
+  const { completeLesson } = useMvp1Progress();
 
   function toggleEmotion(em: string) {
     setSelected((prev) => (prev.includes(em) ? prev.filter((x) => x !== em) : [...prev, em]));
@@ -118,7 +121,7 @@ export function MissionTwoScreen({
     [firstName, motivation]
   );
 
-  function handleSave() {
+  async function handleSave() {
     const e: typeof errors = {};
     if (!motivation.trim()) e.motivation = "Cuéntanos por qué quieres aprender ukelele.";
     if (selected.length === 0) e.emotion = "Elige al menos una emoción para acompañar tu viaje.";
@@ -126,9 +129,17 @@ export function MissionTwoScreen({
     setErrors(e);
     if (Object.keys(e).length > 0) return;
 
+    setSaving(true);
+    setSaveError(null);
     writeLS(LS.motivation, motivation.trim());
     writeLS(LS.emotions, JSON.stringify(finalEmotions));
     writeLS(LS.phrase, fuelPhrase);
+    const res = await completeLesson("n2", { islandId: "start-port" });
+    setSaving(false);
+    if (!res.ok) {
+      setSaveError(res.error ?? "No pudimos guardar tu avance. Intenta nuevamente.");
+      return;
+    }
     setSaved(true);
   }
 
@@ -293,11 +304,12 @@ export function MissionTwoScreen({
           {errors.other && <div style={errStyle}>{errors.other}</div>}
         </div>
 
-        <Btn onClick={handleSave} fullWidth>
-          Guardar mi motivo
+        <Btn onClick={handleSave} fullWidth disabled={saving}>
+          {saving ? "Guardando…" : "Guardar mi motivo"}
         </Btn>
+        {saveError && <div style={{ ...errStyle, marginTop: 10 }}>{saveError}</div>}
       </Card>
-      <LessonCompletionBox lessonId="n2" islandId="start-port" onCompleted={onBack} />
+      
     </div>
   );
 }
