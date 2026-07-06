@@ -510,6 +510,11 @@ export function ArchipelagoApp() {
 
         {screen === "celebration" && <CelebrationScreen onHome={goToRoute} />}
       </div>
+      <BlockedIslandModal
+        open={blockedModal !== null}
+        variant={blockedModal === "lesson" ? "lesson" : "island"}
+        onClose={() => setBlockedModal(null)}
+      />
     </main>
   );
 }
