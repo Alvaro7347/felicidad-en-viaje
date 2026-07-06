@@ -103,6 +103,10 @@ export function ReturnWelcomeScreen({ userName, onEnter, loading = false, ctaLab
           </Btn>
         </div>
 
+        <InstallHelpCard />
+
+
+
 
         <div
           style={{
