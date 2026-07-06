@@ -317,23 +317,32 @@ export function ArchipelagoApp() {
               (async () => {
                 const { data: sess } = await supabase.auth.getSession();
                 const uid = sess.session?.user.id;
-                if (uid) {
-                  const payload = { name, answers } as unknown as never;
-                  await supabase.from("user_onboarding").upsert(
-                    {
-                      user_id: uid,
-                      answers: payload,
-                      updated_at: new Date().toISOString(),
-                    },
-                    { onConflict: "user_id" },
+                if (!uid) {
+                  console.error("[onboarding] No hay sesión activa; no se puede guardar onboarding.");
+                  return;
+                }
+                const payload = { name, answers } as unknown as never;
+                const { error: onbError } = await supabase.from("user_onboarding").upsert(
+                  {
+                    user_id: uid,
+                    answers: payload,
+                    updated_at: new Date().toISOString(),
+                  },
+                  { onConflict: "user_id" },
+                );
+                if (onbError) {
+                  console.error("[onboarding] Error al guardar user_onboarding:", onbError);
+                  return;
+                }
+                setHasOnboarding(true);
+                const { error: profError } = await supabase
+                  .from("profiles")
+                  .upsert(
+                    { id: uid, name, updated_at: new Date().toISOString() },
+                    { onConflict: "id" },
                   );
-                  setHasOnboarding(true);
-                  await supabase
-                    .from("profiles")
-                    .upsert(
-                      { id: uid, name, updated_at: new Date().toISOString() },
-                      { onConflict: "id" },
-                    );
+                if (profError) {
+                  console.error("[onboarding] Error al guardar profiles.name:", profError);
                 }
               })();
               setScreen("diagnosis-result");
