@@ -297,7 +297,7 @@ export function MissionTwoScreen({
           Guardar mi motivo
         </Btn>
       </Card>
-      <LessonCompletionBox lessonId="n2" islandId="start-port" onCompleted={onBack} />
+      
     </div>
   );
 }
