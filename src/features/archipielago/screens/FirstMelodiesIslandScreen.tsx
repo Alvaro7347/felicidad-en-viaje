@@ -4,6 +4,8 @@ import type { NodeStatus, RouteNode } from "../types";
 import { Btn } from "../components/Btn";
 import { Card } from "../components/Card";
 import { useMvp1Progress } from "../hooks/useMvp1Progress";
+import { MVP1_LESSON_SEQUENCE, MVP1_LOCKED_ISLANDS, findMvp1Lesson, type IslandId } from "../data/mvp1Progress";
+import { STAGE_TO_ISLAND } from "../data/islands";
 
 
 const MELODIES_NODES_BASE: Omit<RouteNode, 'status'>[] = [
