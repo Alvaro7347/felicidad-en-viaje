@@ -301,7 +301,7 @@ export function ArchipelagoApp() {
         {screen === "route" && (
           <RouteScreen
             userName={userName}
-            onStartMission={() => openMissionGuarded("n5")}
+            onStartMission={(id) => openMissionGuarded(id)}
             onReviewMission={(id) => openMissionGuarded(id)}
             onOpenFirstMelodiesIsland={() => setScreen("first-melodies-island")}
             onOpenPulseIsland={() => setScreen("pulse-island")}
