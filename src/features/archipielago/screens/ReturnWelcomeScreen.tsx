@@ -97,10 +97,11 @@ export function ReturnWelcomeScreen({ userName, onEnter, loading = false, ctaLab
         </p>
 
         <div style={{ width: "100%", marginTop: 6 }}>
-          <Btn onClick={onEnter} fullWidth>
-            Entrar a mi Archipiélago
+          <Btn onClick={onEnter} fullWidth disabled={loading}>
+            {ctaLabel ?? "Entrar a mi Archipiélago"}
           </Btn>
         </div>
+
 
         <div
           style={{
