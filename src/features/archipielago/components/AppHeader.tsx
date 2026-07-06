@@ -3,6 +3,7 @@ import { B } from "../data/brand";
 import type { Screen } from "../types";
 import { ONBOARDING_SCREENS } from "../data/screens";
 import { ROUTE_STAGES } from "../data/islands";
+import { supabase } from "@/integrations/supabase/client";
 
 type InfoModal = null | "settings" | "help" | "policies";
 
