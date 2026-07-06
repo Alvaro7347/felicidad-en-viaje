@@ -304,9 +304,10 @@ export function MissionTwoScreen({
           {errors.other && <div style={errStyle}>{errors.other}</div>}
         </div>
 
-        <Btn onClick={handleSave} fullWidth>
-          Guardar mi motivo
+        <Btn onClick={handleSave} fullWidth disabled={saving}>
+          {saving ? "Guardando…" : "Guardar mi motivo"}
         </Btn>
+        {saveError && <div style={{ ...errStyle, marginTop: 10 }}>{saveError}</div>}
       </Card>
       
     </div>
