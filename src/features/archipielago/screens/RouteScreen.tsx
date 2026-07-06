@@ -182,6 +182,11 @@ export function RouteScreen({ onStartMission, onReviewMission, onOpenFirstMelodi
                     onTouchCancel={() => setPressedIsland(null)}
                     onClick={() => {
                       if (isl.id === 'puerto-inicio') return;
+                      const islandId = STAGE_TO_ISLAND[isl.id] as IslandId | undefined;
+                      if (!islandId || !canOpenIsland(islandId)) {
+                        setShowLockedIsland(true);
+                        return;
+                      }
                       if (isl.id === 'primeras-melodias') { onOpenFirstMelodiesIsland(); return; }
                       if (isl.id === 'pulso') { onOpenPulseIsland(); return; }
                       if (isl.id === 'ritmo') { onOpenRhythmIsland(); return; }
