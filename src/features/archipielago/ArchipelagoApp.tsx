@@ -265,6 +265,24 @@ export function ArchipelagoApp() {
               if (typeof window !== "undefined") {
                 try { window.localStorage.setItem("archipielago_user_name", name); } catch {}
               }
+              // Guardar onboarding en Supabase (fuente MVP1)
+              (async () => {
+                const { data: sess } = await supabase.auth.getSession();
+                const uid = sess.session?.user.id;
+                if (uid) {
+                  const payload = { name, answers } as unknown as never;
+                  await supabase.from("user_onboarding").insert({
+                    user_id: uid,
+                    answers: payload,
+                  });
+                  await supabase
+                    .from("profiles")
+                    .upsert(
+                      { id: uid, name, updated_at: new Date().toISOString() },
+                      { onConflict: "id" },
+                    );
+                }
+              })();
               setScreen("diagnosis-result");
             }}
           />
@@ -283,16 +301,16 @@ export function ArchipelagoApp() {
         {screen === "route" && (
           <RouteScreen
             userName={userName}
-            onStartMission={() => setScreen("mission")}
-            onReviewMission={(id) => setScreen(REVIEW_MISSION_BY_NODE[id] ?? "mission-two")}
+            onStartMission={() => openMissionGuarded("n5")}
+            onReviewMission={(id) => openMissionGuarded(id)}
             onOpenFirstMelodiesIsland={() => setScreen("first-melodies-island")}
             onOpenPulseIsland={() => setScreen("pulse-island")}
-            onOpenRhythmIsland={() => setScreen("rhythm-island")}
-            onOpenMusicIsland={() => setScreen("music-island")}
-            onOpenJoyIsland={() => setScreen("joy-island")}
-            onOpenChordsIsland={() => setScreen("chords-island")}
-            onOpenStrummingIsland={() => setScreen("strumming-island")}
-            onOpenSongsIsland={() => setScreen("songs-island")}
+            onOpenRhythmIsland={openLockedIsland}
+            onOpenMusicIsland={openLockedIsland}
+            onOpenJoyIsland={openLockedIsland}
+            onOpenChordsIsland={openLockedIsland}
+            onOpenStrummingIsland={openLockedIsland}
+            onOpenSongsIsland={openLockedIsland}
           />
         )}
 
@@ -317,33 +335,31 @@ export function ArchipelagoApp() {
         {screen === "first-melodies-island" && (
           <FirstMelodiesIslandScreen
             onBack={() => setScreen("route")}
-            onOpenLesson={(lessonId) => {
-              setFirstMelodiesLessonId(lessonId);
-              setScreen("first-melodies-lesson");
-            }}
+            onOpenLesson={(lessonId) =>
+              openLessonGuarded(lessonId, "first-melodies-lesson", setFirstMelodiesLessonId)
+            }
             onOpenPulseIsland={() => setScreen("pulse-island")}
-            onOpenRhythmIsland={() => setScreen("rhythm-island")}
-            onOpenMusicIsland={() => setScreen("music-island")}
-            onOpenJoyIsland={() => setScreen("joy-island")}
-            onOpenChordsIsland={() => setScreen("chords-island")}
-            onOpenStrummingIsland={() => setScreen("strumming-island")}
-            onOpenSongsIsland={() => setScreen("songs-island")}
+            onOpenRhythmIsland={openLockedIsland}
+            onOpenMusicIsland={openLockedIsland}
+            onOpenJoyIsland={openLockedIsland}
+            onOpenChordsIsland={openLockedIsland}
+            onOpenStrummingIsland={openLockedIsland}
+            onOpenSongsIsland={openLockedIsland}
           />
         )}
         {screen === "pulse-island" && (
           <PulseIslandScreen
             onOpenStartPort={() => setScreen("route")}
             onOpenFirstMelodiesIsland={() => setScreen("first-melodies-island")}
-            onOpenRhythmIsland={() => setScreen("rhythm-island")}
-            onOpenMusicIsland={() => setScreen("music-island")}
-            onOpenJoyIsland={() => setScreen("joy-island")}
-            onOpenChordsIsland={() => setScreen("chords-island")}
-            onOpenStrummingIsland={() => setScreen("strumming-island")}
-            onOpenSongsIsland={() => setScreen("songs-island")}
-            onOpenLesson={(lessonId) => {
-              setPulseLessonId(lessonId);
-              setScreen("pulse-lesson");
-            }}
+            onOpenRhythmIsland={openLockedIsland}
+            onOpenMusicIsland={openLockedIsland}
+            onOpenJoyIsland={openLockedIsland}
+            onOpenChordsIsland={openLockedIsland}
+            onOpenStrummingIsland={openLockedIsland}
+            onOpenSongsIsland={openLockedIsland}
+            onOpenLesson={(lessonId) =>
+              openLessonGuarded(lessonId, "pulse-lesson", setPulseLessonId)
+            }
           />
         )}
         {screen === "rhythm-island" && (
