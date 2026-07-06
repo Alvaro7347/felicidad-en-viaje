@@ -436,7 +436,6 @@ export function PulseLessonScreen({
         </Card>
       )}
 
-      <Btn onClick={onBackToIsland} fullWidth>Volver a Isla del Pulso</Btn>
     </div>
   );
 }
