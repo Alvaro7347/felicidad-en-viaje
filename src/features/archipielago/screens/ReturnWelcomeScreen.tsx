@@ -1,5 +1,6 @@
 import { B } from "../data/brand";
 import { Btn } from "../components/Btn";
+import { InstallHelpCard } from "../components/InstallHelpCard";
 
 interface Props {
   userName: string;
