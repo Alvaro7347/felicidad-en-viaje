@@ -46,6 +46,7 @@ import { MissionTwoScreen } from "./screens/MissionTwoScreen";
 import { OnboardingScreen } from "./screens/OnboardingScreen";
 import { RouteScreen } from "./screens/RouteScreen";
 import { WelcomeScreen } from "./screens/WelcomeScreen";
+import { ReturnWelcomeScreen } from "./screens/ReturnWelcomeScreen";
 
 // Nodo de la ruta → pantalla de revisión. Explícito y fácil de extender.
 const REVIEW_MISSION_BY_NODE: Record<string, Screen> = {
@@ -168,7 +169,7 @@ export function ArchipelagoApp() {
           try { window.localStorage.setItem("archipielago_user_name", name || "Navegante"); } catch {}
         }
         setHasOnboarding(true);
-        setScreen("route");
+        setScreen("return-welcome");
       } else {
         setHasOnboarding(false);
         setScreen("welcome");
@@ -294,12 +295,18 @@ export function ArchipelagoApp() {
       )}
 
       <div style={{ maxWidth: 640, margin: "0 auto" }}>
-        <AppHeader
-          screen={screen}
-          onHome={isOnboarding ? undefined : goToRoute}
-          onOpenGuide={() => setScreen("mission-guide")}
-          userName={userName}
-        />
+        {screen !== "return-welcome" && (
+          <AppHeader
+            screen={screen}
+            onHome={isOnboarding ? undefined : goToRoute}
+            onOpenGuide={() => setScreen("mission-guide")}
+            userName={userName}
+          />
+        )}
+
+        {screen === "return-welcome" && (
+          <ReturnWelcomeScreen userName={userName} onEnter={() => setScreen("route")} />
+        )}
 
         {screen === "welcome" && <WelcomeScreen onStart={() => setScreen("onboarding")} />}
 
