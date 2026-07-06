@@ -395,7 +395,7 @@ export function RouteScreen({ onStartMission, onReviewMission, onOpenFirstMelodi
                 {/* Node card */}
                 <div
                   onClick={() => {
-                    if (isCurrent) onStartMission();
+                    if (isCurrent) onStartMission(node.id);
                     else if (isLocked) setExploringNode(node.id);
                     else if (s === 'done') onReviewMission(node.id);
                   }}
