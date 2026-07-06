@@ -54,11 +54,21 @@ export function RouteScreen({ onStartMission, onReviewMission, onOpenFirstMelodi
   // (celebraciones, perfil), pero ya no lo mostramos como tarjeta permanente en la ruta.
   useEffect(() => { touchLastVisit(); }, []);
 
-  const [exploringNode, setExploringNode] = useState<string | null>(null);
   const [showLockedIsland, setShowLockedIsland] = useState(false);
+  const [showLockedNode, setShowLockedNode] = useState(false);
   const [hoveredNode, setHoveredNode] = useState<string | null>(null);
   const [pressedNode, setPressedNode] = useState<string | null>(null);
   const [pressedIsland, setPressedIsland] = useState<string | null>(null);
+
+  const canOpenIsland = useCallback((islandId: IslandId): boolean => {
+    if (MVP1_LOCKED_ISLANDS.includes(islandId)) return false;
+    const lessons = MVP1_LESSON_SEQUENCE.filter((l) => l.islandId === islandId);
+    if (lessons.length === 0) return false;
+    const anyDone = lessons.some((l) => progress.isLessonCompleted(l.lessonId));
+    const current = progress.getCurrentLessonId();
+    const currentIsland = current ? findMvp1Lesson(current)?.islandId ?? null : null;
+    return anyDone || currentIsland === islandId;
+  }, [progress]);
   const [focusedStageId, setFocusedStageId] = useState<string>(ROUTE_STAGES[0].id);
   const stripRef = useRef<HTMLDivElement | null>(null);
   const stageRefs = useRef<Record<string, HTMLDivElement | null>>({});
