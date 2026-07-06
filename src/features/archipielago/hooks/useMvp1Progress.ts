@@ -217,6 +217,11 @@ export function useMvp1Progress() {
         answer: params.answer,
       });
       if (error) {
+        logEvent("checkin_save_error", {
+          lesson_id: params.lessonId,
+          island_id: params.islandId,
+          reason: error.message,
+        });
         return { ok: false, error: error.message };
       }
       logEvent("lesson_checkin_submitted", {
