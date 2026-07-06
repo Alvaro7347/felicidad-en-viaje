@@ -1,4 +1,4 @@
-import { useCallback, useEffect, useState } from "react";
+import { useCallback, useEffect, useSyncExternalStore } from "react";
 import { supabase } from "@/integrations/supabase/client";
 import {
   MVP1_LESSON_IDS,
@@ -9,6 +9,78 @@ import {
 } from "../data/mvp1Progress";
 
 export type LessonStatus = "done" | "current" | "locked" | "future-blocked";
+
+// ── Store global compartido (single source of truth) ───────────────
+interface ProgressState {
+  userId: string | null;
+  completedLessonIds: Set<string>;
+  loading: boolean;
+  loadError: string | null;
+}
+
+let state: ProgressState = {
+  userId: null,
+  completedLessonIds: new Set(),
+  loading: true,
+  loadError: null,
+};
+
+const listeners = new Set<() => void>();
+
+function setState(patch: Partial<ProgressState>) {
+  state = { ...state, ...patch };
+  listeners.forEach((l) => l());
+}
+
+function subscribe(l: () => void) {
+  listeners.add(l);
+  return () => {
+    listeners.delete(l);
+  };
+}
+
+function getSnapshot() {
+  return state;
+}
+
+let authSubscribed = false;
+let loadingPromise: Promise<void> | null = null;
+
+async function loadProgress(): Promise<void> {
+  if (loadingPromise) return loadingPromise;
+  loadingPromise = (async () => {
+    setState({ loading: true, loadError: null });
+    const { data: sess } = await supabase.auth.getSession();
+    const uid = sess.session?.user.id ?? null;
+    if (!uid) {
+      setState({ userId: null, completedLessonIds: new Set(), loading: false });
+      return;
+    }
+    const { data, error } = await supabase
+      .from("lesson_progress")
+      .select("lesson_id, status")
+      .eq("user_id", uid)
+      .eq("status", "completed");
+    if (error) {
+      setState({
+        userId: uid,
+        loading: false,
+        loadError: "No pudimos cargar tu avance. Intenta recargar la app.",
+      });
+      return;
+    }
+    setState({
+      userId: uid,
+      completedLessonIds: new Set((data ?? []).map((r) => r.lesson_id)),
+      loading: false,
+    });
+  })();
+  try {
+    await loadingPromise;
+  } finally {
+    loadingPromise = null;
+  }
+}
 
 async function logEvent(name: string, data?: Record<string, unknown>) {
   try {
@@ -24,49 +96,25 @@ async function logEvent(name: string, data?: Record<string, unknown>) {
 }
 
 export function useMvp1Progress() {
-  const [userId, setUserId] = useState<string | null>(null);
-  const [completedLessonIds, setCompletedLessonIds] = useState<Set<string>>(new Set());
-  const [loading, setLoading] = useState(true);
-  const [loadError, setLoadError] = useState<string | null>(null);
-
-  const load = useCallback(async () => {
-    setLoadError(null);
-    const { data: sess } = await supabase.auth.getSession();
-    const uid = sess.session?.user.id ?? null;
-    setUserId(uid);
-    if (!uid) {
-      setCompletedLessonIds(new Set());
-      setLoading(false);
-      return;
-    }
-    const { data, error } = await supabase
-      .from("lesson_progress")
-      .select("lesson_id, status")
-      .eq("user_id", uid)
-      .eq("status", "completed");
-    if (error) {
-      setLoadError("No pudimos cargar tu avance. Intenta recargar la app.");
-      setLoading(false);
-      return;
-    }
-    setCompletedLessonIds(new Set((data ?? []).map((r) => r.lesson_id)));
-    setLoading(false);
-  }, []);
+  const snap = useSyncExternalStore(subscribe, getSnapshot, getSnapshot);
 
   useEffect(() => {
-    load();
-    const { data: sub } = supabase.auth.onAuthStateChange(() => {
-      load();
-    });
-    return () => sub.subscription.unsubscribe();
-  }, [load]);
+    if (!authSubscribed) {
+      authSubscribed = true;
+      supabase.auth.onAuthStateChange(() => {
+        loadProgress();
+      });
+    }
+    loadProgress();
+  }, []);
+
+  const { userId, completedLessonIds, loading, loadError } = snap;
 
   const isLessonCompleted = useCallback(
     (lessonId: string) => completedLessonIds.has(lessonId),
     [completedLessonIds],
   );
 
-  // Próxima clase no completada dentro de la secuencia MVP1
   const getCurrentLessonId = useCallback((): string | null => {
     for (const entry of MVP1_LESSON_SEQUENCE) {
       if (!completedLessonIds.has(entry.lessonId)) return entry.lessonId;
@@ -74,18 +122,14 @@ export function useMvp1Progress() {
     return null;
   }, [completedLessonIds]);
 
-  const getNextLessonId = useCallback(
-    (lessonId: string): string | null => {
-      const idx = MVP1_LESSON_IDS.indexOf(lessonId);
-      if (idx === -1 || idx === MVP1_LESSON_IDS.length - 1) return null;
-      return MVP1_LESSON_IDS[idx + 1];
-    },
-    [],
-  );
+  const getNextLessonId = useCallback((lessonId: string): string | null => {
+    const idx = MVP1_LESSON_IDS.indexOf(lessonId);
+    if (idx === -1 || idx === MVP1_LESSON_IDS.length - 1) return null;
+    return MVP1_LESSON_IDS[idx + 1];
+  }, []);
 
   const isLessonUnlocked = useCallback(
     (lessonId: string): boolean => {
-      // Sólo lecciones dentro de la secuencia MVP1 pueden estar desbloqueadas
       if (!MVP1_LESSON_IDS.includes(lessonId)) return false;
       if (completedLessonIds.has(lessonId)) return true;
       const current = getCurrentLessonId();
@@ -140,11 +184,10 @@ export function useMvp1Progress() {
           error: "No pudimos guardar tu avance. Revisa tu conexión e intenta nuevamente.",
         };
       }
-      setCompletedLessonIds((prev) => {
-        const next = new Set(prev);
-        next.add(lessonId);
-        return next;
-      });
+      // Actualiza el store global inmediatamente → todos los consumidores re-renderizan.
+      const nextSet = new Set(state.completedLessonIds);
+      nextSet.add(lessonId);
+      setState({ completedLessonIds: nextSet });
       logEvent("lesson_completed", { lesson_id: lessonId, island_id: islandId });
       return { ok: true };
     },
@@ -194,7 +237,7 @@ export function useMvp1Progress() {
     submitCheckin,
     getCurrentLessonId,
     getNextLessonId,
-    refreshProgress: load,
+    refreshProgress: loadProgress,
     logEvent,
   };
 }
