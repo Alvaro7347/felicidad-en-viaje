@@ -21,17 +21,17 @@ const MELODIES_NODES_BASE: Omit<RouteNode, 'status'>[] = [
   { id: 'm10', title: 'Lo que ya conquistaste', subtitle: 'Resumen, medición breve y premio de cierre.', icon: '🏆', type: 'Resumen', time: '3 min' },
 ];
 
-// Territorios visibles en el carrusel — la Isla de Primeras Melodías es la activa aquí.
-const TERRITORIES = [
-  { id: 'puerto-inicio', title: 'Puerto de Inicio', state: 'done' as const },
-  { id: 'primeras-melodias', title: 'Isla de Primeras Melodías', state: 'active' as const, progress: 0 },
-  { id: 'pulso', title: 'Isla del Pulso', state: 'prototype' as const },
-  { id: 'ritmo', title: 'Isla del Ritmo', state: 'prototype' as const },
-  { id: 'musical', title: 'Isla Musical', state: 'prototype' as const },
-  { id: 'alegria', title: 'Isla de la Alegría', state: 'prototype' as const },
-  { id: 'acordes', title: 'Isla de los Acordes', state: 'prototype' as const },
-  { id: 'rasgueo', title: 'Isla del Rasgueo', state: 'prototype' as const },
-  { id: 'canciones', title: 'Isla de las Canciones', state: 'prototype' as const },
+type TerritoryState = 'done' | 'active' | 'locked';
+const TERRITORY_META: { id: string; title: string }[] = [
+  { id: 'puerto-inicio', title: 'Puerto de Inicio' },
+  { id: 'primeras-melodias', title: 'Isla de Primeras Melodías' },
+  { id: 'pulso', title: 'Isla del Pulso' },
+  { id: 'ritmo', title: 'Isla del Ritmo' },
+  { id: 'musical', title: 'Isla Musical' },
+  { id: 'alegria', title: 'Isla de la Alegría' },
+  { id: 'acordes', title: 'Isla de los Acordes' },
+  { id: 'rasgueo', title: 'Isla del Rasgueo' },
+  { id: 'canciones', title: 'Isla de las Canciones' },
 ];
 
 export function FirstMelodiesIslandScreen({ onBack, onOpenLesson, onOpenPulseIsland, onOpenRhythmIsland, onOpenMusicIsland, onOpenJoyIsland, onOpenChordsIsland, onOpenStrummingIsland, onOpenSongsIsland }: { onBack: () => void; onOpenLesson: (lessonId: string) => void; onOpenPulseIsland: () => void; onOpenRhythmIsland: () => void; onOpenMusicIsland: () => void; onOpenJoyIsland: () => void; onOpenChordsIsland: () => void; onOpenStrummingIsland: () => void; onOpenSongsIsland: () => void }) {
