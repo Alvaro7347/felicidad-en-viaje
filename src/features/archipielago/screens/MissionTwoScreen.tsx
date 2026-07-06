@@ -182,7 +182,7 @@ export function MissionTwoScreen({
             Guardaremos este motivo para recordártelo cuando avances, completes misiones o necesites volver a conectar con tu sonido.
           </p>
           <div style={{ display: "flex", gap: 10, flexWrap: "wrap" }}>
-            <Btn variant="ghost" onClick={() => setSaved(false)}>Editar mi motivo</Btn>
+            <Btn variant="ghost" onClick={() => setEditing(true)}>Editar mi motivo</Btn>
             <Btn onClick={onNext}>Continuar mi viaje</Btn>
           </div>
         </Card>
