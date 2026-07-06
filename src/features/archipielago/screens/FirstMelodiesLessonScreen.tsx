@@ -523,7 +523,6 @@ export function FirstMelodiesLessonScreen({
         onCompleted={onBackToIsland}
       />
 
-      <Btn onClick={onBackToIsland} fullWidth>Volver a la Isla de Primeras Melodías</Btn>
     </div>
   );
 }

@@ -93,7 +93,7 @@ export function MissionFourScreen({ onBack }: { onBack: () => void }) {
         </p>
       </Card>
 
-      <Btn onClick={onBack} fullWidth>Volver al Puerto de Inicio</Btn>
+      
 
       {showVideoModal && (
         <div

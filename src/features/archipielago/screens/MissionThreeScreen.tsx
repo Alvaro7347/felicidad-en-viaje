@@ -246,11 +246,6 @@ export function MissionThreeScreen({ onBack }: { onBack: () => void }) {
           >
             Ahora puedes volver al Puerto de Inicio y seguir avanzando una misión a la vez.
           </p>
-          <div style={{ width: "100%" }}>
-            <Btn onClick={onBack} fullWidth>
-              Volver al Puerto de Inicio
-            </Btn>
-          </div>
         </Card>
       )}
       <LessonCompletionBox lessonId="n3" islandId="start-port" onCompleted={onBack} />

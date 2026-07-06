@@ -266,10 +266,7 @@ export function MissionSixScreen({ onBack }: { onBack: () => void }) {
             </p>
           </Card>
 
-          <div style={{ display: "flex", flexDirection: "column", gap: 10 }}>
-            <Btn fullWidth variant="ghost" onClick={reset}>Reintentar quiz</Btn>
-            <Btn fullWidth onClick={onBack}>Volver al Puerto de Inicio</Btn>
-          </div>
+          <Btn fullWidth variant="ghost" onClick={reset}>Reintentar quiz</Btn>
         </>
       )}
       <LessonCompletionBox lessonId="n6" islandId="start-port" onCompleted={onBack} />

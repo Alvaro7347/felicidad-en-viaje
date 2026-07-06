@@ -111,8 +111,6 @@ export function MissionScreen({ onBack }: { onBack: () => void }) {
         </p>
       </Card>
 
-      {/* 8. CTA */}
-      <Btn onClick={onBack} fullWidth>Volver al Puerto de Inicio</Btn>
 
       {showVideoModal && (
         <div
