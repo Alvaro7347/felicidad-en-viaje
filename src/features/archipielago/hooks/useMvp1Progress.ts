@@ -179,6 +179,11 @@ export function useMvp1Progress() {
           { onConflict: "user_id,lesson_id" },
         );
       if (error) {
+        logEvent("lesson_progress_save_error", {
+          lesson_id: lessonId,
+          island_id: islandId,
+          message: error.message,
+        });
         return {
           ok: false,
           error: "No pudimos guardar tu avance. Revisa tu conexión e intenta nuevamente.",
@@ -212,6 +217,11 @@ export function useMvp1Progress() {
         answer: params.answer,
       });
       if (error) {
+        logEvent("checkin_save_error", {
+          lesson_id: params.lessonId,
+          island_id: params.islandId,
+          reason: error.message,
+        });
         return { ok: false, error: error.message };
       }
       logEvent("lesson_checkin_submitted", {

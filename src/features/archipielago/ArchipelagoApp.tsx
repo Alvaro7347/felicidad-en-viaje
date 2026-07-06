@@ -1,4 +1,4 @@
-import { useEffect, useState } from "react";
+import { useEffect, useRef, useState } from "react";
 import type { Session } from "@supabase/supabase-js";
 
 import { supabase } from "@/integrations/supabase/client";
@@ -179,11 +179,38 @@ export function ArchipelagoApp() {
     return () => { cancelled = true; };
   }, [session?.user.id]);
 
+  // ── Medición: app_opened + return_visit (una vez por carga con sesión) ──
+  const appOpenedLoggedRef = useRef(false);
+  useEffect(() => {
+    if (appOpenedLoggedRef.current) return;
+    if (!session?.user.id) return;
+    if (progress.loading) return;
+    if (hasOnboarding === null) return;
+    appOpenedLoggedRef.current = true;
+    const cur = progress.getCurrentLessonId();
+    const entry = cur ? findMvp1Lesson(cur) : null;
+    const current_island_id = entry?.islandId ?? null;
+    progress.logEvent("app_opened", {
+      current_lesson_id: cur,
+      current_island_id,
+      has_onboarding: !!hasOnboarding,
+    });
+    if (hasOnboarding && cur && cur !== "n1") {
+      progress.logEvent("return_visit", {
+        current_lesson_id: cur,
+        current_island_id,
+      });
+    }
+  }, [session?.user.id, progress.loading, hasOnboarding, progress]);
+
   const goToRoute = () => setScreen("route");
   const isOnboarding = ONBOARDING_SCREENS.includes(screen);
 
   // Intento de abrir isla bloqueada (Ritmo en adelante durante MVP1)
-  const openLockedIsland = () => setBlockedModal("island");
+  const openLockedIsland = (islandId: string) => {
+    setBlockedModal("island");
+    progress.logEvent("blocked_island_clicked", { island_id: islandId });
+  };
 
   // Intento de abrir lección: valida contra el progreso MVP1
   const openLessonGuarded = (
@@ -365,6 +392,7 @@ export function ArchipelagoApp() {
                   return;
                 }
                 setHasOnboarding(true);
+                progress.logEvent("onboarding_completed", { source: "diagnosis" });
                 const { error: profError } = await supabase
                   .from("profiles")
                   .upsert(
@@ -397,12 +425,12 @@ export function ArchipelagoApp() {
             onReviewMission={(id) => openMissionGuarded(id)}
             onOpenFirstMelodiesIsland={() => setScreen("first-melodies-island")}
             onOpenPulseIsland={() => setScreen("pulse-island")}
-            onOpenRhythmIsland={openLockedIsland}
-            onOpenMusicIsland={openLockedIsland}
-            onOpenJoyIsland={openLockedIsland}
-            onOpenChordsIsland={openLockedIsland}
-            onOpenStrummingIsland={openLockedIsland}
-            onOpenSongsIsland={openLockedIsland}
+            onOpenRhythmIsland={() => openLockedIsland("rhythm")}
+            onOpenMusicIsland={() => openLockedIsland("music")}
+            onOpenJoyIsland={() => openLockedIsland("joy")}
+            onOpenChordsIsland={() => openLockedIsland("chords")}
+            onOpenStrummingIsland={() => openLockedIsland("strumming")}
+            onOpenSongsIsland={() => openLockedIsland("songs")}
           />
         )}
 
@@ -431,24 +459,24 @@ export function ArchipelagoApp() {
               openLessonGuarded(lessonId, "first-melodies-lesson", setFirstMelodiesLessonId)
             }
             onOpenPulseIsland={() => setScreen("pulse-island")}
-            onOpenRhythmIsland={openLockedIsland}
-            onOpenMusicIsland={openLockedIsland}
-            onOpenJoyIsland={openLockedIsland}
-            onOpenChordsIsland={openLockedIsland}
-            onOpenStrummingIsland={openLockedIsland}
-            onOpenSongsIsland={openLockedIsland}
+            onOpenRhythmIsland={() => openLockedIsland("rhythm")}
+            onOpenMusicIsland={() => openLockedIsland("music")}
+            onOpenJoyIsland={() => openLockedIsland("joy")}
+            onOpenChordsIsland={() => openLockedIsland("chords")}
+            onOpenStrummingIsland={() => openLockedIsland("strumming")}
+            onOpenSongsIsland={() => openLockedIsland("songs")}
           />
         )}
         {screen === "pulse-island" && (
           <PulseIslandScreen
             onOpenStartPort={() => setScreen("route")}
             onOpenFirstMelodiesIsland={() => setScreen("first-melodies-island")}
-            onOpenRhythmIsland={openLockedIsland}
-            onOpenMusicIsland={openLockedIsland}
-            onOpenJoyIsland={openLockedIsland}
-            onOpenChordsIsland={openLockedIsland}
-            onOpenStrummingIsland={openLockedIsland}
-            onOpenSongsIsland={openLockedIsland}
+            onOpenRhythmIsland={() => openLockedIsland("rhythm")}
+            onOpenMusicIsland={() => openLockedIsland("music")}
+            onOpenJoyIsland={() => openLockedIsland("joy")}
+            onOpenChordsIsland={() => openLockedIsland("chords")}
+            onOpenStrummingIsland={() => openLockedIsland("strumming")}
+            onOpenSongsIsland={() => openLockedIsland("songs")}
             onOpenLesson={(lessonId) =>
               openLessonGuarded(lessonId, "pulse-lesson", setPulseLessonId)
             }
