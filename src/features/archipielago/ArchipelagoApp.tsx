@@ -319,10 +319,15 @@ export function ArchipelagoApp() {
                 const uid = sess.session?.user.id;
                 if (uid) {
                   const payload = { name, answers } as unknown as never;
-                  await supabase.from("user_onboarding").insert({
-                    user_id: uid,
-                    answers: payload,
-                  });
+                  await supabase.from("user_onboarding").upsert(
+                    {
+                      user_id: uid,
+                      answers: payload,
+                      updated_at: new Date().toISOString(),
+                    },
+                    { onConflict: "user_id" },
+                  );
+                  setHasOnboarding(true);
                   await supabase
                     .from("profiles")
                     .upsert(
