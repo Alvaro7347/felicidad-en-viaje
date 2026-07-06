@@ -1,0 +1,32 @@
+{
+  "name": "Archipiélago de la Felicidad",
+  "short_name": "Archipiélago",
+  "description": "Toca la felicidad. Un viaje musical para aprender ukelele con pequeñas victorias.",
+  "start_url": "/",
+  "scope": "/",
+  "display": "standalone",
+  "orientation": "portrait",
+  "background_color": "#DFF9EF",
+  "theme_color": "#2EE6AE",
+  "lang": "es",
+  "icons": [
+    {
+      "src": "/icon-192.png",
+      "sizes": "192x192",
+      "type": "image/png",
+      "purpose": "any"
+    },
+    {
+      "src": "/icon-512.png",
+      "sizes": "512x512",
+      "type": "image/png",
+      "purpose": "any"
+    },
+    {
+      "src": "/icon-512.png",
+      "sizes": "512x512",
+      "type": "image/png",
+      "purpose": "maskable"
+    }
+  ]
+}

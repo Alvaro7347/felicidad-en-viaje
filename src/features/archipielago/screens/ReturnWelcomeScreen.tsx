@@ -1,5 +1,6 @@
 import { B } from "../data/brand";
 import { Btn } from "../components/Btn";
+import { InstallHelpCard } from "../components/InstallHelpCard";
 
 interface Props {
   userName: string;
@@ -101,6 +102,10 @@ export function ReturnWelcomeScreen({ userName, onEnter, loading = false, ctaLab
             {ctaLabel ?? "Entrar a mi Archipiélago"}
           </Btn>
         </div>
+
+        <InstallHelpCard />
+
+
 
 
         <div
