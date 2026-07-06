@@ -10,7 +10,7 @@ const EMAIL_RE = /^[^\s@]+@[^\s@]+\.[^\s@]+$/;
 // No usar window.location.origin aquí: en preview puede redirigir a lovable.dev.
 const AUTH_REDIRECT_URL = "https://soundkeleles-archipielago-journey.lovable.app";
 
-const LOGO_SRC = "/logo-soundkeleles-nobg.png";
+const LOGO_SRC = "/logo-calipso.png";
 
 async function logEvent(name: string, data?: Record<string, unknown>) {
   try {
