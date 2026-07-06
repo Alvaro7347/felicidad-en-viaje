@@ -236,10 +236,11 @@ export function RouteScreen({ onStartMission, onReviewMission, onOpenFirstMelodi
                           {isl.title}
                         </div>
                         {!isActive && (() => {
-                          const isPrototype = isl.id === 'primeras-melodias' || isl.id === 'pulso' || isl.id === 'ritmo' || isl.id === 'musical' || isl.id === 'alegria' || isl.id === 'acordes' || isl.id === 'rasgueo' || isl.id === 'canciones';
+                          const islandId = STAGE_TO_ISLAND[isl.id] as IslandId | undefined;
+                          const openable = islandId ? canOpenIsland(islandId) : false;
                           return (
-                            <div style={{ fontSize: 9, color: isPrototype ? 'rgba(46,230,174,0.85)' : (isFocused ? 'rgba(255,255,255,0.45)' : 'rgba(255,255,255,0.25)'), marginTop: 2, letterSpacing: '0.02em' }}>
-                              {isPrototype ? 'disponible prototipo' : 'próximamente'}
+                            <div style={{ fontSize: 9, color: openable ? 'rgba(46,230,174,0.85)' : (isFocused ? 'rgba(255,255,255,0.45)' : 'rgba(255,255,255,0.25)'), marginTop: 2, letterSpacing: '0.02em' }}>
+                              {openable ? 'disponible' : 'bloqueada'}
                             </div>
                           );
                         })()}
