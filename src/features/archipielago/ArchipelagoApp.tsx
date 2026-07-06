@@ -1,8 +1,11 @@
 import { useEffect, useState } from "react";
+import type { Session } from "@supabase/supabase-js";
 
+import { supabase } from "@/integrations/supabase/client";
 import { B } from "./data/brand";
 import { ONBOARDING_SCREENS } from "./data/screens";
 import type { DiagAnswers, Screen } from "./types";
+import { AuthScreen } from "./screens/AuthScreen";
 
 import { AppHeader } from "./components/AppHeader";
 import { DevNav, SHOW_DEV_NAV } from "./components/DevNav";
@@ -71,6 +74,41 @@ export function ArchipelagoApp() {
     };
   }, []);
 
+  // ── Sesión (Supabase Auth OTP) ─────────────────────────────────
+  const [session, setSession] = useState<Session | null>(null);
+  const [authChecking, setAuthChecking] = useState(true);
+
+  useEffect(() => {
+    let mounted = true;
+    supabase.auth.getSession().then(({ data }) => {
+      if (!mounted) return;
+      setSession(data.session);
+      setAuthChecking(false);
+    });
+    const { data: sub } = supabase.auth.onAuthStateChange((_event, s) => {
+      setSession(s);
+      setAuthChecking(false);
+      if (s?.user) {
+        supabase
+          .from("profiles")
+          .upsert(
+            {
+              id: s.user.id,
+              email: s.user.email ?? null,
+              updated_at: new Date().toISOString(),
+            },
+            { onConflict: "id" },
+          )
+          .then(() => {});
+      }
+    });
+    return () => {
+      mounted = false;
+      sub.subscription.unsubscribe();
+    };
+  }, []);
+
+
   // ── Estado del viaje ───────────────────────────────────────────
   const [screen, setScreen] = useState<Screen>("welcome");
   const [diagAnswers, setDiagAnswers] = useState<DiagAnswers>({});
@@ -93,6 +131,44 @@ export function ArchipelagoApp() {
 
   const goToRoute = () => setScreen("route");
   const isOnboarding = ONBOARDING_SCREENS.includes(screen);
+
+  // ── Compuerta de sesión ────────────────────────────────────────
+  if (authChecking) {
+    return (
+      <main
+        style={{
+          minHeight: "100vh",
+          background: B.gray,
+          color: B.dark,
+          fontFamily: "Quicksand, Arial, sans-serif",
+          display: "flex",
+          alignItems: "center",
+          justifyContent: "center",
+        }}
+      >
+        {showSplash && <SplashScreen fading={splashFading} />}
+        <div style={{ fontSize: 14, color: B.grayText }}>Cargando…</div>
+      </main>
+    );
+  }
+
+  if (!session) {
+    return (
+      <main
+        style={{
+          minHeight: "100vh",
+          background: B.gray,
+          color: B.dark,
+          fontFamily: "Quicksand, Arial, sans-serif",
+          padding: "16px 16px 48px",
+        }}
+      >
+        <div style={{ maxWidth: 480, margin: "0 auto" }}>
+          <AuthScreen />
+        </div>
+      </main>
+    );
+  }
 
   return (
     <main
