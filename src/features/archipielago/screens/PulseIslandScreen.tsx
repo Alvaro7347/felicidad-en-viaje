@@ -3,19 +3,20 @@ import { B } from "../data/brand";
 import type { NodeStatus, RouteNode } from "../types";
 import { Btn } from "../components/Btn";
 import { Card } from "../components/Card";
+import { useMvp1Progress } from "../hooks/useMvp1Progress";
 
-const PULSE_NODES: RouteNode[] = [
-  { id: 'p1', title: 'El acorde de la luz: SOL', subtitle: 'Entiende el SOL como puerta a más canciones.', icon: '☀️', status: 'current', type: 'Video práctica', time: '4 min' },
-  { id: 'p2', title: 'Mapa visual del SOL', subtitle: 'Refuerza el acorde SOL con apoyo visual.', icon: '🗺️', status: 'locked', type: 'Diagrama', time: '2 min' },
-  { id: 'p3', title: 'Puente SOL–DO', subtitle: 'Practica un cambio cercano y controlado.', icon: '🌉', status: 'locked', type: 'Práctica BPM', time: '5 min' },
-  { id: 'p4', title: 'Leer el camino de los acordes', subtitle: 'Aprende a seguir una progresión simple.', icon: '📖', status: 'locked', type: 'Video', time: '4 min' },
-  { id: 'p5', title: 'La Vaca Lola en pulso', subtitle: 'Aplica DO y SOL en una canción simple.', icon: '🐮', status: 'locked', type: 'Canción guiada', time: '5 min' },
-  { id: 'p6', title: 'Puente SOL–LAm', subtitle: 'Entrena una distancia mayor entre acordes.', icon: '🌉', status: 'locked', type: 'Práctica BPM', time: '5 min' },
-  { id: 'p7', title: 'Puente SOL–FA', subtitle: 'Enfrenta un cambio desafiante con calma.', icon: '🌉', status: 'locked', type: 'Práctica BPM', time: '5 min' },
-  { id: 'p8', title: 'No se va en pulso', subtitle: 'Toca una canción popular con cuatro acordes.', icon: '🎶', status: 'locked', type: 'Canción guiada', time: '6 min' },
-  { id: 'p9', title: 'Descifra la clave americana', subtitle: 'Aprende el idioma moderno de los acordes.', icon: '🔤', status: 'locked', type: 'Video + tarjeta', time: '3 min' },
-  { id: 'p10', title: 'Despacito en pulso', subtitle: 'Aplica LAm–FA–DO–SOL usando cifrado.', icon: '🎵', status: 'locked', type: 'Canción guiada', time: '6 min' },
-  { id: 'p11', title: 'Calma en pulso', subtitle: 'Cierra la isla tocando con calma.', icon: '🌊', status: 'locked', type: 'Cierre de isla', time: '6 min' },
+const PULSE_NODES_BASE: Omit<RouteNode, 'status'>[] = [
+  { id: 'p1', title: 'El acorde de la luz: SOL', subtitle: 'Entiende el SOL como puerta a más canciones.', icon: '☀️', type: 'Video práctica', time: '4 min' },
+  { id: 'p2', title: 'Mapa visual del SOL', subtitle: 'Refuerza el acorde SOL con apoyo visual.', icon: '🗺️', type: 'Diagrama', time: '2 min' },
+  { id: 'p3', title: 'Puente SOL–DO', subtitle: 'Practica un cambio cercano y controlado.', icon: '🌉', type: 'Práctica BPM', time: '5 min' },
+  { id: 'p4', title: 'Leer el camino de los acordes', subtitle: 'Aprende a seguir una progresión simple.', icon: '📖', type: 'Video', time: '4 min' },
+  { id: 'p5', title: 'La Vaca Lola en pulso', subtitle: 'Aplica DO y SOL en una canción simple.', icon: '🐮', type: 'Canción guiada', time: '5 min' },
+  { id: 'p6', title: 'Puente SOL–LAm', subtitle: 'Entrena una distancia mayor entre acordes.', icon: '🌉', type: 'Práctica BPM', time: '5 min' },
+  { id: 'p7', title: 'Puente SOL–FA', subtitle: 'Enfrenta un cambio desafiante con calma.', icon: '🌉', type: 'Práctica BPM', time: '5 min' },
+  { id: 'p8', title: 'No se va en pulso', subtitle: 'Toca una canción popular con cuatro acordes.', icon: '🎶', type: 'Canción guiada', time: '6 min' },
+  { id: 'p9', title: 'Descifra la clave americana', subtitle: 'Aprende el idioma moderno de los acordes.', icon: '🔤', type: 'Video + tarjeta', time: '3 min' },
+  { id: 'p10', title: 'Despacito en pulso', subtitle: 'Aplica LAm–FA–DO–SOL usando cifrado.', icon: '🎵', type: 'Canción guiada', time: '6 min' },
+  { id: 'p11', title: 'Calma en pulso', subtitle: 'Cierra la isla tocando con calma.', icon: '🌊', type: 'Cierre de isla', time: '6 min' },
 ];
 
 // Isla del Pulso activa en este carrusel.
