@@ -54,11 +54,21 @@ export function RouteScreen({ onStartMission, onReviewMission, onOpenFirstMelodi
   // (celebraciones, perfil), pero ya no lo mostramos como tarjeta permanente en la ruta.
   useEffect(() => { touchLastVisit(); }, []);
 
-  const [exploringNode, setExploringNode] = useState<string | null>(null);
   const [showLockedIsland, setShowLockedIsland] = useState(false);
+  const [showLockedNode, setShowLockedNode] = useState(false);
   const [hoveredNode, setHoveredNode] = useState<string | null>(null);
   const [pressedNode, setPressedNode] = useState<string | null>(null);
   const [pressedIsland, setPressedIsland] = useState<string | null>(null);
+
+  const canOpenIsland = useCallback((islandId: IslandId): boolean => {
+    if (MVP1_LOCKED_ISLANDS.includes(islandId)) return false;
+    const lessons = MVP1_LESSON_SEQUENCE.filter((l) => l.islandId === islandId);
+    if (lessons.length === 0) return false;
+    const anyDone = lessons.some((l) => progress.isLessonCompleted(l.lessonId));
+    const current = progress.getCurrentLessonId();
+    const currentIsland = current ? findMvp1Lesson(current)?.islandId ?? null : null;
+    return anyDone || currentIsland === islandId;
+  }, [progress]);
   const [focusedStageId, setFocusedStageId] = useState<string>(ROUTE_STAGES[0].id);
   const stripRef = useRef<HTMLDivElement | null>(null);
   const stageRefs = useRef<Record<string, HTMLDivElement | null>>({});
@@ -172,6 +182,11 @@ export function RouteScreen({ onStartMission, onReviewMission, onOpenFirstMelodi
                     onTouchCancel={() => setPressedIsland(null)}
                     onClick={() => {
                       if (isl.id === 'puerto-inicio') return;
+                      const islandId = STAGE_TO_ISLAND[isl.id] as IslandId | undefined;
+                      if (!islandId || !canOpenIsland(islandId)) {
+                        setShowLockedIsland(true);
+                        return;
+                      }
                       if (isl.id === 'primeras-melodias') { onOpenFirstMelodiesIsland(); return; }
                       if (isl.id === 'pulso') { onOpenPulseIsland(); return; }
                       if (isl.id === 'ritmo') { onOpenRhythmIsland(); return; }
@@ -221,10 +236,11 @@ export function RouteScreen({ onStartMission, onReviewMission, onOpenFirstMelodi
                           {isl.title}
                         </div>
                         {!isActive && (() => {
-                          const isPrototype = isl.id === 'primeras-melodias' || isl.id === 'pulso' || isl.id === 'ritmo' || isl.id === 'musical' || isl.id === 'alegria' || isl.id === 'acordes' || isl.id === 'rasgueo' || isl.id === 'canciones';
+                          const islandId = STAGE_TO_ISLAND[isl.id] as IslandId | undefined;
+                          const openable = islandId ? canOpenIsland(islandId) : false;
                           return (
-                            <div style={{ fontSize: 9, color: isPrototype ? 'rgba(46,230,174,0.85)' : (isFocused ? 'rgba(255,255,255,0.45)' : 'rgba(255,255,255,0.25)'), marginTop: 2, letterSpacing: '0.02em' }}>
-                              {isPrototype ? 'disponible prototipo' : 'próximamente'}
+                            <div style={{ fontSize: 9, color: openable ? 'rgba(46,230,174,0.85)' : (isFocused ? 'rgba(255,255,255,0.45)' : 'rgba(255,255,255,0.25)'), marginTop: 2, letterSpacing: '0.02em' }}>
+                              {openable ? 'disponible' : 'bloqueada'}
                             </div>
                           );
                         })()}
@@ -267,35 +283,28 @@ export function RouteScreen({ onStartMission, onReviewMission, onOpenFirstMelodi
         </div>
       </div>
 
-      {exploringNode && (
-        <div style={{
-          position: 'fixed',
-          inset: 0,
-          background: 'rgba(60,60,59,0.45)',
-          zIndex: 50,
-          display: 'flex',
-          alignItems: 'center',
-          justifyContent: 'center',
-          padding: 16,
-        }}>
-          <Card style={{ width: '100%', maxWidth: 460, border: `1.5px solid ${B.pink}` }}>
-            <div style={{ fontSize: 11, fontWeight: 800, color: B.pink, letterSpacing: '1.2px', textTransform: 'uppercase', marginBottom: 6 }}>
-              Modo exploración
-            </div>
-            <div style={{ fontSize: 13, lineHeight: 1.6, color: B.dark, marginBottom: 14 }}>
-              Esta misión aún no está desbloqueada en tu viaje, pero puedes explorarla para conocer cómo será la experiencia.
-            </div>
-            <div style={{ display: 'flex', flexDirection: 'column', gap: 10 }}>
-              <Btn onClick={() => setExploringNode(null)} fullWidth>
-                Entendido
-              </Btn>
-              <Btn variant="ghost" onClick={() => setExploringNode(null)} fullWidth>
-                Volver a la ruta
-              </Btn>
-            </div>
-          </Card>
+      {showLockedNode && (
+        <div
+          onClick={() => setShowLockedNode(false)}
+          style={{
+            position: 'fixed', inset: 0, background: 'rgba(60,60,59,0.45)', zIndex: 60,
+            display: 'flex', alignItems: 'center', justifyContent: 'center', padding: 16,
+          }}
+        >
+          <div onClick={(e) => e.stopPropagation()} style={{ width: '100%', maxWidth: 420 }}>
+            <Card style={{ border: `1.5px solid ${B.grayBorder}` }}>
+              <div style={{ fontSize: 18, fontFamily: 'Space Grotesk, sans-serif', fontWeight: 800, color: B.dark, marginBottom: 8 }}>
+                🔒 Clase bloqueada
+              </div>
+              <div style={{ fontSize: 13.5, lineHeight: 1.6, color: B.grayText, marginBottom: 14 }}>
+                Para abrir esta clase, primero necesitas completar la clase anterior.
+              </div>
+              <Btn onClick={() => setShowLockedNode(false)} fullWidth>Entendido</Btn>
+            </Card>
+          </div>
         </div>
       )}
+
 
       {showLockedIsland && (
         <div style={{
@@ -396,7 +405,7 @@ export function RouteScreen({ onStartMission, onReviewMission, onOpenFirstMelodi
                 <div
                   onClick={() => {
                     if (isCurrent) onStartMission(node.id);
-                    else if (isLocked) setExploringNode(node.id);
+                    else if (isLocked) setShowLockedNode(true);
                     else if (s === 'done') onReviewMission(node.id);
                   }}
                   onMouseEnter={() => setHoveredNode(node.id)}
@@ -456,8 +465,8 @@ export function RouteScreen({ onStartMission, onReviewMission, onOpenFirstMelodi
                       </div>
                     )}
                     {isLocked && (
-                      <div style={{ color: B.pink, fontSize: 10, fontWeight: 800 }}>
-                        Explorar →
+                      <div style={{ color: B.grayText, fontSize: 10, fontWeight: 800 }}>
+                        Bloqueada
                       </div>
                     )}
                   </div>
