@@ -80,6 +80,8 @@ export function ArchipelagoApp() {
   // ── Sesión (Supabase Auth OTP) ─────────────────────────────────
   const [session, setSession] = useState<Session | null>(null);
   const [authChecking, setAuthChecking] = useState(true);
+  const [onboardingChecking, setOnboardingChecking] = useState(false);
+  const [hasOnboarding, setHasOnboarding] = useState<boolean | null>(null);
 
   useEffect(() => {
     let mounted = true;
@@ -132,6 +134,50 @@ export function ArchipelagoApp() {
   const progress = useMvp1Progress();
   const [blockedModal, setBlockedModal] = useState<null | "island" | "lesson">(null);
 
+  // ── Onboarding: leer desde Supabase (fuente de verdad) ─────────
+  useEffect(() => {
+    const uid = session?.user.id;
+    if (!uid) {
+      setHasOnboarding(null);
+      return;
+    }
+    let cancelled = false;
+    setOnboardingChecking(true);
+    (async () => {
+      const { data: onb } = await supabase
+        .from("user_onboarding")
+        .select("answers")
+        .eq("user_id", uid)
+        .maybeSingle();
+      if (cancelled) return;
+      if (onb) {
+        // Recuperar nombre desde answers.name o profiles.name
+        const answers = (onb.answers ?? {}) as { name?: string; answers?: DiagAnswers };
+        let name = answers.name ?? "";
+        if (!name) {
+          const { data: prof } = await supabase
+            .from("profiles")
+            .select("name")
+            .eq("id", uid)
+            .maybeSingle();
+          if (cancelled) return;
+          name = prof?.name ?? "Navegante";
+        }
+        setUserName(name || "Navegante");
+        if (typeof window !== "undefined") {
+          try { window.localStorage.setItem("archipielago_user_name", name || "Navegante"); } catch {}
+        }
+        setHasOnboarding(true);
+        setScreen("route");
+      } else {
+        setHasOnboarding(false);
+        setScreen("welcome");
+      }
+      setOnboardingChecking(false);
+    })();
+    return () => { cancelled = true; };
+  }, [session?.user.id]);
+
   const goToRoute = () => setScreen("route");
   const isOnboarding = ONBOARDING_SCREENS.includes(screen);
 
@@ -169,7 +215,7 @@ export function ArchipelagoApp() {
 
 
   // ── Compuerta de sesión ────────────────────────────────────────
-  if (authChecking) {
+  if (authChecking || (session && (onboardingChecking || hasOnboarding === null))) {
     return (
       <main
         style={{
@@ -183,7 +229,9 @@ export function ArchipelagoApp() {
         }}
       >
         {showSplash && <SplashScreen fading={splashFading} />}
-        <div style={{ fontSize: 14, color: B.grayText }}>Cargando…</div>
+        <div style={{ fontSize: 14, color: B.grayText }}>
+          {session ? "Preparando tu viaje…" : "Cargando…"}
+        </div>
       </main>
     );
   }
@@ -271,10 +319,15 @@ export function ArchipelagoApp() {
                 const uid = sess.session?.user.id;
                 if (uid) {
                   const payload = { name, answers } as unknown as never;
-                  await supabase.from("user_onboarding").insert({
-                    user_id: uid,
-                    answers: payload,
-                  });
+                  await supabase.from("user_onboarding").upsert(
+                    {
+                      user_id: uid,
+                      answers: payload,
+                      updated_at: new Date().toISOString(),
+                    },
+                    { onConflict: "user_id" },
+                  );
+                  setHasOnboarding(true);
                   await supabase
                     .from("profiles")
                     .upsert(
