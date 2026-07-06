@@ -102,6 +102,10 @@ export function MissionTwoScreen({
   const [otherEmotion, setOtherEmotion] = useState(customInitial);
   const [errors, setErrors] = useState<{ motivation?: string; emotion?: string; other?: string }>({});
   const [saved, setSaved] = useState(Boolean(initialMotivation && initialEmotions.length > 0));
+  const [saving, setSaving] = useState(false);
+  const [saveError, setSaveError] = useState<string | null>(null);
+  const { completeLesson } = useMvp1Progress();
+  const [saved, setSaved] = useState(Boolean(initialMotivation && initialEmotions.length > 0));
 
   function toggleEmotion(em: string) {
     setSelected((prev) => (prev.includes(em) ? prev.filter((x) => x !== em) : [...prev, em]));
