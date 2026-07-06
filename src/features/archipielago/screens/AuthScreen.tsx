@@ -145,24 +145,30 @@ export function AuthScreen() {
         <div style={{ textAlign: "center", marginBottom: 22 }}>
           <div
             style={{
-              width: 96,
-              height: 96,
+              width: 200,
+              height: 100,
               margin: "0 auto 14px",
-              borderRadius: 28,
+              borderRadius: 24,
               background: B.white,
               boxShadow: "0 10px 30px -12px rgba(46, 230, 174, 0.55)",
+              border: "1px solid rgba(46, 230, 174, 0.25)",
               display: "flex",
               alignItems: "center",
               justifyContent: "center",
-              overflow: "hidden",
+              padding: 12,
+              boxSizing: "border-box",
             }}
           >
             <img
               src={LOGO_SRC}
-              alt="SoundKeleles"
-              style={{ width: "78%", height: "78%", objectFit: "contain" }}
-              onError={(e) => {
-                (e.currentTarget as HTMLImageElement).style.display = "none";
+              alt="SoundKeleles — Archipiélago de la Felicidad"
+              style={{
+                maxWidth: "100%",
+                maxHeight: "100%",
+                width: "auto",
+                height: "auto",
+                objectFit: "contain",
+                display: "block",
               }}
             />
           </div>
