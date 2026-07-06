@@ -6,6 +6,9 @@ import { B } from "./data/brand";
 import { ONBOARDING_SCREENS } from "./data/screens";
 import type { DiagAnswers, Screen } from "./types";
 import { AuthScreen } from "./screens/AuthScreen";
+import { BlockedIslandModal } from "./components/BlockedIslandModal";
+import { useMvp1Progress } from "./hooks/useMvp1Progress";
+import { findMvp1Lesson } from "./data/mvp1Progress";
 
 import { AppHeader } from "./components/AppHeader";
 import { DevNav, SHOW_DEV_NAV } from "./components/DevNav";
