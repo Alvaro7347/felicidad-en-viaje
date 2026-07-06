@@ -191,6 +191,7 @@ export function ArchipelagoApp() {
     lessonScreen: Screen,
     setLessonId: (id: string) => void,
   ) => {
+    if (progress.loading) return; // Esperar a tener progreso real antes de decidir.
     if (!progress.isLessonUnlocked(lessonId)) {
       setBlockedModal("lesson");
       progress.logEvent("blocked_lesson_clicked", { lesson_id: lessonId });
@@ -203,6 +204,7 @@ export function ArchipelagoApp() {
 
   // Ir a la pantalla de una misión (Puerto) sólo si está desbloqueada.
   const openMissionGuarded = (lessonId: string) => {
+    if (progress.loading) return;
     const entry = findMvp1Lesson(lessonId);
     if (!entry) return;
     if (!progress.isLessonUnlocked(lessonId)) {
