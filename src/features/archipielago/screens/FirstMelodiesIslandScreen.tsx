@@ -68,8 +68,6 @@ export function FirstMelodiesIslandScreen({ onBack, onOpenLesson, onOpenPulseIsl
   const [hoveredNode, setHoveredNode] = useState<string | null>(null);
   const [pressedNode, setPressedNode] = useState<string | null>(null);
   const [pressedIsland, setPressedIsland] = useState<string | null>(null);
-  const [pressedNode, setPressedNode] = useState<string | null>(null);
-  const [pressedIsland, setPressedIsland] = useState<string | null>(null);
   const [focusedStageId, setFocusedStageId] = useState<string>('primeras-melodias');
   const [mounted, setMounted] = useState(false);
   const stripRef = useRef<HTMLDivElement | null>(null);
