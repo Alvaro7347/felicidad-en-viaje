@@ -2,7 +2,7 @@ import { useMemo, useState } from "react";
 import { B } from "../data/brand";
 import { Card } from "./Card";
 import { Btn } from "./Btn";
-import { useMvp1Progress } from "../hooks/useMvp1Progress";
+import { useMvp1ProgressContext } from "../context/Mvp1ProgressContext";
 import {
   CHORD_CHANGE_CHECKIN,
   isChordCheckinLesson,
@@ -34,7 +34,7 @@ export function LessonCompletionBox({
     completeLesson,
     submitCheckin,
     logEvent,
-  } = useMvp1Progress();
+  } = useMvp1ProgressContext();
 
   const effectiveCheckin = useMemo(() => {
     if (checkin) return checkin;

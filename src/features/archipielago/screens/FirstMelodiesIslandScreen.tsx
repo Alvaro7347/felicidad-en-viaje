@@ -3,7 +3,7 @@ import { B } from "../data/brand";
 import type { NodeStatus, RouteNode } from "../types";
 import { Btn } from "../components/Btn";
 import { Card } from "../components/Card";
-import { useMvp1Progress } from "../hooks/useMvp1Progress";
+import { useMvp1ProgressContext } from "../context/Mvp1ProgressContext";
 import { MVP1_LESSON_SEQUENCE, MVP1_LOCKED_ISLANDS, findMvp1Lesson, type IslandId } from "../data/mvp1Progress";
 import { STAGE_TO_ISLAND } from "../data/islands";
 
@@ -35,7 +35,7 @@ const TERRITORY_META: { id: string; title: string }[] = [
 ];
 
 export function FirstMelodiesIslandScreen({ onBack, onOpenLesson, onOpenPulseIsland, onOpenRhythmIsland, onOpenMusicIsland, onOpenJoyIsland, onOpenChordsIsland, onOpenStrummingIsland, onOpenSongsIsland }: { onBack: () => void; onOpenLesson: (lessonId: string) => void; onOpenPulseIsland: () => void; onOpenRhythmIsland: () => void; onOpenMusicIsland: () => void; onOpenJoyIsland: () => void; onOpenChordsIsland: () => void; onOpenStrummingIsland: () => void; onOpenSongsIsland: () => void }) {
-  const progress = useMvp1Progress();
+  const progress = useMvp1ProgressContext();
   const MELODIES_NODES: RouteNode[] = MELODIES_NODES_BASE.map((n) => {
     const s = progress.getLessonStatus(n.id);
     const status: NodeStatus = s === 'done' ? 'done' : s === 'current' ? 'current' : 'locked';

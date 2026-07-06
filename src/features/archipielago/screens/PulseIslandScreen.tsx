@@ -3,7 +3,7 @@ import { B } from "../data/brand";
 import type { NodeStatus, RouteNode } from "../types";
 import { Btn } from "../components/Btn";
 import { Card } from "../components/Card";
-import { useMvp1Progress } from "../hooks/useMvp1Progress";
+import { useMvp1ProgressContext } from "../context/Mvp1ProgressContext";
 
 const PULSE_NODES_BASE: Omit<RouteNode, 'status'>[] = [
   { id: 'p1', title: 'El acorde de la luz: SOL', subtitle: 'Entiende el SOL como puerta a más canciones.', icon: '☀️', type: 'Video práctica', time: '4 min' },
@@ -53,7 +53,7 @@ export function PulseIslandScreen({
   onOpenSongsIsland: () => void;
   onOpenLesson: (lessonId: string) => void;
 }) {
-  const progress = useMvp1Progress();
+  const progress = useMvp1ProgressContext();
   const PULSE_NODES: RouteNode[] = PULSE_NODES_BASE.map((n) => {
     const s = progress.getLessonStatus(n.id);
     const status: NodeStatus = s === 'done' ? 'done' : s === 'current' ? 'current' : 'locked';

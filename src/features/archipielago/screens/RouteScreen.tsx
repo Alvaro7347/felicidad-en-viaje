@@ -2,7 +2,7 @@ import { useState, useRef, useEffect, useCallback, useMemo } from "react";
 import { B } from "../data/brand";
 import { START_PORT_NODES, ROUTE_STAGES, STAGE_TO_ISLAND } from "../data/islands";
 import { MVP1_LESSON_SEQUENCE, MVP1_LOCKED_ISLANDS, findMvp1Lesson, type IslandId } from "../data/mvp1Progress";
-import { useMvp1Progress } from "../hooks/useMvp1Progress";
+import { useMvp1ProgressContext } from "../context/Mvp1ProgressContext";
 
 import type { NodeStatus } from "../types";
 import { Btn } from "../components/Btn";
@@ -10,7 +10,7 @@ import { Card } from "../components/Card";
 import { touchLastVisit } from "../data/musicalFuel";
 
 export function RouteScreen({ onStartMission, onReviewMission, onOpenFirstMelodiesIsland, onOpenPulseIsland, onOpenRhythmIsland, onOpenMusicIsland, onOpenJoyIsland, onOpenChordsIsland, onOpenStrummingIsland, onOpenSongsIsland, userName }: { onStartMission: (lessonId: string) => void; onReviewMission: (id: string) => void; onOpenFirstMelodiesIsland: () => void; onOpenPulseIsland: () => void; onOpenRhythmIsland: () => void; onOpenMusicIsland: () => void; onOpenJoyIsland: () => void; onOpenChordsIsland: () => void; onOpenStrummingIsland: () => void; onOpenSongsIsland: () => void; userName: string }) {
-  const progress = useMvp1Progress();
+  const progress = useMvp1ProgressContext();
 
   // Estado real de cada nodo del Puerto = derivado de Supabase (lesson_progress).
   const nodeStatusById = useMemo(() => {
