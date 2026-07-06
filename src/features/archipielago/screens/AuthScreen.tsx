@@ -304,25 +304,14 @@ export function AuthScreen() {
           style={{
             textAlign: "center",
             fontFamily: "Quicksand, sans-serif",
-            fontSize: 13,
+            fontSize: 12,
             color: B.greenDark,
-            marginTop: 18,
+            marginTop: 12,
             lineHeight: 1.5,
             fontWeight: 600,
           }}
         >
           🎸 Tu ukelele te espera al otro lado.
-        </p>
-        <p
-          style={{
-            textAlign: "center",
-            fontSize: 12,
-            color: B.grayText,
-            marginTop: 6,
-            lineHeight: 1.5,
-          }}
-        >
-          Guarda este viaje en tu celular y vuelve a practicar durante la semana.
         </p>
       </div>
     </div>
