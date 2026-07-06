@@ -93,7 +93,7 @@ export function AuthScreen() {
         position: "relative",
         minHeight: "100vh",
         margin: "-24px -20px",
-        padding: "40px 20px 32px",
+        padding: "20px 20px 24px",
         background:
           "radial-gradient(circle at 20% 0%, #C7F7E7 0%, transparent 55%), radial-gradient(circle at 90% 100%, #FFE1EE 0%, transparent 50%), linear-gradient(180deg, #E9FFF7 0%, #FFFFFF 100%)",
         overflow: "hidden",
@@ -106,8 +106,8 @@ export function AuthScreen() {
           position: "absolute",
           top: -60,
           right: -60,
-          width: 220,
-          height: 220,
+          width: 200,
+          height: 200,
           borderRadius: "50%",
           background: "rgba(46, 230, 174, 0.25)",
           filter: "blur(8px)",
@@ -119,84 +119,67 @@ export function AuthScreen() {
           position: "absolute",
           bottom: -80,
           left: -60,
-          width: 240,
-          height: 240,
+          width: 220,
+          height: 220,
           borderRadius: "50%",
           background: "rgba(239, 87, 161, 0.18)",
           filter: "blur(10px)",
         }}
       />
-      <div
-        aria-hidden
-        style={{
-          position: "absolute",
-          top: "40%",
-          left: -30,
-          width: 100,
-          height: 100,
-          borderRadius: "50%",
-          background: "rgba(46, 230, 174, 0.18)",
-          filter: "blur(6px)",
-        }}
-      />
 
       <div style={{ position: "relative", maxWidth: 420, margin: "0 auto" }}>
         {/* Logo + header */}
-        <div style={{ textAlign: "center", marginBottom: 22 }}>
+        <div style={{ textAlign: "center", marginBottom: 16 }}>
           <div
             style={{
-              width: 200,
-              height: 100,
-              margin: "0 auto 14px",
-              borderRadius: 24,
+              width: 104,
+              height: 104,
+              margin: "0 auto 12px",
+              borderRadius: "50%",
               background: B.white,
-              boxShadow: "0 10px 30px -12px rgba(46, 230, 174, 0.55)",
-              border: "1px solid rgba(46, 230, 174, 0.25)",
+              boxShadow: "0 12px 28px -10px rgba(46, 230, 174, 0.55)",
+              border: "1px solid rgba(46, 230, 174, 0.28)",
               display: "flex",
               alignItems: "center",
               justifyContent: "center",
-              padding: 12,
-              boxSizing: "border-box",
+              overflow: "hidden",
             }}
           >
             <img
               src={LOGO_SRC}
-              alt="SoundKeleles — Archipiélago de la Felicidad"
+              alt="Archipiélago de la Felicidad"
               style={{
-                maxWidth: "100%",
-                maxHeight: "100%",
-                width: "auto",
-                height: "auto",
+                width: "72%",
+                height: "72%",
                 objectFit: "contain",
                 display: "block",
               }}
             />
           </div>
-          <div
+          <h1
             style={{
               fontFamily: "Space Grotesk, sans-serif",
               fontWeight: 800,
-              fontSize: 26,
+              fontSize: 24,
               color: B.dark,
               lineHeight: 1.15,
+              margin: 0,
             }}
           >
-            Archipiélago
-            <br />
-            de la Felicidad
-          </div>
+            Archipiélago de la Felicidad
+          </h1>
           <div
             style={{
               fontFamily: "Quicksand, sans-serif",
-              fontSize: 15,
+              fontSize: 14,
               color: B.greenDark,
-              marginTop: 8,
+              marginTop: 6,
               fontWeight: 600,
             }}
           >
-            Tu viaje musical comienza aquí 🌊🎶
+            Tu viaje musical comienza aquí
           </div>
-          <div style={{ fontSize: 13, color: B.grayText, marginTop: 4 }}>
+          <div style={{ fontSize: 12, color: B.grayText, marginTop: 2 }}>
             Toca la felicidad, paso a paso.
           </div>
         </div>
@@ -205,8 +188,8 @@ export function AuthScreen() {
         <div
           style={{
             background: B.white,
-            borderRadius: 24,
-            padding: 24,
+            borderRadius: 22,
+            padding: "20px 20px 18px",
             boxShadow: "0 20px 50px -20px rgba(28, 196, 142, 0.35)",
             border: "1px solid rgba(46, 230, 174, 0.18)",
           }}
