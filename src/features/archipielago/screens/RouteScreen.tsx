@@ -122,7 +122,8 @@ export function RouteScreen({ onStartMission, onReviewMission, onOpenFirstMelodi
           minHeight: 84,
         }}>
           {ROUTE_STAGES.map((isl, i) => {
-            const isActive = isl.status === 'active';
+            const stageState = stageStateById[isl.id] ?? { status: isl.status, progress: 0 };
+            const isActive = stageState.status === 'active';
             const isFocused = focusedStageId === isl.id;
             const isIslPress = pressedIsland === isl.id;
 
