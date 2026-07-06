@@ -282,35 +282,28 @@ export function RouteScreen({ onStartMission, onReviewMission, onOpenFirstMelodi
         </div>
       </div>
 
-      {exploringNode && (
-        <div style={{
-          position: 'fixed',
-          inset: 0,
-          background: 'rgba(60,60,59,0.45)',
-          zIndex: 50,
-          display: 'flex',
-          alignItems: 'center',
-          justifyContent: 'center',
-          padding: 16,
-        }}>
-          <Card style={{ width: '100%', maxWidth: 460, border: `1.5px solid ${B.pink}` }}>
-            <div style={{ fontSize: 11, fontWeight: 800, color: B.pink, letterSpacing: '1.2px', textTransform: 'uppercase', marginBottom: 6 }}>
-              Modo exploración
-            </div>
-            <div style={{ fontSize: 13, lineHeight: 1.6, color: B.dark, marginBottom: 14 }}>
-              Esta misión aún no está desbloqueada en tu viaje, pero puedes explorarla para conocer cómo será la experiencia.
-            </div>
-            <div style={{ display: 'flex', flexDirection: 'column', gap: 10 }}>
-              <Btn onClick={() => setExploringNode(null)} fullWidth>
-                Entendido
-              </Btn>
-              <Btn variant="ghost" onClick={() => setExploringNode(null)} fullWidth>
-                Volver a la ruta
-              </Btn>
-            </div>
-          </Card>
+      {showLockedNode && (
+        <div
+          onClick={() => setShowLockedNode(false)}
+          style={{
+            position: 'fixed', inset: 0, background: 'rgba(60,60,59,0.45)', zIndex: 60,
+            display: 'flex', alignItems: 'center', justifyContent: 'center', padding: 16,
+          }}
+        >
+          <div onClick={(e) => e.stopPropagation()} style={{ width: '100%', maxWidth: 420 }}>
+            <Card style={{ border: `1.5px solid ${B.grayBorder}` }}>
+              <div style={{ fontSize: 18, fontFamily: 'Space Grotesk, sans-serif', fontWeight: 800, color: B.dark, marginBottom: 8 }}>
+                🔒 Clase bloqueada
+              </div>
+              <div style={{ fontSize: 13.5, lineHeight: 1.6, color: B.grayText, marginBottom: 14 }}>
+                Para abrir esta clase, primero necesitas completar la clase anterior.
+              </div>
+              <Btn onClick={() => setShowLockedNode(false)} fullWidth>Entendido</Btn>
+            </Card>
+          </div>
         </div>
       )}
+
 
       {showLockedIsland && (
         <div style={{
