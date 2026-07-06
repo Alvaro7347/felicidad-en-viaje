@@ -63,7 +63,11 @@ export function LessonCompletionBox({
       });
       if (!cr.ok) {
         // No bloqueamos el avance por fallo de check-in, pero avisamos.
-        logEvent("auth_login_error", { reason: "checkin_save_failed", lessonId });
+        logEvent("checkin_save_error", {
+          lesson_id: lessonId,
+          island_id: islandId,
+          reason: cr.error ?? "unknown",
+        });
       }
     }
     const res = await completeLesson(lessonId, { islandId });
