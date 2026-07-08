@@ -409,7 +409,15 @@ export function ArchipelagoApp() {
 
         {screen === "welcome" && <WelcomeScreen onStart={() => setScreen("onboarding")} />}
 
-        {screen === "onboarding" && <OnboardingScreen onStart={() => setScreen("diagnosis")} />}
+        {screen === "onboarding" && (
+          <OnboardingScreen
+            onStart={() => setScreen("diagnosis")}
+            onSelectProfile={(id) => {
+              if (id === "empezar") setScreen("diagnosis");
+              else if (id === "acompanar") setScreen("parent-journey-intro");
+            }}
+          />
+        )}
 
         {screen === "diagnosis" && (
           <DiagnosisScreen
