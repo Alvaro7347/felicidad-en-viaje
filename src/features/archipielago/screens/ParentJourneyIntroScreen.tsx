@@ -1,3 +1,4 @@
+import { useEffect, useState } from "react";
 import { B } from "../data/brand";
 
 type Props = {
@@ -5,7 +6,43 @@ type Props = {
   onBack: () => void;
 };
 
+type SavedJourney = {
+  answers?: {
+    parent?: { name?: string; relationship?: string };
+    student?: { name?: string; experience?: string };
+    practice?: { planName?: string };
+  };
+};
+
+function readSaved(): SavedJourney | null {
+  if (typeof window === "undefined") return null;
+  try {
+    const raw = window.localStorage.getItem("archipielago_parent_journey_lucia");
+    if (!raw) return null;
+    return JSON.parse(raw) as SavedJourney;
+  } catch {
+    return null;
+  }
+}
+
 export function ParentJourneyIntroScreen({ onCreate, onBack }: Props) {
+  const [saved, setSaved] = useState<SavedJourney | null>(null);
+
+  useEffect(() => {
+    setSaved(readSaved());
+  }, []);
+
+  const student = saved?.answers?.student;
+  const parent = saved?.answers?.parent;
+  const practice = saved?.answers?.practice;
+  const hasSaved = !!(student?.name && student.name.trim());
+
+  const studentName = student?.name?.trim() || "";
+  const parentName = parent?.name?.trim() || "";
+  const relationship = parent?.relationship?.trim() || "";
+  const planName = practice?.planName?.trim() || "Plan Semanal Presencial";
+  const experience = student?.experience?.trim() || "Desde cero";
+
   return (
     <div style={{ display: "flex", flexDirection: "column", gap: 18, paddingTop: 8 }}>
       <div
@@ -36,26 +73,43 @@ export function ParentJourneyIntroScreen({ onCreate, onBack }: Props) {
             letterSpacing: "-0.02em",
           }}
         >
-          Viaje Musical de <span style={{ color: B.green }}>Lucía</span>
+          {hasSaved ? (
+            <>
+              Viaje musical de <span style={{ color: B.green }}>{studentName}</span>
+            </>
+          ) : (
+            <>Crea el viaje musical de tu hijo/a</>
+          )}
         </h1>
         <p style={{ marginTop: 10, color: "#6f6f6d", fontSize: 14.5, lineHeight: 1.55 }}>
-          Carolina, aquí podrás acompañar el aprendizaje musical de Lucía paso a paso.
+          {hasSaved
+            ? `${parentName || "Aquí"}, aquí podrás acompañar el aprendizaje musical paso a paso.`
+            : "En pocos pasos prepararemos una experiencia para acompañar su aprendizaje musical."}
         </p>
       </div>
 
-      <InfoCard title="Datos del viaje">
-        <Row label="Alumna" value="Lucía" />
-        <Row label="Apoderada" value="Carolina" />
-        <Row label="Profesor guía" value="Álvaro" />
-        <Row label="Plan" value="Semanal presencial" />
-        <Row label="Nivel inicial" value="Desde cero" />
-        <Row label="Estado" value="Preparando primera clase" />
-      </InfoCard>
+      {hasSaved ? (
+        <InfoCard title="Datos del viaje">
+          <Row label="Alumno/a" value={studentName} />
+          {parentName && <Row label="Apoderado/a" value={parentName} />}
+          {relationship && <Row label="Relación" value={relationship} />}
+          <Row label="Profesor guía" value="Álvaro" />
+          <Row label="Plan" value={planName} />
+          <Row label="Nivel inicial" value={experience} />
+          <Row label="Estado" value="Preparando primera clase" />
+        </InfoCard>
+      ) : (
+        <InfoCard title="Cómo funciona">
+          <p style={{ margin: 0, fontSize: 13.5, color: "#6f6f6d", lineHeight: 1.55 }}>
+            Este espacio permitirá que el apoderado pueda revisar avances, tareas, observaciones y acompañar el proceso sin sentirse saturado.
+          </p>
+        </InfoCard>
+      )}
 
       <InfoCard title="Cómo funciona este viaje">
-        <Block emoji="🎶" title="Lucía aprende" text="Vive las clases, practica y desbloquea pequeñas victorias musicales." />
-        <Block emoji="🌱" title="Carolina acompaña" text="Puede revisar tareas, observar avances y compartir comentarios desde casa." />
-        <Block emoji="🧭" title="Álvaro guía" text="Registra lo visto en clase, define tareas y ajusta el camino según el avance real." />
+        <Block emoji="🎶" title="Aprende" text="Vive las clases, practica y desbloquea pequeñas victorias musicales." />
+        <Block emoji="🌱" title="Acompañas" text="Puedes revisar tareas, observar avances y compartir comentarios desde casa." />
+        <Block emoji="🧭" title="El profesor guía" text="Registra lo visto en clase, define tareas y ajusta el camino según el avance real." />
       </InfoCard>
 
       <button
@@ -75,7 +129,7 @@ export function ParentJourneyIntroScreen({ onCreate, onBack }: Props) {
           boxShadow: "0 6px 18px rgba(46,230,174,0.32)",
         }}
       >
-        Crear el viaje de Lucía
+        {hasSaved ? `Continuar el viaje de ${studentName}` : "Crear viaje musical"}
       </button>
 
       <button

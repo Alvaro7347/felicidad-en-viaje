@@ -135,6 +135,7 @@ export function ArchipelagoApp() {
   const [chordsLessonId, setChordsLessonId] = useState<string>("chords1");
   const [strummingLessonId, setStrummingLessonId] = useState<string>("strumming1");
   const [songsLessonId, setSongsLessonId] = useState<string>("songs1");
+  const [parentJourneyAnswers, setParentJourneyAnswers] = useState<ParentOnboardingAnswers | null>(null);
 
   // ── Progreso MVP1 ──────────────────────────────────────────────
   const progress = useMvp1ProgressContext();
@@ -383,14 +384,17 @@ export function ArchipelagoApp() {
             onCancel={() => setScreen("parent-journey-intro")}
             onComplete={async (ans: ParentOnboardingAnswers) => {
               const uid = session?.user.id;
+              const studentName = ans.student.name.trim();
+              const parentName = ans.parent.name.trim();
+              const planName = ans.practice.planName?.trim() || "Plan Semanal Presencial";
               if (uid) {
                 try {
                   const { error } = await supabase.from("parent_journeys" as never).insert({
                     user_id: uid,
-                    student_name: ans.student.name || "Lucía",
-                    parent_name: "Carolina",
+                    student_name: studentName || null,
+                    parent_name: parentName || null,
                     teacher_name: "Álvaro",
-                    plan_name: "Plan Semanal Presencial",
+                    plan_name: planName,
                     status: "pilot",
                     onboarding_answers: ans as unknown as Record<string, unknown>,
                   } as never);
@@ -408,6 +412,7 @@ export function ArchipelagoApp() {
                 );
                 window.localStorage.setItem("archipielago_selected_profile", "maria_jose");
               } catch {}
+              setParentJourneyAnswers(ans);
               setScreen("parent-journey-created");
             }}
           />
@@ -416,6 +421,11 @@ export function ArchipelagoApp() {
         {screen === "parent-journey-created" && (
           <ParentJourneyCreatedScreen
             onContinue={() => setScreen("parent-journey-intro")}
+            studentName={parentJourneyAnswers?.student.name}
+            parentName={parentJourneyAnswers?.parent.name}
+            relationship={parentJourneyAnswers?.parent.relationship}
+            planName={parentJourneyAnswers?.practice.planName}
+            experience={parentJourneyAnswers?.student.experience}
           />
         )}
 

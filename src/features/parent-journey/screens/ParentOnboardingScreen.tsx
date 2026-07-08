@@ -2,6 +2,12 @@ import { useState } from "react";
 import { B } from "@/features/archipielago/data/brand";
 
 export type ParentOnboardingAnswers = {
+  parent: {
+    name: string;
+    relationship: string;
+    email?: string;
+    motivation: string;
+  };
   student: {
     name: string;
     age: string;
@@ -20,6 +26,7 @@ export type ParentOnboardingAnswers = {
     goodExperience: string[];
   };
   practice: {
+    planName: string;
     homePractice: string;
     companion: string;
     taskType: string[];
@@ -31,10 +38,11 @@ export type ParentOnboardingAnswers = {
 };
 
 const empty: ParentOnboardingAnswers = {
-  student: { name: "Lucía", age: "", experience: "", hasUkulele: "", likes: "" },
+  parent: { name: "", relationship: "", email: "", motivation: "" },
+  student: { name: "", age: "", experience: "", hasUkulele: "", likes: "" },
   learning: { reactions: [], noteForTeacher: "" },
   expectations: { goal: "", weeklyObserve: "", worry: "", goodExperience: [] },
-  practice: { homePractice: "", companion: "", taskType: [] },
+  practice: { planName: "Plan Semanal Presencial", homePractice: "", companion: "", taskType: [] },
   accompaniment: { reportPrefs: [], messageForTeacher: "" },
 };
 
@@ -63,6 +71,8 @@ export function ParentOnboardingScreen({ onComplete, onCancel }: Props) {
     }
   };
 
+  const studentLabel = ans.student.name.trim() || "tu hijo/a";
+
   return (
     <div style={{ display: "flex", flexDirection: "column", gap: 20, paddingTop: 8 }}>
       <Progress step={step} total={TOTAL} />
@@ -83,7 +93,7 @@ export function ParentOnboardingScreen({ onComplete, onCancel }: Props) {
           </button>
         ) : (
           <button type="button" onClick={submit} disabled={submitting} style={{ ...primaryBtn, opacity: submitting ? 0.7 : 1 }}>
-            {submitting ? "Guardando…" : "Crear viaje de Lucía"}
+            {submitting ? "Guardando…" : `Crear viaje de ${studentLabel}`}
           </button>
         )}
       </div>
@@ -234,20 +244,43 @@ type StepProps = {
 };
 
 function Step1({ ans, setAns }: StepProps) {
+  const p = ans.parent;
+  const upd = (patch: Partial<typeof p>) => setAns({ ...ans, parent: { ...p, ...patch } });
+  return (
+    <div style={{ display: "flex", flexDirection: "column", gap: 16 }}>
+      <SectionHeader title="Cuéntanos sobre ti" subtitle="Queremos saber quién acompañará este viaje musical." />
+      <Field label="Nombre del apoderado/a">
+        <input style={inputStyle} value={p.name} onChange={(e) => upd({ name: e.target.value })} placeholder="Ej: Carolina" />
+      </Field>
+      <Field label="Relación con el alumno/a">
+        <OptionList
+          options={["Mamá", "Papá", "Abuelo/a", "Tío/a", "Tutor/a", "Otro"]}
+          value={p.relationship}
+          onChange={(v) => upd({ relationship: v as string })}
+        />
+      </Field>
+      <Field label="¿Qué te motivó a iniciar este proceso?">
+        <textarea style={textareaStyle} value={p.motivation} onChange={(e) => upd({ motivation: e.target.value })} placeholder="Escribe libremente…" />
+      </Field>
+    </div>
+  );
+}
+
+function Step2({ ans, setAns }: StepProps) {
   const s = ans.student;
   const upd = (patch: Partial<typeof s>) => setAns({ ...ans, student: { ...s, ...patch } });
   return (
     <div style={{ display: "flex", flexDirection: "column", gap: 16 }}>
-      <SectionHeader title="Cuéntanos sobre Lucía" subtitle="Con esto Álvaro puede preparar mejor la primera clase." />
-      <Field label="Nombre de la alumna">
-        <input style={inputStyle} value={s.name} onChange={(e) => upd({ name: e.target.value })} />
+      <SectionHeader title="Cuéntanos sobre quien aprenderá" subtitle="Esta información ayudará a preparar mejor la primera clase." />
+      <Field label="Nombre del alumno/a">
+        <input style={inputStyle} value={s.name} onChange={(e) => upd({ name: e.target.value })} placeholder="Ej: Lucía" />
       </Field>
       <Field label="Edad">
-        <input style={inputStyle} value={s.age} onChange={(e) => upd({ age: e.target.value })} placeholder="Ej: 9 años" />
+        <input style={inputStyle} value={s.age} onChange={(e) => upd({ age: e.target.value })} placeholder="Ej: 8 años" />
       </Field>
       <Field label="¿Ha tocado ukelele o algún instrumento antes?">
         <OptionList
-          options={["No, comienza desde cero", "Ha probado un poco", "Ya ha tenido clases antes", "No estoy segura"]}
+          options={["No, comienza desde cero", "Ha probado un poco", "Ya ha tenido clases antes", "No estoy segura/o"]}
           value={s.experience}
           onChange={(v) => upd({ experience: v as string })}
         />
@@ -262,89 +295,53 @@ function Step1({ ans, setAns }: StepProps) {
   );
 }
 
-function Step2({ ans, setAns }: StepProps) {
+function Step3({ ans, setAns }: StepProps) {
   const s = ans.learning;
   const upd = (patch: Partial<typeof s>) => setAns({ ...ans, learning: { ...s, ...patch } });
   return (
     <div style={{ display: "flex", flexDirection: "column", gap: 16 }}>
-      <SectionHeader title="Cómo aprende Lucía" subtitle="¿Cómo suele reaccionar cuando aprende algo nuevo? (puedes elegir varias)" />
-      <OptionList
-        multi
-        options={[
-          "Se entusiasma rápido",
-          "Le da vergüenza al inicio",
-          "Se frustra si no le resulta",
-          "Necesita tiempo para tomar confianza",
-          "Le gusta mostrar lo que aprende",
-          "Prefiere practicar acompañada",
-          "Prefiere probar sola primero",
-        ]}
-        value={s.reactions}
-        onChange={(v) => upd({ reactions: v as string[] })}
-      />
-      <Field label="¿Hay algo que Álvaro debería saber para acompañarla mejor?">
+      <SectionHeader title="¿Cómo suele aprender?" subtitle="Cada niño o niña necesita una forma distinta de acompañamiento." />
+      <Field label="¿Cómo suele reaccionar cuando aprende algo nuevo? (puedes elegir varias)">
+        <OptionList
+          multi
+          options={[
+            "Se entusiasma rápido",
+            "Le da vergüenza al inicio",
+            "Se frustra si no le resulta",
+            "Necesita tiempo para tomar confianza",
+            "Le gusta mostrar lo que aprende",
+            "Prefiere practicar acompañada/o",
+            "Prefiere probar sola/o primero",
+          ]}
+          value={s.reactions}
+          onChange={(v) => upd({ reactions: v as string[] })}
+        />
+      </Field>
+      <Field label="¿Hay algo que el profesor debería saber para acompañarle mejor?">
         <textarea style={textareaStyle} value={s.noteForTeacher} onChange={(e) => upd({ noteForTeacher: e.target.value })} />
       </Field>
     </div>
   );
 }
 
-function Step3({ ans, setAns }: StepProps) {
-  const s = ans.expectations;
-  const upd = (patch: Partial<typeof s>) => setAns({ ...ans, expectations: { ...s, ...patch } });
+function Step4({ ans, setAns }: StepProps) {
+  const e = ans.expectations;
+  const pr = ans.practice;
+  const updE = (patch: Partial<typeof e>) => setAns({ ...ans, expectations: { ...e, ...patch } });
+  const updP = (patch: Partial<typeof pr>) => setAns({ ...ans, practice: { ...pr, ...patch } });
   return (
     <div style={{ display: "flex", flexDirection: "column", gap: 16 }}>
-      <SectionHeader title="Tus expectativas" subtitle="Carolina, cuéntanos qué esperas de este viaje." />
-      <Field label="¿Qué esperas que Lucía logre con las clases de ukelele?">
-        <textarea style={textareaStyle} value={s.goal} onChange={(e) => upd({ goal: e.target.value })} />
+      <SectionHeader title="Expectativas y práctica" subtitle="Buscamos que el proceso sea realista y sostenible." />
+      <Field label="¿Qué esperas que logre con las clases de ukelele?">
+        <textarea style={textareaStyle} value={e.goal} onChange={(ev) => updE({ goal: ev.target.value })} />
       </Field>
       <Field label="¿Qué te gustaría observar semana a semana?">
-        <textarea style={textareaStyle} value={s.weeklyObserve} onChange={(e) => upd({ weeklyObserve: e.target.value })} />
+        <textarea style={textareaStyle} value={e.weeklyObserve} onChange={(ev) => updE({ weeklyObserve: ev.target.value })} />
       </Field>
       <Field label="¿Qué te preocupa del proceso?">
-        <textarea style={textareaStyle} value={s.worry} onChange={(e) => upd({ worry: e.target.value })} />
+        <textarea style={textareaStyle} value={e.worry} onChange={(ev) => updE({ worry: ev.target.value })} />
       </Field>
-      <Field label="Para ti, una buena experiencia sería que Lucía… (puedes elegir varias)">
-        <OptionList
-          multi
-          options={[
-            "Disfrute la música",
-            "Gane confianza",
-            "Aprenda canciones",
-            "Sea constante",
-            "Se exprese mejor",
-            "Tenga una actividad significativa",
-            "Comparta algo bonito en familia",
-          ]}
-          value={s.goodExperience}
-          onChange={(v) => upd({ goodExperience: v as string[] })}
-        />
-      </Field>
-    </div>
-  );
-}
-
-function Step4({ ans, setAns }: StepProps) {
-  const s = ans.practice;
-  const upd = (patch: Partial<typeof s>) => setAns({ ...ans, practice: { ...s, ...patch } });
-  return (
-    <div style={{ display: "flex", flexDirection: "column", gap: 16 }}>
-      <SectionHeader title="Plan y práctica en casa" />
-      <div
-        style={{
-          background: B.greenLight,
-          border: `1px solid ${B.green}`,
-          borderRadius: 14,
-          padding: 14,
-          display: "flex",
-          flexDirection: "column",
-          gap: 4,
-        }}
-      >
-        <div style={{ fontFamily: "Space Grotesk, sans-serif", fontWeight: 800, color: B.dark }}>Plan Semanal Presencial</div>
-        <div style={{ fontSize: 13, color: "#4a4a48" }}>1 clase por semana · Profesor guía: Álvaro</div>
-      </div>
-      <Field label="¿Cuánto tiempo realista podría practicar Lucía en casa?">
+      <Field label="¿Cuánto tiempo realista podría practicar en casa?">
         <OptionList
           options={[
             "5 minutos, 1 o 2 veces por semana",
@@ -352,18 +349,43 @@ function Step4({ ans, setAns }: StepProps) {
             "10 minutos, 2 o 3 veces por semana",
             "No lo sé todavía",
           ]}
-          value={s.homePractice}
-          onChange={(v) => upd({ homePractice: v as string })}
+          value={pr.homePractice}
+          onChange={(v) => updP({ homePractice: v as string })}
         />
       </Field>
-      <Field label="¿Quién podría acompañarla en casa?">
+      <Field label="¿Quién podría acompañar la práctica en casa?">
         <OptionList
-          options={["Mamá", "Papá", "Otro familiar", "Practicaría sola", "Depende de la semana"]}
-          value={s.companion}
-          onChange={(v) => upd({ companion: v as string })}
+          options={["Mamá", "Papá", "Otro familiar", "Practicaría sola/o", "Depende de la semana"]}
+          value={pr.companion}
+          onChange={(v) => updP({ companion: v as string })}
         />
       </Field>
-      <Field label="¿Qué tipo de tareas prefieres para Lucía? (puedes elegir varias)">
+    </div>
+  );
+}
+
+function Step5({ ans, setAns }: StepProps) {
+  const a = ans.accompaniment;
+  const pr = ans.practice;
+  const updA = (patch: Partial<typeof a>) => setAns({ ...ans, accompaniment: { ...a, ...patch } });
+  const updP = (patch: Partial<typeof pr>) => setAns({ ...ans, practice: { ...pr, ...patch } });
+  return (
+    <div style={{ display: "flex", flexDirection: "column", gap: 16 }}>
+      <SectionHeader title="¿Cómo quieres acompañar?" subtitle="Elige qué información te gustaría recibir después de cada clase." />
+      <OptionList
+        multi
+        options={[
+          "Reporte breve",
+          "Reporte detallado",
+          "Tareas semanales",
+          "Recomendaciones para acompañar en casa",
+          "Hitos importantes",
+          "Alertas si algo le está costando",
+        ]}
+        value={a.reportPrefs}
+        onChange={(v) => updA({ reportPrefs: v as string[] })}
+      />
+      <Field label="¿Qué tipo de tareas prefieres? (puedes elegir varias)">
         <OptionList
           multi
           options={[
@@ -373,35 +395,12 @@ function Step4({ ans, setAns }: StepProps) {
             "Ejercicios paso a paso",
             "Actividades para hacer en familia",
           ]}
-          value={s.taskType}
-          onChange={(v) => upd({ taskType: v as string[] })}
+          value={pr.taskType}
+          onChange={(v) => updP({ taskType: v as string[] })}
         />
       </Field>
-    </div>
-  );
-}
-
-function Step5({ ans, setAns }: StepProps) {
-  const s = ans.accompaniment;
-  const upd = (patch: Partial<typeof s>) => setAns({ ...ans, accompaniment: { ...s, ...patch } });
-  return (
-    <div style={{ display: "flex", flexDirection: "column", gap: 16 }}>
-      <SectionHeader title="Cómo quieres acompañar el viaje" subtitle="Elige el tipo de información que te gustaría recibir después de cada clase." />
-      <OptionList
-        multi
-        options={[
-          "Reporte breve",
-          "Reporte detallado",
-          "Tareas semanales",
-          "Recomendaciones para acompañarla",
-          "Hitos importantes",
-          "Alertas si algo le está costando",
-        ]}
-        value={s.reportPrefs}
-        onChange={(v) => upd({ reportPrefs: v as string[] })}
-      />
-      <Field label="¿Qué te gustaría contarle a Álvaro antes de la primera clase?">
-        <textarea style={textareaStyle} value={s.messageForTeacher} onChange={(e) => upd({ messageForTeacher: e.target.value })} />
+      <Field label="¿Qué te gustaría contarle al profesor antes de la primera clase?">
+        <textarea style={textareaStyle} value={a.messageForTeacher} onChange={(ev) => updA({ messageForTeacher: ev.target.value })} />
       </Field>
     </div>
   );
