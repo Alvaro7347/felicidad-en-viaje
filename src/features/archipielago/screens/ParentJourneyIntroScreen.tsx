@@ -114,7 +114,13 @@ export function ParentJourneyIntroScreen({ onCreate, onBack }: Props) {
 
       <button
         type="button"
-        onClick={onCreate}
+        onClick={() => {
+          if (hasSaved) {
+            // Continuar: por ahora se mantiene en esta pantalla (futuro dashboard).
+            return;
+          }
+          onCreate();
+        }}
         style={{
           width: "100%",
           border: "none",
@@ -129,8 +135,36 @@ export function ParentJourneyIntroScreen({ onCreate, onBack }: Props) {
           boxShadow: "0 6px 18px rgba(46,230,174,0.32)",
         }}
       >
-        {hasSaved ? `Continuar el viaje de ${studentName}` : "Crear viaje musical"}
+        {hasSaved ? "Continuar viaje musical" : "Crear viaje musical"}
       </button>
+
+      {hasSaved && (
+        <button
+          type="button"
+          onClick={() => {
+            try {
+              window.localStorage.removeItem("archipielago_parent_journey_lucia");
+              window.localStorage.setItem("archipielago_selected_profile", "maria_jose");
+            } catch {}
+            setSaved(null);
+            onCreate();
+          }}
+          style={{
+            alignSelf: "center",
+            border: "none",
+            background: "transparent",
+            color: B.grayText,
+            fontFamily: "Space Grotesk, sans-serif",
+            fontWeight: 600,
+            fontSize: 13,
+            padding: "6px 10px",
+            cursor: "pointer",
+            textDecoration: "underline",
+          }}
+        >
+          Recrear viaje musical
+        </button>
+      )}
 
       <button
         type="button"
