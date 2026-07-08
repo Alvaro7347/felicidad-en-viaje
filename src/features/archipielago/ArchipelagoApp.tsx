@@ -47,7 +47,7 @@ import { OnboardingScreen } from "./screens/OnboardingScreen";
 import { RouteScreen } from "./screens/RouteScreen";
 import { WelcomeScreen } from "./screens/WelcomeScreen";
 import { ReturnWelcomeScreen } from "./screens/ReturnWelcomeScreen";
-import { UserPathSelectionScreen } from "./screens/UserPathSelectionScreen";
+
 import { ParentJourneyIntroScreen } from "./screens/ParentJourneyIntroScreen";
 import { ParentOnboardingScreen, type ParentOnboardingAnswers } from "@/features/parent-journey/screens/ParentOnboardingScreen";
 
@@ -362,17 +362,10 @@ export function ArchipelagoApp() {
         )}
 
 
-        {screen === "path-selection" && (
-          <UserPathSelectionScreen
-            onChooseLearner={() => setScreen("onboarding")}
-            onChooseParent={() => setScreen("parent-journey-intro")}
-          />
-        )}
-
         {screen === "parent-journey-intro" && (
           <ParentJourneyIntroScreen
             onCreate={() => setScreen("parent-onboarding")}
-            onBack={() => setScreen("path-selection")}
+            onBack={() => setScreen("onboarding")}
           />
         )}
 

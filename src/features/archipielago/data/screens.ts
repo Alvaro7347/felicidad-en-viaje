@@ -1,6 +1,6 @@
 import type { Screen } from "../types";
 
-export const ONBOARDING_SCREENS: Screen[] = ['welcome', 'path-selection', 'parent-journey-intro', 'parent-onboarding', 'parent-onboarding-placeholder', 'onboarding', 'diagnosis', 'diagnosis-result'];
+export const ONBOARDING_SCREENS: Screen[] = ['welcome', 'parent-journey-intro', 'parent-onboarding', 'parent-onboarding-placeholder', 'onboarding', 'diagnosis', 'diagnosis-result'];
 
 export type LessonGroup = 'first-melodies' | 'pulse' | 'rhythm' | 'music' | 'joy' | 'chords' | 'strumming' | 'songs';
 
