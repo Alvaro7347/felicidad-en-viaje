@@ -385,7 +385,7 @@ export function ArchipelagoApp() {
               const uid = session?.user.id;
               if (uid) {
                 try {
-                  await supabase.from("parent_journeys" as never).insert({
+                  const { error } = await supabase.from("parent_journeys" as never).insert({
                     user_id: uid,
                     student_name: ans.student.name || "Lucía",
                     parent_name: "Carolina",
@@ -394,8 +394,11 @@ export function ArchipelagoApp() {
                     status: "pilot",
                     onboarding_answers: ans as unknown as Record<string, unknown>,
                   } as never);
+                  if (error) {
+                    console.warn("[parent_journeys] insert failed, using localStorage fallback:", error);
+                  }
                 } catch (e) {
-                  console.warn("[parent_journeys] insert failed, continuing:", e);
+                  console.warn("[parent_journeys] insert threw, using localStorage fallback:", e);
                 }
               }
               try {
@@ -403,9 +406,16 @@ export function ArchipelagoApp() {
                   "archipielago_parent_journey_lucia",
                   JSON.stringify({ answers: ans, savedAt: new Date().toISOString() }),
                 );
+                window.localStorage.setItem("archipielago_selected_profile", "maria_jose");
               } catch {}
-              setScreen("parent-journey-intro");
+              setScreen("parent-journey-created");
             }}
+          />
+        )}
+
+        {screen === "parent-journey-created" && (
+          <ParentJourneyCreatedScreen
+            onContinue={() => setScreen("parent-journey-intro")}
           />
         )}
 
