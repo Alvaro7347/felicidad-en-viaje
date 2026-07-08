@@ -176,7 +176,7 @@ export function ArchipelagoApp() {
         setScreen("return-welcome");
       } else {
         setHasOnboarding(false);
-        setScreen("path-selection");
+        setScreen("onboarding");
       }
       setOnboardingChecking(false);
     })();
@@ -398,7 +398,7 @@ export function ArchipelagoApp() {
               }
               try {
                 window.localStorage.setItem(
-                  "parent_journey_lucia_v1",
+                  "archipielago_parent_journey_lucia",
                   JSON.stringify({ answers: ans, savedAt: new Date().toISOString() }),
                 );
               } catch {}
@@ -409,7 +409,15 @@ export function ArchipelagoApp() {
 
         {screen === "welcome" && <WelcomeScreen onStart={() => setScreen("onboarding")} />}
 
-        {screen === "onboarding" && <OnboardingScreen onStart={() => setScreen("diagnosis")} />}
+        {screen === "onboarding" && (
+          <OnboardingScreen
+            onStart={() => setScreen("diagnosis")}
+            onSelectProfile={(id) => {
+              if (id === "empezar") setScreen("diagnosis");
+              else if (id === "acompanar") setScreen("parent-journey-intro");
+            }}
+          />
+        )}
 
         {screen === "diagnosis" && (
           <DiagnosisScreen

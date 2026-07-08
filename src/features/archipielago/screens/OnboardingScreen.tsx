@@ -2,8 +2,10 @@ import { useState } from "react";
 import { Lock } from "lucide-react";
 import { B } from "../data/brand";
 
+export type OnboardingProfileId = "empezar" | "acompanar" | "experiencia";
+
 type Route = {
-  id: string;
+  id: OnboardingProfileId;
   icon: string;
   title: string;
   desc: string;
@@ -23,7 +25,7 @@ const ROUTES: Route[] = [
     icon: "🏡",
     title: "Quiero acompañar",
     desc: "Quiero ayudar a alguien cercano a descubrir la música.",
-    active: false,
+    active: true,
   },
   {
     id: "experiencia",
@@ -34,9 +36,15 @@ const ROUTES: Route[] = [
   },
 ];
 
-export function OnboardingScreen({ onStart }: { onStart: () => void }) {
+type Props = {
+  onStart: () => void;
+  onSelectProfile?: (id: OnboardingProfileId) => void;
+};
+
+export function OnboardingScreen({ onStart, onSelectProfile }: Props) {
   const [hoverId, setHoverId] = useState<string | null>(null);
   const [pressId, setPressId] = useState<string | null>(null);
+  const [selectedId, setSelectedId] = useState<OnboardingProfileId>("empezar");
 
   return (
     <div style={{ display: "flex", flexDirection: "column", gap: 24, paddingTop: 8 }}>
@@ -86,10 +94,12 @@ export function OnboardingScreen({ onStart }: { onStart: () => void }) {
             ? "0 4px 14px rgba(0,0,0,0.06)"
             : "0 2px 8px rgba(0,0,0,0.035)";
 
+          const isSelected = selectedId === r.id && r.active;
           return (
             <button
               key={r.id}
               type="button"
+              onClick={() => { if (r.active) setSelectedId(r.id); }}
               onMouseEnter={() => setHoverId(r.id)}
               onMouseLeave={() => {
                 setHoverId(null);
@@ -107,9 +117,9 @@ export function OnboardingScreen({ onStart }: { onStart: () => void }) {
                 gap: 14,
                 width: "100%",
                 boxSizing: "border-box",
-                background: B.white,
+                background: isSelected ? B.greenLight : B.white,
                 border: r.active
-                  ? `1.5px solid ${B.green}`
+                  ? `${isSelected ? 2 : 1.5}px solid ${B.green}`
                   : `1px solid ${B.grayBorder}`,
                 borderRadius: 18,
                 padding: "16px 16px",
@@ -117,11 +127,12 @@ export function OnboardingScreen({ onStart }: { onStart: () => void }) {
                 boxShadow: r.active ? activeShadow : lockedShadow,
                 transform: scale,
                 transition:
-                  "transform 0.18s cubic-bezier(0.34,1.56,0.64,1), box-shadow 0.2s ease",
+                  "transform 0.18s cubic-bezier(0.34,1.56,0.64,1), box-shadow 0.2s ease, background 0.2s ease",
                 opacity: r.active ? 1 : 0.78,
                 userSelect: "none",
                 WebkitUserSelect: "none",
               }}
+              aria-pressed={isSelected}
               aria-disabled={!r.active}
             >
               {/* Icono */}
@@ -218,7 +229,10 @@ export function OnboardingScreen({ onStart }: { onStart: () => void }) {
       <div style={{ marginTop: 4 }}>
         <button
           type="button"
-          onClick={onStart}
+          onClick={() => {
+            if (onSelectProfile) onSelectProfile(selectedId);
+            else onStart();
+          }}
           style={{
             width: "100%",
             border: "none",
