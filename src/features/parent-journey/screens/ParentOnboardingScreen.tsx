@@ -1,5 +1,6 @@
 import { useState } from "react";
 import { B } from "@/features/archipielago/data/brand";
+import { OnboardingProgressHeader } from "@/features/archipielago/components/OnboardingProgressHeader";
 
 export type ParentOnboardingAnswers = {
   parent: {
