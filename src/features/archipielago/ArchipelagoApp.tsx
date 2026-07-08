@@ -47,6 +47,10 @@ import { OnboardingScreen } from "./screens/OnboardingScreen";
 import { RouteScreen } from "./screens/RouteScreen";
 import { WelcomeScreen } from "./screens/WelcomeScreen";
 import { ReturnWelcomeScreen } from "./screens/ReturnWelcomeScreen";
+import { UserPathSelectionScreen } from "./screens/UserPathSelectionScreen";
+import { ParentJourneyIntroScreen } from "./screens/ParentJourneyIntroScreen";
+import { ParentOnboardingPlaceholderScreen } from "./screens/ParentOnboardingPlaceholderScreen";
+import { isMariaJosePilotEmail } from "./data/pilotAccess";
 
 // Nodo de la ruta → pantalla de revisión. Explícito y fácil de extender.
 const REVIEW_MISSION_BY_NODE: Record<string, Screen> = {
@@ -172,7 +176,7 @@ export function ArchipelagoApp() {
         setScreen("return-welcome");
       } else {
         setHasOnboarding(false);
-        setScreen("welcome");
+        setScreen("path-selection");
       }
       setOnboardingChecking(false);
     })();
@@ -357,6 +361,25 @@ export function ArchipelagoApp() {
           />
         )}
 
+
+        {screen === "path-selection" && (
+          <UserPathSelectionScreen
+            showParentPath={isMariaJosePilotEmail(session?.user.email)}
+            onChooseLearner={() => setScreen("welcome")}
+            onChooseParent={() => setScreen("parent-journey-intro")}
+          />
+        )}
+
+        {screen === "parent-journey-intro" && (
+          <ParentJourneyIntroScreen
+            onCreate={() => setScreen("parent-onboarding-placeholder")}
+            onBack={() => setScreen("path-selection")}
+          />
+        )}
+
+        {screen === "parent-onboarding-placeholder" && (
+          <ParentOnboardingPlaceholderScreen onBack={() => setScreen("parent-journey-intro")} />
+        )}
 
         {screen === "welcome" && <WelcomeScreen onStart={() => setScreen("onboarding")} />}
 
