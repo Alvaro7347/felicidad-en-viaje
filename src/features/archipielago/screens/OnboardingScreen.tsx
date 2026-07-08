@@ -2,8 +2,10 @@ import { useState } from "react";
 import { Lock } from "lucide-react";
 import { B } from "../data/brand";
 
+export type OnboardingProfileId = "empezar" | "acompanar" | "experiencia";
+
 type Route = {
-  id: string;
+  id: OnboardingProfileId;
   icon: string;
   title: string;
   desc: string;
@@ -23,7 +25,7 @@ const ROUTES: Route[] = [
     icon: "🏡",
     title: "Quiero acompañar",
     desc: "Quiero ayudar a alguien cercano a descubrir la música.",
-    active: false,
+    active: true,
   },
   {
     id: "experiencia",
@@ -34,9 +36,15 @@ const ROUTES: Route[] = [
   },
 ];
 
-export function OnboardingScreen({ onStart }: { onStart: () => void }) {
+type Props = {
+  onStart: () => void;
+  onSelectProfile?: (id: OnboardingProfileId) => void;
+};
+
+export function OnboardingScreen({ onStart, onSelectProfile }: Props) {
   const [hoverId, setHoverId] = useState<string | null>(null);
   const [pressId, setPressId] = useState<string | null>(null);
+  const [selectedId, setSelectedId] = useState<OnboardingProfileId>("empezar");
 
   return (
     <div style={{ display: "flex", flexDirection: "column", gap: 24, paddingTop: 8 }}>
