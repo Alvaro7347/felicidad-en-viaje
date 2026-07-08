@@ -177,7 +177,15 @@ export function ArchipelagoApp() {
         setScreen("return-welcome");
       } else {
         setHasOnboarding(false);
-        setScreen("onboarding");
+        let selectedProfile: string | null = null;
+        if (typeof window !== "undefined") {
+          try { selectedProfile = window.localStorage.getItem("archipielago_selected_profile"); } catch {}
+        }
+        if (selectedProfile === "maria_jose") {
+          setScreen("parent-journey-intro");
+        } else {
+          setScreen("onboarding");
+        }
       }
       setOnboardingChecking(false);
     })();
