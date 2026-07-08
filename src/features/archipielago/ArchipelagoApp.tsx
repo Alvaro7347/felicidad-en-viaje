@@ -47,7 +47,7 @@ import { OnboardingScreen } from "./screens/OnboardingScreen";
 import { RouteScreen } from "./screens/RouteScreen";
 import { WelcomeScreen } from "./screens/WelcomeScreen";
 import { ReturnWelcomeScreen } from "./screens/ReturnWelcomeScreen";
-import { UserPathSelectionScreen } from "./screens/UserPathSelectionScreen";
+
 import { ParentJourneyIntroScreen } from "./screens/ParentJourneyIntroScreen";
 import { ParentOnboardingScreen, type ParentOnboardingAnswers } from "@/features/parent-journey/screens/ParentOnboardingScreen";
 
