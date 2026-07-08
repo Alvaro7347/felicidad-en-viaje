@@ -2,9 +2,27 @@ import { B } from "../data/brand";
 
 type Props = {
   onContinue: () => void;
+  studentName?: string;
+  parentName?: string;
+  relationship?: string;
+  planName?: string;
+  experience?: string;
 };
 
-export function ParentJourneyCreatedScreen({ onContinue }: Props) {
+export function ParentJourneyCreatedScreen({
+  onContinue,
+  studentName,
+  parentName,
+  relationship,
+  planName,
+  experience,
+}: Props) {
+  const s = studentName?.trim() || "tu hijo/a";
+  const p = parentName?.trim() || "";
+  const rel = relationship?.trim() || "";
+  const plan = planName?.trim() || "Plan Semanal Presencial";
+  const exp = experience?.trim() || "Desde cero";
+
   return (
     <div style={{ display: "flex", flexDirection: "column", gap: 20, paddingTop: 8 }}>
       <div
@@ -35,11 +53,11 @@ export function ParentJourneyCreatedScreen({ onContinue }: Props) {
             letterSpacing: "-0.02em",
           }}
         >
-          Viaje musical de <span style={{ color: B.green }}>Lucía</span> creado
+          Viaje musical creado
         </h1>
         <p style={{ marginTop: 10, color: "#6f6f6d", fontSize: 14.5, lineHeight: 1.55 }}>
-          Gracias, Carolina. Con esta información, Álvaro podrá preparar mejor la primera clase
-          de Lucía y acompañar su avance semana a semana.
+          Gracias{p ? `, ${p}` : ""}. Con esta información podremos preparar mejor la primera clase
+          y acompañar el avance semana a semana.
         </p>
       </div>
 
@@ -66,11 +84,11 @@ export function ParentJourneyCreatedScreen({ onContinue }: Props) {
         >
           Resumen
         </div>
-        <Row label="Alumna" value="Lucía" />
-        <Row label="Apoderada" value="Carolina" />
-        <Row label="Profesor guía" value="Álvaro" />
-        <Row label="Plan" value="Semanal presencial" />
-        <Row label="Nivel inicial" value="Desde cero" />
+        <Row label="Alumno/a" value={s} />
+        {p && <Row label="Apoderado/a" value={p} />}
+        {rel && <Row label="Relación" value={rel} />}
+        <Row label="Plan" value={plan} />
+        <Row label="Nivel inicial" value={exp} />
       </div>
 
       <button
@@ -90,7 +108,7 @@ export function ParentJourneyCreatedScreen({ onContinue }: Props) {
           boxShadow: "0 6px 18px rgba(46,230,174,0.32)",
         }}
       >
-        Ir al viaje musical de Lucía
+        Ir al viaje musical de {s}
       </button>
     </div>
   );
