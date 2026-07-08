@@ -49,7 +49,7 @@ import { WelcomeScreen } from "./screens/WelcomeScreen";
 import { ReturnWelcomeScreen } from "./screens/ReturnWelcomeScreen";
 import { UserPathSelectionScreen } from "./screens/UserPathSelectionScreen";
 import { ParentJourneyIntroScreen } from "./screens/ParentJourneyIntroScreen";
-import { ParentOnboardingPlaceholderScreen } from "./screens/ParentOnboardingPlaceholderScreen";
+import { ParentOnboardingScreen, type ParentOnboardingAnswers } from "@/features/parent-journey/screens/ParentOnboardingScreen";
 
 
 // Nodo de la ruta → pantalla de revisión. Explícito y fácil de extender.
