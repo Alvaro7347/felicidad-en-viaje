@@ -49,6 +49,7 @@ import { WelcomeScreen } from "./screens/WelcomeScreen";
 import { ReturnWelcomeScreen } from "./screens/ReturnWelcomeScreen";
 
 import { ParentJourneyIntroScreen } from "./screens/ParentJourneyIntroScreen";
+import { ParentJourneyCreatedScreen } from "./screens/ParentJourneyCreatedScreen";
 import { ParentOnboardingScreen, type ParentOnboardingAnswers } from "@/features/parent-journey/screens/ParentOnboardingScreen";
 
 
