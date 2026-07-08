@@ -1,12 +1,11 @@
 import { B } from "../data/brand";
 
 type Props = {
-  showParentPath: boolean;
   onChooseLearner: () => void;
   onChooseParent: () => void;
 };
 
-export function UserPathSelectionScreen({ showParentPath, onChooseLearner, onChooseParent }: Props) {
+export function UserPathSelectionScreen({ onChooseLearner, onChooseParent }: Props) {
   return (
     <div style={{ display: "flex", flexDirection: "column", gap: 20, paddingTop: 8 }}>
       <div style={{ textAlign: "center", marginTop: 8 }}>
@@ -37,17 +36,15 @@ export function UserPathSelectionScreen({ showParentPath, onChooseLearner, onCho
         accent={B.green}
       />
 
-      {showParentPath && (
-        <PathCard
-          emoji="🌱"
-          title="Quiero acompañar el aprendizaje de mi hijo/a"
-          description="Ruta piloto para apoderados que acompañan el aprendizaje musical de un niño o niña."
-          ctaLabel="Entrar al viaje de Lucía"
-          onClick={onChooseParent}
-          accent={B.pink}
-          tag="Piloto privado"
-        />
-      )}
+      <PathCard
+        emoji="🌱"
+        title="Quiero acompañar el aprendizaje de mi hijo/a"
+        description="Nueva ruta para apoderados que acompañan el aprendizaje musical de un niño o niña."
+        ctaLabel="Entrar al viaje de Lucía"
+        onClick={onChooseParent}
+        accent={B.pink}
+        tag="Nueva ruta · Piloto"
+      />
 
       <p style={{ textAlign: "center", fontSize: 12, color: "#bcbcba", margin: "8px 0 0", fontStyle: "italic" }}>
         Cada viaje se adapta a quien lo camina.
