@@ -50,7 +50,7 @@ import { ReturnWelcomeScreen } from "./screens/ReturnWelcomeScreen";
 import { UserPathSelectionScreen } from "./screens/UserPathSelectionScreen";
 import { ParentJourneyIntroScreen } from "./screens/ParentJourneyIntroScreen";
 import { ParentOnboardingPlaceholderScreen } from "./screens/ParentOnboardingPlaceholderScreen";
-import { isMariaJosePilotEmail } from "./data/pilotAccess";
+
 
 // Nodo de la ruta → pantalla de revisión. Explícito y fácil de extender.
 const REVIEW_MISSION_BY_NODE: Record<string, Screen> = {
