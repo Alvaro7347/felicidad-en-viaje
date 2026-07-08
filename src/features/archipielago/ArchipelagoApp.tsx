@@ -364,15 +364,22 @@ export function ArchipelagoApp() {
 
         {screen === "path-selection" && (
           <UserPathSelectionScreen
-            showParentPath={isMariaJosePilotEmail(session?.user.email)}
-            onChooseLearner={() => setScreen("welcome")}
-            onChooseParent={() => setScreen("parent-journey-intro")}
+            onChooseLearner={() => setScreen("onboarding")}
+            onChooseParent={() => {
+              if (typeof window !== "undefined") {
+                window.location.href = "/lucia";
+              }
+            }}
           />
         )}
 
         {screen === "parent-journey-intro" && (
           <ParentJourneyIntroScreen
-            onCreate={() => setScreen("parent-onboarding-placeholder")}
+            onCreate={() => {
+              if (typeof window !== "undefined") {
+                window.location.href = "/lucia";
+              }
+            }}
             onBack={() => setScreen("path-selection")}
           />
         )}
