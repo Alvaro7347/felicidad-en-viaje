@@ -176,7 +176,7 @@ export function ArchipelagoApp() {
         setScreen("return-welcome");
       } else {
         setHasOnboarding(false);
-        setScreen("path-selection");
+        setScreen("onboarding");
       }
       setOnboardingChecking(false);
     })();
