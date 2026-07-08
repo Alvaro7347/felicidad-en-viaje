@@ -229,7 +229,10 @@ export function OnboardingScreen({ onStart, onSelectProfile }: Props) {
       <div style={{ marginTop: 4 }}>
         <button
           type="button"
-          onClick={onStart}
+          onClick={() => {
+            if (onSelectProfile) onSelectProfile(selectedId);
+            else onStart();
+          }}
           style={{
             width: "100%",
             border: "none",
