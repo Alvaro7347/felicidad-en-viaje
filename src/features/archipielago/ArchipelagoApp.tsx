@@ -362,17 +362,10 @@ export function ArchipelagoApp() {
         )}
 
 
-        {screen === "path-selection" && (
-          <UserPathSelectionScreen
-            onChooseLearner={() => setScreen("onboarding")}
-            onChooseParent={() => setScreen("parent-journey-intro")}
-          />
-        )}
-
         {screen === "parent-journey-intro" && (
           <ParentJourneyIntroScreen
             onCreate={() => setScreen("parent-onboarding")}
-            onBack={() => setScreen("path-selection")}
+            onBack={() => setScreen("onboarding")}
           />
         )}
 
