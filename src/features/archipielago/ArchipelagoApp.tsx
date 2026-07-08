@@ -415,8 +415,13 @@ export function ArchipelagoApp() {
           <OnboardingScreen
             onStart={() => setScreen("diagnosis")}
             onSelectProfile={(id) => {
-              if (id === "empezar") setScreen("diagnosis");
-              else if (id === "acompanar") setScreen("parent-journey-intro");
+              if (id === "empezar") {
+                try { window.localStorage.setItem("archipielago_selected_profile", "alejandra"); } catch {}
+                setScreen("diagnosis");
+              } else if (id === "acompanar") {
+                try { window.localStorage.setItem("archipielago_selected_profile", "maria_jose"); } catch {}
+                setScreen("parent-journey-intro");
+              }
             }}
           />
         )}
