@@ -7,6 +7,7 @@ export function Btn({
   fullWidth = false,
   size = 'md',
   disabled = false,
+  type = 'button',
 }: {
   children: React.ReactNode;
   variant?: 'primary' | 'pink' | 'ghost' | 'dark';
@@ -14,6 +15,7 @@ export function Btn({
   fullWidth?: boolean;
   size?: 'sm' | 'md';
   disabled?: boolean;
+  type?: 'button' | 'submit' | 'reset';
 }) {
   const pad = size === 'sm' ? '9px 18px' : '13px 28px';
   const fs = size === 'sm' ? 14 : 16;
@@ -33,6 +35,7 @@ export function Btn({
   };
   return (
     <button
+      type={type}
       style={{ ...base, ...variants[variant] }}
       onClick={disabled ? undefined : onClick}
       disabled={disabled}

@@ -354,7 +354,7 @@ export function AuthScreen() {
             )}
 
             <div style={{ marginTop: 18 }}>
-              <Btn variant="primary" fullWidth onClick={submit} disabled={loading}>
+              <Btn type="submit" variant="primary" fullWidth disabled={loading}>
                 {loading
                   ? isSignup
                     ? "Creando cuenta..."
