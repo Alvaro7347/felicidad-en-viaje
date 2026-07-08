@@ -98,6 +98,45 @@ export type Database = {
         }
         Relationships: []
       }
+      parent_journeys: {
+        Row: {
+          created_at: string
+          id: string
+          onboarding_answers: Json
+          parent_name: string
+          plan_name: string
+          status: string
+          student_name: string
+          teacher_name: string
+          updated_at: string
+          user_id: string
+        }
+        Insert: {
+          created_at?: string
+          id?: string
+          onboarding_answers?: Json
+          parent_name?: string
+          plan_name?: string
+          status?: string
+          student_name?: string
+          teacher_name?: string
+          updated_at?: string
+          user_id: string
+        }
+        Update: {
+          created_at?: string
+          id?: string
+          onboarding_answers?: Json
+          parent_name?: string
+          plan_name?: string
+          status?: string
+          student_name?: string
+          teacher_name?: string
+          updated_at?: string
+          user_id?: string
+        }
+        Relationships: []
+      }
       profiles: {
         Row: {
           created_at: string
