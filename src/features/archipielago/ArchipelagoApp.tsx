@@ -338,7 +338,7 @@ export function ArchipelagoApp() {
       )}
 
       <div style={{ maxWidth: 640, margin: "0 auto" }}>
-        {screen !== "return-welcome" && (
+        {screen !== "return-welcome" && !isOnboarding && (
           <AppHeader
             screen={screen}
             onHome={isOnboarding ? undefined : goToRoute}
