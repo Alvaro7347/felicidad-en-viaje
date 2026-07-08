@@ -94,10 +94,12 @@ export function OnboardingScreen({ onStart, onSelectProfile }: Props) {
             ? "0 4px 14px rgba(0,0,0,0.06)"
             : "0 2px 8px rgba(0,0,0,0.035)";
 
+          const isSelected = selectedId === r.id && r.active;
           return (
             <button
               key={r.id}
               type="button"
+              onClick={() => { if (r.active) setSelectedId(r.id); }}
               onMouseEnter={() => setHoverId(r.id)}
               onMouseLeave={() => {
                 setHoverId(null);
@@ -115,9 +117,9 @@ export function OnboardingScreen({ onStart, onSelectProfile }: Props) {
                 gap: 14,
                 width: "100%",
                 boxSizing: "border-box",
-                background: B.white,
+                background: isSelected ? B.greenLight : B.white,
                 border: r.active
-                  ? `1.5px solid ${B.green}`
+                  ? `${isSelected ? 2 : 1.5}px solid ${B.green}`
                   : `1px solid ${B.grayBorder}`,
                 borderRadius: 18,
                 padding: "16px 16px",
@@ -125,11 +127,12 @@ export function OnboardingScreen({ onStart, onSelectProfile }: Props) {
                 boxShadow: r.active ? activeShadow : lockedShadow,
                 transform: scale,
                 transition:
-                  "transform 0.18s cubic-bezier(0.34,1.56,0.64,1), box-shadow 0.2s ease",
+                  "transform 0.18s cubic-bezier(0.34,1.56,0.64,1), box-shadow 0.2s ease, background 0.2s ease",
                 opacity: r.active ? 1 : 0.78,
                 userSelect: "none",
                 WebkitUserSelect: "none",
               }}
+              aria-pressed={isSelected}
               aria-disabled={!r.active}
             >
               {/* Icono */}
