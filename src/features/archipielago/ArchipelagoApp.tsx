@@ -398,7 +398,7 @@ export function ArchipelagoApp() {
               }
               try {
                 window.localStorage.setItem(
-                  "parent_journey_lucia_v1",
+                  "archipielago_parent_journey_lucia",
                   JSON.stringify({ answers: ans, savedAt: new Date().toISOString() }),
                 );
               } catch {}
