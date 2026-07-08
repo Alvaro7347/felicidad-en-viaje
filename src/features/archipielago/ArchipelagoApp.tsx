@@ -365,27 +365,46 @@ export function ArchipelagoApp() {
         {screen === "path-selection" && (
           <UserPathSelectionScreen
             onChooseLearner={() => setScreen("onboarding")}
-            onChooseParent={() => {
-              if (typeof window !== "undefined") {
-                window.location.href = "/lucia";
-              }
-            }}
+            onChooseParent={() => setScreen("parent-journey-intro")}
           />
         )}
 
         {screen === "parent-journey-intro" && (
           <ParentJourneyIntroScreen
-            onCreate={() => {
-              if (typeof window !== "undefined") {
-                window.location.href = "/lucia";
-              }
-            }}
+            onCreate={() => setScreen("parent-onboarding")}
             onBack={() => setScreen("path-selection")}
           />
         )}
 
-        {screen === "parent-onboarding-placeholder" && (
-          <ParentOnboardingPlaceholderScreen onBack={() => setScreen("parent-journey-intro")} />
+        {screen === "parent-onboarding" && (
+          <ParentOnboardingScreen
+            onCancel={() => setScreen("parent-journey-intro")}
+            onComplete={async (ans: ParentOnboardingAnswers) => {
+              const uid = session?.user.id;
+              if (uid) {
+                try {
+                  await supabase.from("parent_journeys" as never).insert({
+                    user_id: uid,
+                    student_name: ans.student.name || "Lucía",
+                    parent_name: "Carolina",
+                    teacher_name: "Álvaro",
+                    plan_name: "Plan Semanal Presencial",
+                    status: "pilot",
+                    onboarding_answers: ans as unknown as Record<string, unknown>,
+                  } as never);
+                } catch (e) {
+                  console.warn("[parent_journeys] insert failed, continuing:", e);
+                }
+              }
+              try {
+                window.localStorage.setItem(
+                  "parent_journey_lucia_v1",
+                  JSON.stringify({ answers: ans, savedAt: new Date().toISOString() }),
+                );
+              } catch {}
+              setScreen("parent-journey-intro");
+            }}
+          />
         )}
 
         {screen === "welcome" && <WelcomeScreen onStart={() => setScreen("onboarding")} />}
