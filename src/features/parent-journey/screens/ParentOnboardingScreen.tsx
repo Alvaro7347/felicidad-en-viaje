@@ -260,7 +260,29 @@ function Step1({ ans, setAns }: StepProps) {
         />
       </Field>
       <Field label="¿Qué te motivó a iniciar este proceso?">
-        <textarea style={textareaStyle} value={p.motivation} onChange={(e) => upd({ motivation: e.target.value })} placeholder="Escribe libremente…" />
+        <OptionList
+          options={[
+            "Quiero que descubra la música desde pequeño/a",
+            "Le gusta el ukelele y quiere aprender",
+            "Busco una actividad significativa fuera de la pantalla",
+            "Quiero que gane confianza y se exprese",
+            "Quiero compartir la música en familia",
+          ]}
+          value={p.motivation}
+          onChange={(v) => upd({ motivation: v as string })}
+        />
+        <textarea
+          style={{ ...textareaStyle, marginTop: 8 }}
+          value={p.motivation && ![
+            "Quiero que descubra la música desde pequeño/a",
+            "Le gusta el ukelele y quiere aprender",
+            "Busco una actividad significativa fuera de la pantalla",
+            "Quiero que gane confianza y se exprese",
+            "Quiero compartir la música en familia",
+          ].includes(p.motivation) ? p.motivation : ""}
+          onChange={(e) => upd({ motivation: e.target.value })}
+          placeholder="Otro motivo (opcional)…"
+        />
       </Field>
     </div>
   );
