@@ -1,6 +1,6 @@
 import type { Screen } from "../types";
 
-export const ONBOARDING_SCREENS: Screen[] = ['welcome', 'parent-journey-intro', 'parent-onboarding', 'onboarding', 'diagnosis', 'diagnosis-return'].filter(Boolean) as Screen[];
+export const ONBOARDING_SCREENS: Screen[] = ['welcome', 'parent-journey-intro', 'parent-onboarding', 'onboarding', 'diagnosis', 'diagnosis-result'];
 
 export type LessonGroup = 'first-melodies' | 'pulse' | 'rhythm' | 'music' | 'joy' | 'chords' | 'strumming' | 'songs';
 
