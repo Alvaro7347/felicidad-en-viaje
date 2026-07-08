@@ -1,12 +1,11 @@
 import { B } from "../data/brand";
 
 type Props = {
-  showParentPath: boolean;
   onChooseLearner: () => void;
   onChooseParent: () => void;
 };
 
-export function UserPathSelectionScreen({ showParentPath, onChooseLearner, onChooseParent }: Props) {
+export function UserPathSelectionScreen({ onChooseLearner, onChooseParent }: Props) {
   return (
     <div style={{ display: "flex", flexDirection: "column", gap: 20, paddingTop: 8 }}>
       <div style={{ textAlign: "center", marginTop: 8 }}>
