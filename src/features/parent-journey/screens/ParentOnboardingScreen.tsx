@@ -1,5 +1,6 @@
 import { useState } from "react";
 import { B } from "@/features/archipielago/data/brand";
+import { OnboardingProgressHeader } from "@/features/archipielago/components/OnboardingProgressHeader";
 
 export type ParentOnboardingAnswers = {
   parent: {
@@ -104,14 +105,11 @@ export function ParentOnboardingScreen({ onComplete, onCancel }: Props) {
 // ─── UI helpers ──────────────────────────────────────────────────────────
 function Progress({ step, total }: { step: number; total: number }) {
   return (
-    <div style={{ display: "flex", flexDirection: "column", gap: 8 }}>
-      <div style={{ fontSize: 11.5, fontWeight: 700, letterSpacing: "0.5px", color: B.grayText, textTransform: "uppercase" }}>
-        Paso {step} de {total}
-      </div>
-      <div style={{ height: 6, borderRadius: 999, background: B.grayBorder, overflow: "hidden" }}>
-        <div style={{ width: `${(step / total) * 100}%`, height: "100%", background: B.green, transition: "width 0.25s ease" }} />
-      </div>
-    </div>
+    <OnboardingProgressHeader
+      currentStep={step}
+      totalSteps={total}
+      label="Perfil de acompañamiento"
+    />
   );
 }
 
