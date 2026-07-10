@@ -93,7 +93,7 @@ export function ParentOnboardingScreen({ onComplete, onCancel }: Props) {
           </button>
         ) : (
           <button type="button" onClick={submit} disabled={submitting} style={{ ...primaryBtn, opacity: submitting ? 0.7 : 1 }}>
-            {submitting ? "Guardando…" : `Crear viaje de ${studentLabel}`}
+            {submitting ? "Guardando…" : "Crear viaje musical"}
           </button>
         )}
       </div>
