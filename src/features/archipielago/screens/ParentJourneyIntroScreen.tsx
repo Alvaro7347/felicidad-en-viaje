@@ -112,31 +112,27 @@ export function ParentJourneyIntroScreen({ onCreate, onBack }: Props) {
         <Block emoji="🧭" title="El profesor guía" text="Registra lo visto en clase, define tareas y ajusta el camino según el avance real." />
       </InfoCard>
 
-      <button
-        type="button"
-        onClick={() => {
-          if (hasSaved) {
-            // Continuar: por ahora se mantiene en esta pantalla (futuro dashboard).
-            return;
-          }
-          onCreate();
-        }}
-        style={{
-          width: "100%",
-          border: "none",
-          background: B.green,
-          color: B.dark,
-          fontFamily: "Space Grotesk, sans-serif",
-          fontWeight: 800,
-          fontSize: 16,
-          borderRadius: 14,
-          padding: "15px 20px",
-          cursor: "pointer",
-          boxShadow: "0 6px 18px rgba(46,230,174,0.32)",
-        }}
-      >
-        {hasSaved ? "Continuar viaje musical" : "Crear viaje musical"}
-      </button>
+      {!hasSaved && (
+        <button
+          type="button"
+          onClick={onCreate}
+          style={{
+            width: "100%",
+            border: "none",
+            background: B.green,
+            color: B.dark,
+            fontFamily: "Space Grotesk, sans-serif",
+            fontWeight: 800,
+            fontSize: 16,
+            borderRadius: 14,
+            padding: "15px 20px",
+            cursor: "pointer",
+            boxShadow: "0 6px 18px rgba(46,230,174,0.32)",
+          }}
+        >
+          Crear viaje musical
+        </button>
+      )}
 
       {hasSaved && (
         <button
