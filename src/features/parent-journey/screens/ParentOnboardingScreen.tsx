@@ -52,7 +52,7 @@ type Props = {
   onCancel: () => void;
 };
 
-const TOTAL = 5;
+const TOTAL = 4;
 
 export function ParentOnboardingScreen({ onComplete, onCancel }: Props) {
   const [step, setStep] = useState(1);
