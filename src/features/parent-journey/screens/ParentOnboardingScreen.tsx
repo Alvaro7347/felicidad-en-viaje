@@ -82,7 +82,6 @@ export function ParentOnboardingScreen({ onComplete, onCancel }: Props) {
       {step === 2 && <Step2 ans={ans} setAns={setAns} />}
       {step === 3 && <Step3 ans={ans} setAns={setAns} />}
       {step === 4 && <Step4 ans={ans} setAns={setAns} />}
-      {step === 5 && <Step5 ans={ans} setAns={setAns} />}
 
       <div style={{ display: "flex", gap: 10, marginTop: 4 }}>
         <button type="button" onClick={back} style={secondaryBtn}>
