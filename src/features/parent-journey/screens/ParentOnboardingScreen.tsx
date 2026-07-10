@@ -72,8 +72,6 @@ export function ParentOnboardingScreen({ onComplete, onCancel }: Props) {
     }
   };
 
-  const studentLabel = ans.student.name.trim() || "tu hijo/a";
-
   return (
     <div style={{ display: "flex", flexDirection: "column", gap: 20, paddingTop: 8 }}>
       <Progress step={step} total={TOTAL} />
