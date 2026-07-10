@@ -387,10 +387,37 @@ export function ArchipelagoApp() {
               const studentName = ans.student.name.trim();
               const parentName = ans.parent.name.trim();
               const planName = ans.practice.planName?.trim() || "Plan Semanal Presencial";
+              let studentId: string | null = null;
               if (uid) {
+                // 1) Crear Student como entidad propia (no bloqueante ante fallo)
+                try {
+                  const { data: studentRow, error: studentErr } = await supabase
+                    .from("students" as never)
+                    .insert({
+                      owner_user_id: uid,
+                      name: studentName || "Sin nombre",
+                      age: ans.student.age?.trim() || null,
+                      experience: ans.student.experience?.trim() || null,
+                      teacher_name: "Álvaro",
+                      plan_name: planName,
+                      status: "active",
+                    } as never)
+                    .select("id")
+                    .single();
+                  if (studentErr) {
+                    console.warn("[students] insert failed:", studentErr);
+                  } else if (studentRow && typeof (studentRow as { id?: string }).id === "string") {
+                    studentId = (studentRow as { id: string }).id;
+                  }
+                } catch (e) {
+                  console.warn("[students] insert threw:", e);
+                }
+
+                // 2) Crear parent_journey vinculando student_id (compatibilidad: mantener student_name)
                 try {
                   const { error } = await supabase.from("parent_journeys" as never).insert({
                     user_id: uid,
+                    student_id: studentId,
                     student_name: studentName || null,
                     parent_name: parentName || null,
                     teacher_name: "Álvaro",
@@ -411,10 +438,14 @@ export function ArchipelagoApp() {
                   JSON.stringify({ answers: ans, savedAt: new Date().toISOString() }),
                 );
                 window.localStorage.setItem("archipielago_selected_profile", "maria_jose");
+                if (studentId) {
+                  window.localStorage.setItem("current_student_id", studentId);
+                }
               } catch {}
               setParentJourneyAnswers(ans);
               setScreen("parent-journey-created");
             }}
+
           />
         )}
 
