@@ -352,13 +352,28 @@ function Step4({ ans, setAns }: StepProps) {
     <div style={{ display: "flex", flexDirection: "column", gap: 16 }}>
       <SectionHeader title="Expectativas y práctica" subtitle="Buscamos que el proceso sea realista y sostenible." />
       <Field label="¿Qué esperas que logre con las clases de ukelele?">
-        <textarea style={textareaStyle} value={e.goal} onChange={(ev) => updE({ goal: ev.target.value })} />
+        <textarea
+          style={textareaStyle}
+          value={e.goal}
+          onChange={(ev) => updE({ goal: ev.target.value })}
+          placeholder="Ej: Que disfrute la música, gane confianza y aprenda sus primeras canciones."
+        />
       </Field>
       <Field label="¿Qué te gustaría observar semana a semana?">
-        <textarea style={textareaStyle} value={e.weeklyObserve} onChange={(ev) => updE({ weeklyObserve: ev.target.value })} />
+        <textarea
+          style={textareaStyle}
+          value={e.weeklyObserve}
+          onChange={(ev) => updE({ weeklyObserve: ev.target.value })}
+          placeholder="Ej: Si practica con entusiasmo, si recuerda lo aprendido o si se atreve a tocar algo nuevo."
+        />
       </Field>
       <Field label="¿Qué te preocupa del proceso?">
-        <textarea style={textareaStyle} value={e.worry} onChange={(ev) => updE({ worry: ev.target.value })} />
+        <textarea
+          style={textareaStyle}
+          value={e.worry}
+          onChange={(ev) => updE({ worry: ev.target.value })}
+          placeholder="Ej: Que se frustre rápido, que no practique en casa o que pierda la motivación."
+        />
       </Field>
       <Field label="¿Cuánto tiempo realista podría practicar en casa?">
         <OptionList
@@ -378,48 +393,6 @@ function Step4({ ans, setAns }: StepProps) {
           value={pr.companion}
           onChange={(v) => updP({ companion: v as string })}
         />
-      </Field>
-    </div>
-  );
-}
-
-function Step5({ ans, setAns }: StepProps) {
-  const a = ans.accompaniment;
-  const pr = ans.practice;
-  const updA = (patch: Partial<typeof a>) => setAns({ ...ans, accompaniment: { ...a, ...patch } });
-  const updP = (patch: Partial<typeof pr>) => setAns({ ...ans, practice: { ...pr, ...patch } });
-  return (
-    <div style={{ display: "flex", flexDirection: "column", gap: 16 }}>
-      <SectionHeader title="¿Cómo quieres acompañar?" subtitle="Elige qué información te gustaría recibir después de cada clase." />
-      <OptionList
-        multi
-        options={[
-          "Reporte breve",
-          "Reporte detallado",
-          "Tareas semanales",
-          "Recomendaciones para acompañar en casa",
-          "Hitos importantes",
-          "Alertas si algo le está costando",
-        ]}
-        value={a.reportPrefs}
-        onChange={(v) => updA({ reportPrefs: v as string[] })}
-      />
-      <Field label="¿Qué tipo de tareas prefieres? (puedes elegir varias)">
-        <OptionList
-          multi
-          options={[
-            "Muy simples y cortas",
-            "Desafíos entretenidos",
-            "Canciones conocidas",
-            "Ejercicios paso a paso",
-            "Actividades para hacer en familia",
-          ]}
-          value={pr.taskType}
-          onChange={(v) => updP({ taskType: v as string[] })}
-        />
-      </Field>
-      <Field label="¿Qué te gustaría contarle al profesor antes de la primera clase?">
-        <textarea style={textareaStyle} value={a.messageForTeacher} onChange={(ev) => updA({ messageForTeacher: ev.target.value })} />
       </Field>
     </div>
   );
