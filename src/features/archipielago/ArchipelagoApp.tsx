@@ -148,26 +148,78 @@ export function ArchipelagoApp() {
   const [parentJourneyLoadError, setParentJourneyLoadError] = useState<string | null>(null);
 
   // ── Detección de modalidad + estado inicial (Supabase como fuente) ─
+  // Prioridad: profiles.experience_mode > (parent_journeys | user_onboarding) > localStorage
   useEffect(() => {
     const uid = session?.user.id;
     if (!uid) {
       setHasOnboarding(null);
       return;
     }
-    // Esperamos a que la modalidad termine de cargarse.
     if (experience.loading) return;
     let cancelled = false;
     setOnboardingChecking(true);
     setParentJourneyLoadError(null);
+
     (async () => {
-      // Fallback: si no hay modo en DB, usar caché legacy.
       let mode = experience.mode;
-      if (!mode && typeof window !== "undefined") {
-        try {
-          const legacy = window.localStorage.getItem("archipielago_selected_profile");
+
+      // ── Autorreparación: cuentas antiguas sin experience_mode ─────
+      if (!mode) {
+        const [pjRes, onbRes] = await Promise.all([
+          supabase.from("parent_journeys").select("user_id").eq("user_id", uid).maybeSingle(),
+          supabase.from("user_onboarding").select("user_id").eq("user_id", uid).maybeSingle(),
+        ]);
+        if (cancelled) return;
+
+        // Error de red → NO mostrar el selector; permitir reintento.
+        if (pjRes.error || onbRes.error) {
+          setParentJourneyLoadError("No pudimos cargar tu viaje. Revisa tu conexión y reintenta.");
+          setOnboardingChecking(false);
+          return;
+        }
+
+        const hasPJ = !!pjRes.data;
+        const hasOnb = !!onbRes.data;
+
+        let legacy: string | null = null;
+        if (typeof window !== "undefined") {
+          try { legacy = window.localStorage.getItem("archipielago_selected_profile"); } catch { /* noop */ }
+        }
+
+        if (hasPJ && hasOnb) {
+          // Caso ambiguo: preferir localStorage; si no, priorizar parent.
           if (legacy === "alejandra") mode = "self_learning";
-          else if (legacy === "maria_jose") mode = "accompanied_learning";
-        } catch { /* noop */ }
+          else mode = "accompanied_learning";
+          progress.logEvent("experience_mode_ambiguous", {
+            has_parent_journey: true,
+            has_user_onboarding: true,
+            legacy_profile: legacy,
+            resolved_mode: mode,
+          });
+        } else if (hasPJ) {
+          mode = "accompanied_learning";
+        } else if (hasOnb) {
+          mode = "self_learning";
+        } else if (legacy === "alejandra") {
+          mode = "self_learning";
+        } else if (legacy === "maria_jose") {
+          mode = "accompanied_learning";
+        } else {
+          // Cuenta realmente nueva → mostrar selector.
+          setHasOnboarding(false);
+          setScreen("onboarding");
+          setOnboardingChecking(false);
+          return;
+        }
+
+        // Persistir modalidad inferida en profiles + caché (autorreparación).
+        try {
+          await experience.setMode(mode);
+          progress.logEvent("experience_mode_repaired", { resolved_mode: mode });
+        } catch (e) {
+          console.warn("[experience_mode] repair setMode failed:", e);
+        }
+        if (cancelled) return;
       }
 
       // ── Modalidad ACOMPAÑADA (María José) ─────────────────────
@@ -180,6 +232,8 @@ export function ArchipelagoApp() {
         if (cancelled) return;
         if (error) {
           setParentJourneyLoadError("No pudimos cargar el viaje de acompañamiento. Intenta recargar.");
+          setOnboardingChecking(false);
+          return;
         }
         if (pj) {
           const answers = (pj.onboarding_answers ?? null) as ParentOnboardingAnswers | null;
@@ -192,6 +246,7 @@ export function ArchipelagoApp() {
           setHasOnboarding(true);
           setScreen("parent-journey-dashboard");
         } else {
+          // Modo acompañado declarado pero sin viaje aún → completar onboarding de padres.
           setHasOnboarding(false);
           setScreen("parent-journey-intro");
         }
@@ -199,13 +254,18 @@ export function ArchipelagoApp() {
         return;
       }
 
-      // ── Modalidad PERSONAL (Alejandra) o sin modalidad ───────
-      const { data: onb } = await supabase
+      // ── Modalidad PERSONAL (Alejandra) ───────────────────────
+      const { data: onb, error: onbError } = await supabase
         .from("user_onboarding")
         .select("answers")
         .eq("user_id", uid)
         .maybeSingle();
       if (cancelled) return;
+      if (onbError) {
+        setParentJourneyLoadError("No pudimos cargar tu viaje. Revisa tu conexión y reintenta.");
+        setOnboardingChecking(false);
+        return;
+      }
       if (onb) {
         const answers = (onb.answers ?? {}) as { name?: string; answers?: DiagAnswers };
         let name = answers.name ?? "";
@@ -226,9 +286,9 @@ export function ArchipelagoApp() {
         setHasOnboarding(true);
         setScreen("return-welcome");
       } else {
+        // Modo personal declarado pero sin onboarding → completar diagnóstico.
         setHasOnboarding(false);
-        // Sin modo persistido y sin onboarding → selector inicial.
-        setScreen(mode === "self_learning" ? "onboarding" : "onboarding");
+        setScreen("diagnosis");
       }
       setOnboardingChecking(false);
     })();
