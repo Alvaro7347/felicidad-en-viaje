@@ -1147,6 +1147,27 @@ export function ArchipelagoApp() {
         {screen === "mission-guide" && <MissionGuideScreen userName={userName} onBack={() => setScreen("route")} />}
 
         {screen === "celebration" && <CelebrationScreen onHome={goToRoute} />}
+
+        {screen === "my-profile" && (
+          <MyProfileScreen
+            mode={experience.mode}
+            userName={userName}
+            userEmail={session?.user.email ?? null}
+            studentName={routeStudentName}
+            parentAnswers={parentJourneyAnswers}
+            onBack={goHome}
+          />
+        )}
+
+        {screen === "help-center" && (
+          <HelpCenterScreen
+            mode={experience.mode}
+            onBack={goHome}
+            onOpenPrivacy={() => setScreen("privacy")}
+          />
+        )}
+
+        {screen === "privacy" && <PrivacyScreen onBack={goHome} />}
       </div>
       <BlockedIslandModal
         open={blockedModal !== null}
