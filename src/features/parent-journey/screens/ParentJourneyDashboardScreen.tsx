@@ -30,7 +30,7 @@ function islandLabel(id?: IslandId | null) {
   return ISLAND_LABELS[id] ?? "—";
 }
 
-export function ParentJourneyDashboardScreen({ studentName, parentName, onBack }: Props) {
+export function ParentJourneyDashboardScreen({ studentName, parentName, onBack, onOpenJourney }: Props) {
   const progress = useMvp1ProgressContext();
   const s = studentName?.trim() || "tu hijo/a";
   const p = parentName?.trim() || "";
