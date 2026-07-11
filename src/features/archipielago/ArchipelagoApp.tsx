@@ -418,6 +418,64 @@ export function ArchipelagoApp() {
 
 
   // ── Compuerta de sesión ────────────────────────────────────────
+  if (session && ambiguousMode) {
+    return (
+      <main
+        style={{
+          minHeight: "100vh",
+          background: B.gray,
+          color: B.dark,
+          fontFamily: "Quicksand, Arial, sans-serif",
+          display: "flex",
+          alignItems: "center",
+          justifyContent: "center",
+          padding: 24,
+        }}
+      >
+        <div style={{ maxWidth: 420, textAlign: "center", display: "flex", flexDirection: "column", gap: 14 }}>
+          <div style={{ fontFamily: "Space Grotesk, sans-serif", fontWeight: 800, fontSize: 20, color: B.dark }}>
+            Estamos revisando tu acceso
+          </div>
+          <div style={{ fontSize: 14, color: B.grayText, lineHeight: 1.55 }}>
+            Encontramos más de una configuración asociada a esta cuenta. Estamos revisando tu acceso para no mezclar información. Reintenta en unos segundos o vuelve a iniciar sesión.
+          </div>
+          <button
+            type="button"
+            onClick={() => { setAmbiguousMode(false); void experience.refresh(); }}
+            style={{
+              alignSelf: "center",
+              border: "none",
+              background: B.green,
+              color: B.dark,
+              fontFamily: "Space Grotesk, sans-serif",
+              fontWeight: 800,
+              fontSize: 14,
+              borderRadius: 12,
+              padding: "10px 18px",
+              cursor: "pointer",
+            }}
+          >
+            Reintentar
+          </button>
+          <button
+            type="button"
+            onClick={() => { void experience.signOutAndClear(); }}
+            style={{
+              alignSelf: "center",
+              border: "none",
+              background: "transparent",
+              color: B.grayText,
+              fontSize: 13,
+              textDecoration: "underline",
+              cursor: "pointer",
+            }}
+          >
+            Cerrar sesión
+          </button>
+        </div>
+      </main>
+    );
+  }
   if (authChecking || experience.loading || (session && (onboardingChecking || hasOnboarding === null))) {
     return (
       <main
@@ -438,6 +496,7 @@ export function ArchipelagoApp() {
       </main>
     );
   }
+
 
   if (!session) {
     return (
