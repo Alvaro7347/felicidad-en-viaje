@@ -3,7 +3,6 @@ import { B } from "../data/brand";
 
 type Props = {
   onCreate: () => void;
-  onBack?: () => void;
   onOpenDashboard?: () => void;
 };
 
@@ -26,7 +25,7 @@ function readSaved(): SavedJourney | null {
   }
 }
 
-export function ParentJourneyIntroScreen({ onCreate, onBack, onOpenDashboard }: Props) {
+export function ParentJourneyIntroScreen({ onCreate, onOpenDashboard }: Props) {
   const [saved, setSaved] = useState<SavedJourney | null>(null);
 
   useEffect(() => {
@@ -185,26 +184,6 @@ export function ParentJourneyIntroScreen({ onCreate, onBack, onOpenDashboard }: 
         </button>
       )}
 
-      {onBack && (
-        <button
-          type="button"
-          onClick={onBack}
-          style={{
-            width: "100%",
-            border: `1px solid ${B.grayBorder}`,
-            background: "transparent",
-            color: B.grayText,
-            fontFamily: "Space Grotesk, sans-serif",
-            fontWeight: 600,
-            fontSize: 14,
-            borderRadius: 12,
-            padding: "11px 16px",
-            cursor: "pointer",
-          }}
-        >
-          Volver
-        </button>
-      )}
     </div>
   );
 }
