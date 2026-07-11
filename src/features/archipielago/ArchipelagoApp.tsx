@@ -463,36 +463,42 @@ export function ArchipelagoApp() {
               const parentName = ans.parent.name.trim();
               const planName = ans.practice.planName?.trim() || "Plan Semanal Presencial";
 
-              // Insert directo en parent_journeys. Si falla → informar y abortar.
+              // Upsert en parent_journeys (una cuenta = un viaje).
               try {
-                const { error } = await supabase.from("parent_journeys" as never).insert({
-                  user_id: uid,
-                  student_name: studentName || null,
-                  parent_name: parentName || null,
-                  teacher_name: "Álvaro",
-                  plan_name: planName,
-                  status: "pilot",
-                  onboarding_answers: ans as unknown as Record<string, unknown>,
-                } as never);
+                const { error } = await supabase.from("parent_journeys").upsert(
+                  {
+                    user_id: uid,
+                    student_name: studentName || "",
+                    parent_name: parentName || "",
+                    teacher_name: "Álvaro",
+                    plan_name: planName,
+                    status: "pilot",
+                    onboarding_answers: ans as unknown as never,
+                  },
+                  { onConflict: "user_id" },
+                );
                 if (error) {
-                  console.warn("[parent_journeys] insert failed:", error);
+                  console.warn("[parent_journeys] upsert failed:", error);
                   throw new Error("No pudimos guardar el viaje musical. Intenta nuevamente.");
                 }
               } catch (e) {
                 if (e instanceof Error && e.message.startsWith("No pudimos")) throw e;
-                console.warn("[parent_journeys] insert threw:", e);
+                console.warn("[parent_journeys] upsert threw:", e);
                 throw new Error("No pudimos guardar el viaje musical. Intenta nuevamente.");
               }
 
-              // Éxito: persistir cache y navegar.
+              // Éxito: persistir modalidad + cache y navegar.
+              await experience.setMode("accompanied_learning");
               try {
                 window.localStorage.setItem(
                   "archipielago_parent_journey_lucia",
                   JSON.stringify({ answers: ans, savedAt: new Date().toISOString() }),
                 );
-                window.localStorage.setItem("archipielago_selected_profile", "maria_jose");
-              } catch {}
+              } catch { /* noop */ }
               setParentJourneyAnswers(ans);
+              setRouteStudentName(studentName);
+              setJourneyOrigin("parent");
+              setHasOnboarding(true);
               setScreen("parent-journey-created");
             }}
 
