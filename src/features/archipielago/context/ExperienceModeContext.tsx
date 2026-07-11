@@ -136,16 +136,18 @@ export function ExperienceModeProvider({ children }: { children: ReactNode }) {
     const allowOverride = opts?.allowOverride === true;
     const uid = userId ?? (await supabase.auth.getSession()).data.session?.user.id ?? null;
     if (!uid) {
-      // No hay sesión: no persistir nada globalmente.
-      return;
+      throw new Error("No hay sesión activa para guardar la modalidad.");
     }
     if (!allowOverride) {
       // Verificación server-side: la modalidad consolidada no se sobrescribe.
-      const { data: existing } = await supabase
+      const { data: existing, error: readError } = await supabase
         .from("profiles")
         .select("experience_mode")
         .eq("id", uid)
         .maybeSingle();
+      if (readError) {
+        throw new Error(`No se pudo verificar la modalidad: ${readError.message}`);
+      }
       const current = (existing?.experience_mode ?? null) as ExperienceMode | null;
       if (current && current !== next) {
         console.warn("[experience_mode] setMode bloqueado: modalidad ya consolidada", {
@@ -162,12 +164,16 @@ export function ExperienceModeProvider({ children }: { children: ReactNode }) {
         return;
       }
     }
-    setModeState(next);
-    writePerUserCache(uid, next);
-    await supabase.from("profiles").upsert(
+    // Persistir PRIMERO en Supabase; sólo si confirma OK, actualizar estado local + caché.
+    const { error } = await supabase.from("profiles").upsert(
       { id: uid, experience_mode: next, updated_at: new Date().toISOString() },
       { onConflict: "id" },
     );
+    if (error) {
+      throw new Error(`No se pudo guardar la modalidad: ${error.message}`);
+    }
+    setModeState(next);
+    writePerUserCache(uid, next);
   }, [userId]);
 
   const refresh = useCallback(async () => {
@@ -177,13 +183,16 @@ export function ExperienceModeProvider({ children }: { children: ReactNode }) {
 
   const clearMode = useCallback(async () => {
     const uid = userId ?? (await supabase.auth.getSession()).data.session?.user.id ?? null;
-    if (!uid) return;
-    setModeState(null);
-    writePerUserCache(uid, null);
-    await supabase.from("profiles").upsert(
+    if (!uid) throw new Error("No hay sesión activa para limpiar la modalidad.");
+    const { error } = await supabase.from("profiles").upsert(
       { id: uid, experience_mode: null, updated_at: new Date().toISOString() },
       { onConflict: "id" },
     );
+    if (error) {
+      throw new Error(`No se pudo limpiar la modalidad: ${error.message}`);
+    }
+    setModeState(null);
+    writePerUserCache(uid, null);
   }, [userId]);
 
   const signOutAndClear = useCallback(async () => {
