@@ -10,6 +10,7 @@ type Props = {
   studentName?: string;
   parentName?: string;
   onBack?: () => void;
+  onOpenJourney?: () => void;
 };
 
 const ISLAND_LABELS: Record<IslandId, string> = {
