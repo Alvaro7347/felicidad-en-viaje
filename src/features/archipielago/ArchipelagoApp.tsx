@@ -700,6 +700,7 @@ export function ArchipelagoApp() {
               setRouteStudentName(studentName);
               setJourneyOrigin("parent");
               setHasOnboarding(true);
+              setPendingExperienceMode(null);
               setScreen("parent-journey-created");
             }}
 
