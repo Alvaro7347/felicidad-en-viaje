@@ -125,10 +125,8 @@ export function ArchipelagoApp() {
   // ── Estado del viaje ───────────────────────────────────────────
   const [screen, setScreen] = useState<Screen>("welcome");
   const [diagAnswers, setDiagAnswers] = useState<DiagAnswers>({});
-  const [userName, setUserName] = useState(() => {
-    if (typeof window === "undefined") return "Navegante";
-    return window.localStorage.getItem("archipielago_user_name") || "Navegante";
-  });
+  // Nombre: no leer de localStorage global (podría pertenecer a otra cuenta).
+  const [userName, setUserName] = useState<string>("Navegante");
   const [firstMelodiesLessonId, setFirstMelodiesLessonId] = useState<string>("m1");
   const [pulseLessonId, setPulseLessonId] = useState<string>("p1");
   const [rhythmLessonId, setRhythmLessonId] = useState<string>("r1");
@@ -146,9 +144,34 @@ export function ArchipelagoApp() {
   const experience = useExperienceMode();
   const [blockedModal, setBlockedModal] = useState<null | "island" | "lesson">(null);
   const [parentJourneyLoadError, setParentJourneyLoadError] = useState<string | null>(null);
+  const [ambiguousMode, setAmbiguousMode] = useState(false);
+
+  // ── Aislamiento entre sesiones: al cambiar user_id, limpiar estado local
+  //    para que la nueva cuenta nunca vea datos de la anterior.
+  const lastUidRef = useRef<string | null>(null);
+  useEffect(() => {
+    const uid = session?.user.id ?? null;
+    if (lastUidRef.current !== uid) {
+      lastUidRef.current = uid;
+      setHasOnboarding(null);
+      setUserName("Navegante");
+      setParentJourneyAnswers(null);
+      setRouteStudentName(undefined);
+      setJourneyOrigin("student");
+      setDiagAnswers({});
+      setAmbiguousMode(false);
+      setParentJourneyLoadError(null);
+      setScreen("welcome");
+    }
+  }, [session?.user.id]);
+
 
   // ── Detección de modalidad + estado inicial (Supabase como fuente) ─
-  // Prioridad: profiles.experience_mode > (parent_journeys | user_onboarding) > localStorage
+  // Regla:
+  //  1) Si profiles.experience_mode tiene valor → respetarlo SIEMPRE.
+  //  2) Si es null → inferir usando SOLO parent_journeys/user_onboarding del
+  //     MISMO user_id. Nunca usar cachés globales de otra cuenta.
+  //  3) Caso ambiguo (ambas tablas + mode=null) → estado neutro, no elegir.
   useEffect(() => {
     const uid = session?.user.id;
     if (!uid) {
@@ -159,11 +182,12 @@ export function ArchipelagoApp() {
     let cancelled = false;
     setOnboardingChecking(true);
     setParentJourneyLoadError(null);
+    setAmbiguousMode(false);
 
     (async () => {
       let mode = experience.mode;
 
-      // ── Autorreparación: cuentas antiguas sin experience_mode ─────
+      // ── Inferencia SEGURA por user_id (sólo si no hay valor persistido) ─
       if (!mode) {
         const [pjRes, onbRes] = await Promise.all([
           supabase.from("parent_journeys").select("user_id").eq("user_id", uid).maybeSingle(),
@@ -171,7 +195,6 @@ export function ArchipelagoApp() {
         ]);
         if (cancelled) return;
 
-        // Error de red → NO mostrar el selector; permitir reintento.
         if (pjRes.error || onbRes.error) {
           setParentJourneyLoadError("No pudimos cargar tu viaje. Revisa tu conexión y reintenta.");
           setOnboardingChecking(false);
@@ -181,74 +204,67 @@ export function ArchipelagoApp() {
         const hasPJ = !!pjRes.data;
         const hasOnb = !!onbRes.data;
 
-        let legacy: string | null = null;
-        if (typeof window !== "undefined") {
-          try { legacy = window.localStorage.getItem("archipielago_selected_profile"); } catch { /* noop */ }
-        }
-
         if (hasPJ && hasOnb) {
-          // Caso ambiguo: preferir localStorage; si no, priorizar parent.
-          if (legacy === "alejandra") mode = "self_learning";
-          else mode = "accompanied_learning";
+          // Caso ambiguo → estado controlado, sin elegir por defecto.
           progress.logEvent("experience_mode_ambiguous", {
+            user_id: uid,
+            persisted_mode: null,
             has_parent_journey: true,
             has_user_onboarding: true,
-            legacy_profile: legacy,
-            resolved_mode: mode,
+            event_reason: "both_tables_present_mode_null",
           });
+          setAmbiguousMode(true);
+          setOnboardingChecking(false);
+          return;
         } else if (hasPJ) {
           mode = "accompanied_learning";
         } else if (hasOnb) {
           mode = "self_learning";
-        } else if (legacy === "alejandra") {
-          mode = "self_learning";
-        } else if (legacy === "maria_jose") {
-          mode = "accompanied_learning";
         } else {
-          // Cuenta realmente nueva → mostrar selector.
+          // Cuenta realmente nueva → selector inicial.
           setHasOnboarding(false);
           setScreen("onboarding");
           setOnboardingChecking(false);
           return;
         }
 
-        // Persistir modalidad inferida en profiles + caché (autorreparación).
+        // Persistir modalidad inferida (SIN allowOverride: sólo escribe si es null).
         try {
-          await experience.setMode(mode, { allowOverride: true });
-          progress.logEvent("experience_mode_repaired", { resolved_mode: mode });
+          await experience.setMode(mode);
+          progress.logEvent("experience_mode_repaired", {
+            user_id: uid,
+            resolved_mode: mode,
+            event_reason: hasPJ ? "inferred_from_parent_journeys" : "inferred_from_user_onboarding",
+          });
         } catch (e) {
-          console.warn("[experience_mode] repair setMode failed:", e);
+          console.warn("[experience_mode] persistencia de inferencia falló:", e);
         }
         if (cancelled) return;
-      }
-
-      // ── Detección de inconsistencia: mode=self_learning + parent_journeys existente.
-      // Cuenta afectada por el bug de sobrescritura → priorizar accompanied_learning.
-      if (mode === "self_learning") {
-        const { data: pjExisting } = await supabase
-          .from("parent_journeys")
-          .select("user_id")
-          .eq("user_id", uid)
-          .maybeSingle();
-        if (cancelled) return;
-        if (pjExisting) {
+      } else {
+        // ── Registro de inconsistencia SIN reparar (respetamos el valor persistido).
+        if (mode === "self_learning") {
+          const { data: pjExisting } = await supabase
+            .from("parent_journeys").select("user_id").eq("user_id", uid).maybeSingle();
+          if (!cancelled && pjExisting) {
+            console.warn("[experience_mode] self_learning con parent_journeys existente; se respeta el valor persistido.");
+            progress.logEvent("experience_mode_inconsistent", {
+              user_id: uid,
+              persisted_mode: "self_learning",
+              has_parent_journey: true,
+              event_reason: "self_learning_with_parent_journey",
+            });
+          }
+        } else if (mode === "accompanied_learning") {
           const { data: onbExisting } = await supabase
-            .from("user_onboarding")
-            .select("user_id")
-            .eq("user_id", uid)
-            .maybeSingle();
-          progress.logEvent("experience_mode_inconsistent", {
-            user_id: uid,
-            persisted_mode: "self_learning",
-            has_parent_journey: true,
-            has_user_onboarding: !!onbExisting,
-            resolved_mode: "accompanied_learning",
-          });
-          mode = "accompanied_learning";
-          try {
-            await experience.setMode("accompanied_learning", { allowOverride: true });
-          } catch (e) {
-            console.warn("[experience_mode] reparación de inconsistencia falló:", e);
+            .from("user_onboarding").select("user_id").eq("user_id", uid).maybeSingle();
+          if (!cancelled && onbExisting) {
+            console.warn("[experience_mode] accompanied_learning con user_onboarding existente; se respeta el valor persistido.");
+            progress.logEvent("experience_mode_inconsistent", {
+              user_id: uid,
+              persisted_mode: "accompanied_learning",
+              has_user_onboarding: true,
+              event_reason: "accompanied_learning_with_user_onboarding",
+            });
           }
         }
       }
@@ -277,7 +293,6 @@ export function ArchipelagoApp() {
           setHasOnboarding(true);
           setScreen("parent-journey-dashboard");
         } else {
-          // Modo acompañado declarado pero sin viaje aún → completar onboarding de padres.
           setHasOnboarding(false);
           setScreen("parent-journey-intro");
         }
@@ -302,22 +317,15 @@ export function ArchipelagoApp() {
         let name = answers.name ?? "";
         if (!name) {
           const { data: prof } = await supabase
-            .from("profiles")
-            .select("name")
-            .eq("id", uid)
-            .maybeSingle();
+            .from("profiles").select("name").eq("id", uid).maybeSingle();
           if (cancelled) return;
           name = prof?.name ?? "Navegante";
         }
         setUserName(name || "Navegante");
-        if (typeof window !== "undefined") {
-          try { window.localStorage.setItem("archipielago_user_name", name || "Navegante"); } catch { /* noop */ }
-        }
         setJourneyOrigin("student");
         setHasOnboarding(true);
         setScreen("return-welcome");
       } else {
-        // Modo personal declarado pero sin onboarding → completar diagnóstico.
         setHasOnboarding(false);
         setScreen("diagnosis");
       }
@@ -325,6 +333,7 @@ export function ArchipelagoApp() {
     })();
     return () => { cancelled = true; };
   }, [session?.user.id, experience.loading, experience.mode]);
+
 
   // ── Medición: app_opened + return_visit (una vez por carga con sesión) ──
   const appOpenedLoggedRef = useRef(false);
@@ -409,6 +418,64 @@ export function ArchipelagoApp() {
 
 
   // ── Compuerta de sesión ────────────────────────────────────────
+  if (session && ambiguousMode) {
+    return (
+      <main
+        style={{
+          minHeight: "100vh",
+          background: B.gray,
+          color: B.dark,
+          fontFamily: "Quicksand, Arial, sans-serif",
+          display: "flex",
+          alignItems: "center",
+          justifyContent: "center",
+          padding: 24,
+        }}
+      >
+        <div style={{ maxWidth: 420, textAlign: "center", display: "flex", flexDirection: "column", gap: 14 }}>
+          <div style={{ fontFamily: "Space Grotesk, sans-serif", fontWeight: 800, fontSize: 20, color: B.dark }}>
+            Estamos revisando tu acceso
+          </div>
+          <div style={{ fontSize: 14, color: B.grayText, lineHeight: 1.55 }}>
+            Encontramos más de una configuración asociada a esta cuenta. Estamos revisando tu acceso para no mezclar información. Reintenta en unos segundos o vuelve a iniciar sesión.
+          </div>
+          <button
+            type="button"
+            onClick={() => { setAmbiguousMode(false); void experience.refresh(); }}
+            style={{
+              alignSelf: "center",
+              border: "none",
+              background: B.green,
+              color: B.dark,
+              fontFamily: "Space Grotesk, sans-serif",
+              fontWeight: 800,
+              fontSize: 14,
+              borderRadius: 12,
+              padding: "10px 18px",
+              cursor: "pointer",
+            }}
+          >
+            Reintentar
+          </button>
+          <button
+            type="button"
+            onClick={() => { void experience.signOutAndClear(); }}
+            style={{
+              alignSelf: "center",
+              border: "none",
+              background: "transparent",
+              color: B.grayText,
+              fontSize: 13,
+              textDecoration: "underline",
+              cursor: "pointer",
+            }}
+          >
+            Cerrar sesión
+          </button>
+        </div>
+      </main>
+    );
+  }
   if (authChecking || experience.loading || (session && (onboardingChecking || hasOnboarding === null))) {
     return (
       <main
@@ -429,6 +496,7 @@ export function ArchipelagoApp() {
       </main>
     );
   }
+
 
   if (!session) {
     return (
@@ -700,9 +768,7 @@ export function ArchipelagoApp() {
               onComplete={(answers, name) => {
                 setDiagAnswers(answers);
                 setUserName(name);
-                if (typeof window !== "undefined") {
-                  try { window.localStorage.setItem("archipielago_user_name", name); } catch {}
-                }
+
                 // Guardar onboarding en Supabase (fuente MVP1)
                 (async () => {
                   const { data: sess } = await supabase.auth.getSession();

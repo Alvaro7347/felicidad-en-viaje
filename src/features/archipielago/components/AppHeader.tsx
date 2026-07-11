@@ -3,7 +3,7 @@ import { B } from "../data/brand";
 import type { Screen } from "../types";
 import { ONBOARDING_SCREENS } from "../data/screens";
 import { ROUTE_STAGES } from "../data/islands";
-import { supabase } from "@/integrations/supabase/client";
+import { useExperienceMode } from "../context/ExperienceModeContext";
 
 type InfoModal = null | "settings" | "help" | "policies";
 
@@ -31,6 +31,7 @@ function UserMenu({
   onHome?: () => void;
   onOpenGuide?: () => void;
 }) {
+  const { signOutAndClear } = useExperienceMode();
   const [open, setOpen] = useState(false);
   const [infoModal, setInfoModal] = useState<InfoModal>(null);
   const wrapRef = useRef<HTMLDivElement>(null);
@@ -66,7 +67,7 @@ function UserMenu({
     { key: "settings", label: "Configuración", icon: "⚙️", onClick: () => { setOpen(false); setInfoModal("settings"); } },
     { key: "help", label: "Ayuda", icon: "❔", onClick: () => { setOpen(false); setInfoModal("help"); } },
     { key: "policies", label: "Políticas", icon: "🛡️", onClick: () => { setOpen(false); setInfoModal("policies"); } },
-    { key: "signout", label: "Cerrar sesión", icon: "🚪", onClick: async () => { setOpen(false); await supabase.auth.signOut(); } },
+    { key: "signout", label: "Cerrar sesión", icon: "🚪", onClick: async () => { setOpen(false); await signOutAndClear(); } },
   ];
 
   return (
