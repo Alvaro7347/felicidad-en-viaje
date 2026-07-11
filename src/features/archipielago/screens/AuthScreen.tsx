@@ -45,6 +45,33 @@ export function AuthScreen() {
   const [loading, setLoading] = useState(false);
   const [error, setError] = useState<string | null>(null);
   const [info, setInfo] = useState<string | null>(null);
+  const [resetSent, setResetSent] = useState(false);
+
+  const requestReset = async () => {
+    setError(null);
+    setInfo(null);
+    const clean = email.trim().toLowerCase();
+    if (!EMAIL_RE.test(clean)) {
+      setError("Ingresa un correo válido.");
+      return;
+    }
+    setLoading(true);
+    const redirectTo =
+      typeof window !== "undefined"
+        ? `${window.location.origin}${RESET_REDIRECT_PATH}`
+        : RESET_REDIRECT_PATH;
+    const { error: err } = await supabase.auth.resetPasswordForEmail(clean, {
+      redirectTo,
+    });
+    setLoading(false);
+    // Mensaje neutral aunque haya error, para no revelar existencia de la cuenta.
+    if (err) {
+      logEvent("auth_reset_error", { message: err.message });
+    } else {
+      logEvent("auth_reset_requested", { email: clean });
+    }
+    setResetSent(true);
+  };
 
   const submit = async () => {
     setError(null);
