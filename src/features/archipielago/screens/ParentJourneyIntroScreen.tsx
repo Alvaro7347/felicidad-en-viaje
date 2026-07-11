@@ -4,6 +4,7 @@ import { B } from "../data/brand";
 type Props = {
   onCreate: () => void;
   onBack: () => void;
+  onOpenDashboard?: () => void;
 };
 
 type SavedJourney = {
@@ -25,7 +26,7 @@ function readSaved(): SavedJourney | null {
   }
 }
 
-export function ParentJourneyIntroScreen({ onCreate, onBack }: Props) {
+export function ParentJourneyIntroScreen({ onCreate, onBack, onOpenDashboard }: Props) {
   const [saved, setSaved] = useState<SavedJourney | null>(null);
 
   useEffect(() => {
@@ -131,6 +132,28 @@ export function ParentJourneyIntroScreen({ onCreate, onBack }: Props) {
           }}
         >
           Crear viaje musical
+        </button>
+      )}
+
+      {hasSaved && onOpenDashboard && (
+        <button
+          type="button"
+          onClick={onOpenDashboard}
+          style={{
+            width: "100%",
+            border: "none",
+            background: B.green,
+            color: B.dark,
+            fontFamily: "Space Grotesk, sans-serif",
+            fontWeight: 800,
+            fontSize: 16,
+            borderRadius: 14,
+            padding: "15px 20px",
+            cursor: "pointer",
+            boxShadow: "0 6px 18px rgba(46,230,174,0.32)",
+          }}
+        >
+          Continuar viaje musical
         </button>
       )}
 

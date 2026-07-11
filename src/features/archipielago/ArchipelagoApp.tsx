@@ -50,6 +50,7 @@ import { ReturnWelcomeScreen } from "./screens/ReturnWelcomeScreen";
 
 import { ParentJourneyIntroScreen } from "./screens/ParentJourneyIntroScreen";
 import { ParentJourneyCreatedScreen } from "./screens/ParentJourneyCreatedScreen";
+import { ParentJourneyDashboardScreen } from "@/features/parent-journey/screens/ParentJourneyDashboardScreen";
 import { ParentOnboardingScreen, type ParentOnboardingAnswers } from "@/features/parent-journey/screens/ParentOnboardingScreen";
 
 
@@ -376,6 +377,7 @@ export function ArchipelagoApp() {
           <ParentJourneyIntroScreen
             onCreate={() => setScreen("parent-onboarding")}
             onBack={() => setScreen("onboarding")}
+            onOpenDashboard={() => setScreen("parent-journey-dashboard")}
           />
         )}
 
@@ -430,7 +432,7 @@ export function ArchipelagoApp() {
 
         {screen === "parent-journey-created" && (
           <ParentJourneyCreatedScreen
-            onContinue={() => setScreen("parent-journey-intro")}
+            onContinue={() => setScreen("parent-journey-dashboard")}
             studentName={parentJourneyAnswers?.student.name}
             parentName={parentJourneyAnswers?.parent.name}
             relationship={parentJourneyAnswers?.parent.relationship}
@@ -438,6 +440,38 @@ export function ArchipelagoApp() {
             experience={parentJourneyAnswers?.student.experience}
           />
         )}
+
+        {screen === "parent-journey-dashboard" && (() => {
+          let studentName = parentJourneyAnswers?.student.name;
+          let parentName = parentJourneyAnswers?.parent.name;
+          if ((!studentName || !parentName) && typeof window !== "undefined") {
+            try {
+              const raw = window.localStorage.getItem("archipielago_parent_journey_lucia");
+              if (raw) {
+                const saved = JSON.parse(raw) as {
+                  answers?: {
+                    student?: { name?: string };
+                    parent?: { name?: string };
+                  };
+                };
+                studentName = studentName || saved.answers?.student?.name;
+                parentName = parentName || saved.answers?.parent?.name;
+              }
+            } catch {}
+          }
+          if (!studentName) {
+            // Sin datos guardados: volver a la intro.
+            setTimeout(() => setScreen("parent-journey-intro"), 0);
+            return null;
+          }
+          return (
+            <ParentJourneyDashboardScreen
+              studentName={studentName}
+              parentName={parentName}
+              onBack={() => setScreen("parent-journey-intro")}
+            />
+          );
+        })()}
 
         {screen === "welcome" && <WelcomeScreen onStart={() => setScreen("onboarding")} />}
 
