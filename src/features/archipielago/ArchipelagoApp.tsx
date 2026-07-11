@@ -655,8 +655,14 @@ export function ArchipelagoApp() {
                 throw new Error("No pudimos guardar el viaje musical. Intenta nuevamente.");
               }
 
-              // Éxito: persistir modalidad + cache y navegar.
-              await experience.setMode("accompanied_learning");
+              // Éxito: persistir modalidad (sólo si aún no está consolidada) + cache y navegar.
+              if (experience.mode !== "accompanied_learning") {
+                try {
+                  await experience.setMode("accompanied_learning");
+                } catch (e) {
+                  console.warn("[experience_mode] setMode post-upsert falló:", e);
+                }
+              }
               try {
                 window.localStorage.setItem(
                   "archipielago_parent_journey_lucia",
