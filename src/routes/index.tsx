@@ -23,8 +23,10 @@ export const Route = createFileRoute("/")({
     ],
   }),
   component: () => (
-    <Mvp1ProgressProvider>
-      <ArchipelagoApp />
-    </Mvp1ProgressProvider>
+    <ExperienceModeProvider>
+      <Mvp1ProgressProvider>
+        <ArchipelagoApp />
+      </Mvp1ProgressProvider>
+    </ExperienceModeProvider>
   ),
 });
