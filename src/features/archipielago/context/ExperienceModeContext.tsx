@@ -196,7 +196,7 @@ export function ExperienceModeProvider({ children }: { children: ReactNode }) {
   }, []);
 
   return (
-    <Ctx.Provider value={{ mode, loading, userId, setMode, refresh, signOutAndClear }}>
+    <Ctx.Provider value={{ mode, loading, userId, setMode, clearMode, refresh, signOutAndClear }}>
       {children}
     </Ctx.Provider>
   );
