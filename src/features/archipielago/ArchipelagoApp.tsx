@@ -146,6 +146,11 @@ export function ArchipelagoApp() {
   const [blockedModal, setBlockedModal] = useState<null | "island" | "lesson">(null);
   const [parentJourneyLoadError, setParentJourneyLoadError] = useState<string | null>(null);
   const [ambiguousMode, setAmbiguousMode] = useState(false);
+  // Selección temporal en memoria — NO consolida modalidad hasta que el onboarding
+  // correspondiente se guarde correctamente en Supabase.
+  const [pendingExperienceMode, setPendingExperienceMode] = useState<
+    "self_learning" | "accompanied_learning" | null
+  >(null);
 
   // ── Aislamiento entre sesiones: al cambiar user_id, limpiar estado local
   //    para que la nueva cuenta nunca vea datos de la anterior.
@@ -162,6 +167,7 @@ export function ArchipelagoApp() {
       setDiagAnswers({});
       setAmbiguousMode(false);
       setParentJourneyLoadError(null);
+      setPendingExperienceMode(null);
       setScreen("welcome");
     }
   }, [session?.user.id]);
@@ -186,89 +192,85 @@ export function ArchipelagoApp() {
     setAmbiguousMode(false);
 
     (async () => {
-      let mode = experience.mode;
+      // Consultar SIEMPRE ambas tablas: la existencia real de datos manda
+      // sobre profiles.experience_mode.
+      const [pjRes, onbRes] = await Promise.all([
+        supabase.from("parent_journeys").select("user_id").eq("user_id", uid).maybeSingle(),
+        supabase.from("user_onboarding").select("user_id").eq("user_id", uid).maybeSingle(),
+      ]);
+      if (cancelled) return;
+      if (pjRes.error || onbRes.error) {
+        setParentJourneyLoadError("No pudimos cargar tu viaje. Revisa tu conexión y reintenta.");
+        setOnboardingChecking(false);
+        return;
+      }
 
-      // ── Inferencia SEGURA por user_id (sólo si no hay valor persistido) ─
-      if (!mode) {
-        const [pjRes, onbRes] = await Promise.all([
-          supabase.from("parent_journeys").select("user_id").eq("user_id", uid).maybeSingle(),
-          supabase.from("user_onboarding").select("user_id").eq("user_id", uid).maybeSingle(),
-        ]);
-        if (cancelled) return;
+      const hasPJ = !!pjRes.data;
+      const hasOnb = !!onbRes.data;
+      const persisted = experience.mode;
 
-        if (pjRes.error || onbRes.error) {
-          setParentJourneyLoadError("No pudimos cargar tu viaje. Revisa tu conexión y reintenta.");
-          setOnboardingChecking(false);
-          return;
-        }
-
-        const hasPJ = !!pjRes.data;
-        const hasOnb = !!onbRes.data;
-
-        if (hasPJ && hasOnb) {
-          // Caso ambiguo → estado controlado, sin elegir por defecto.
-          progress.logEvent("experience_mode_ambiguous", {
+      // Caso C: ninguna tabla real → cuenta no configurada.
+      // Si hay un experience_mode "fantasma", limpiarlo y volver al selector.
+      if (!hasPJ && !hasOnb) {
+        if (persisted) {
+          progress.logEvent("experience_mode_cleared_phantom", {
             user_id: uid,
-            persisted_mode: null,
-            has_parent_journey: true,
-            has_user_onboarding: true,
-            event_reason: "both_tables_present_mode_null",
+            persisted_mode: persisted,
+            event_reason: "no_real_onboarding_data",
           });
+          try { await experience.clearMode(); } catch (e) {
+            console.warn("[experience_mode] clearMode falló:", e);
+          }
+        }
+        setHasOnboarding(false);
+        setScreen("onboarding");
+        setOnboardingChecking(false);
+        return;
+      }
+
+      // Caso D: ambas tablas → ambiguo. Respetar persisted si es válido; si no, bloquear.
+      let mode: typeof persisted = persisted;
+      if (hasPJ && hasOnb) {
+        progress.logEvent("experience_mode_ambiguous", {
+          user_id: uid,
+          persisted_mode: persisted,
+          has_parent_journey: true,
+          has_user_onboarding: true,
+        });
+        if (!persisted) {
           setAmbiguousMode(true);
           setOnboardingChecking(false);
           return;
-        } else if (hasPJ) {
-          mode = "accompanied_learning";
-        } else if (hasOnb) {
-          mode = "self_learning";
-        } else {
-          // Cuenta realmente nueva → selector inicial.
-          setHasOnboarding(false);
-          setScreen("onboarding");
-          setOnboardingChecking(false);
-          return;
         }
-
-        // Persistir modalidad inferida (SIN allowOverride: sólo escribe si es null).
-        try {
-          await experience.setMode(mode);
-          progress.logEvent("experience_mode_repaired", {
-            user_id: uid,
-            resolved_mode: mode,
-            event_reason: hasPJ ? "inferred_from_parent_journeys" : "inferred_from_user_onboarding",
-          });
-        } catch (e) {
-          console.warn("[experience_mode] persistencia de inferencia falló:", e);
+        // mode = persisted (respetar)
+      } else if (hasPJ) {
+        // Caso B: sólo parent_journeys → accompanied_learning.
+        mode = "accompanied_learning";
+        if (persisted !== "accompanied_learning") {
+          try {
+            await experience.setMode("accompanied_learning", { allowOverride: true });
+            progress.logEvent("experience_mode_repaired", {
+              user_id: uid,
+              resolved_mode: "accompanied_learning",
+              event_reason: "inferred_from_parent_journeys",
+            });
+          } catch (e) { console.warn("[experience_mode] repair falló:", e); }
         }
-        if (cancelled) return;
-      } else {
-        // ── Registro de inconsistencia SIN reparar (respetamos el valor persistido).
-        if (mode === "self_learning") {
-          const { data: pjExisting } = await supabase
-            .from("parent_journeys").select("user_id").eq("user_id", uid).maybeSingle();
-          if (!cancelled && pjExisting) {
-            console.warn("[experience_mode] self_learning con parent_journeys existente; se respeta el valor persistido.");
-            progress.logEvent("experience_mode_inconsistent", {
+      } else if (hasOnb) {
+        // Caso A: sólo user_onboarding → self_learning.
+        mode = "self_learning";
+        if (persisted !== "self_learning") {
+          try {
+            await experience.setMode("self_learning", { allowOverride: true });
+            progress.logEvent("experience_mode_repaired", {
               user_id: uid,
-              persisted_mode: "self_learning",
-              has_parent_journey: true,
-              event_reason: "self_learning_with_parent_journey",
+              resolved_mode: "self_learning",
+              event_reason: "inferred_from_user_onboarding",
             });
-          }
-        } else if (mode === "accompanied_learning") {
-          const { data: onbExisting } = await supabase
-            .from("user_onboarding").select("user_id").eq("user_id", uid).maybeSingle();
-          if (!cancelled && onbExisting) {
-            console.warn("[experience_mode] accompanied_learning con user_onboarding existente; se respeta el valor persistido.");
-            progress.logEvent("experience_mode_inconsistent", {
-              user_id: uid,
-              persisted_mode: "accompanied_learning",
-              has_user_onboarding: true,
-              event_reason: "accompanied_learning_with_user_onboarding",
-            });
-          }
+          } catch (e) { console.warn("[experience_mode] repair falló:", e); }
         }
       }
+      if (cancelled) return;
 
       // ── Modalidad ACOMPAÑADA (María José) ─────────────────────
       if (mode === "accompanied_learning") {
@@ -741,16 +743,19 @@ export function ArchipelagoApp() {
               onStart={() => setScreen("diagnosis")}
               onSelectProfile={(id) => {
                 if (id === "empezar") {
-                  void experience.setMode("self_learning");
+                  // Selección temporal — NO consolida modalidad hasta guardar user_onboarding.
+                  setPendingExperienceMode("self_learning");
                   setJourneyOrigin("student");
                   setScreen("diagnosis");
                 } else if (id === "acompanar") {
-                  void experience.setMode("accompanied_learning");
+                  // Selección temporal — NO consolida modalidad hasta guardar parent_journeys.
+                  setPendingExperienceMode("accompanied_learning");
                   setJourneyOrigin("parent");
                   setScreen("parent-journey-intro");
                 }
               }}
             />
+
           );
         })()}
 

@@ -8,6 +8,8 @@ interface ExperienceModeContextValue {
   loading: boolean;
   userId: string | null;
   setMode: (mode: ExperienceMode, opts?: { allowOverride?: boolean }) => Promise<void>;
+  /** Limpia la modalidad consolidada (profiles.experience_mode = null) + cache. */
+  clearMode: () => Promise<void>;
   refresh: () => Promise<void>;
   /** Cierra sesión y limpia todo caché per-user + claves legacy globales. */
   signOutAndClear: () => Promise<void>;
@@ -173,6 +175,17 @@ export function ExperienceModeProvider({ children }: { children: ReactNode }) {
     await loadForUid(data.session?.user.id ?? null);
   }, [loadForUid]);
 
+  const clearMode = useCallback(async () => {
+    const uid = userId ?? (await supabase.auth.getSession()).data.session?.user.id ?? null;
+    if (!uid) return;
+    setModeState(null);
+    writePerUserCache(uid, null);
+    await supabase.from("profiles").upsert(
+      { id: uid, experience_mode: null, updated_at: new Date().toISOString() },
+      { onConflict: "id" },
+    );
+  }, [userId]);
+
   const signOutAndClear = useCallback(async () => {
     // Reset in-memory ANTES del signOut para que la próxima sesión arranque limpia.
     setModeState(null);
@@ -183,7 +196,7 @@ export function ExperienceModeProvider({ children }: { children: ReactNode }) {
   }, []);
 
   return (
-    <Ctx.Provider value={{ mode, loading, userId, setMode, refresh, signOutAndClear }}>
+    <Ctx.Provider value={{ mode, loading, userId, setMode, clearMode, refresh, signOutAndClear }}>
       {children}
     </Ctx.Provider>
   );
