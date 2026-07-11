@@ -561,10 +561,12 @@ export function ArchipelagoApp() {
             onStart={() => setScreen("diagnosis")}
             onSelectProfile={(id) => {
               if (id === "empezar") {
-                try { window.localStorage.setItem("archipielago_selected_profile", "alejandra"); } catch {}
+                void experience.setMode("self_learning");
+                setJourneyOrigin("student");
                 setScreen("diagnosis");
               } else if (id === "acompanar") {
-                try { window.localStorage.setItem("archipielago_selected_profile", "maria_jose"); } catch {}
+                void experience.setMode("accompanied_learning");
+                setJourneyOrigin("parent");
                 setScreen("parent-journey-intro");
               }
             }}
