@@ -151,6 +151,12 @@ export function ArchipelagoApp() {
   const [pendingExperienceMode, setPendingExperienceMode] = useState<
     "self_learning" | "accompanied_learning" | null
   >(null);
+  // Guardado transaccional del diagnóstico de Alejandra.
+  const [savingDiagnosis, setSavingDiagnosis] = useState(false);
+  const [diagnosisSaveError, setDiagnosisSaveError] = useState<string | null>(null);
+  const [pendingDiagnosis, setPendingDiagnosis] = useState<
+    { answers: DiagAnswers; name: string } | null
+  >(null);
 
   // ── Aislamiento entre sesiones: al cambiar user_id, limpiar estado local
   //    para que la nueva cuenta nunca vea datos de la anterior.
@@ -168,6 +174,9 @@ export function ArchipelagoApp() {
       setAmbiguousMode(false);
       setParentJourneyLoadError(null);
       setPendingExperienceMode(null);
+      setSavingDiagnosis(false);
+      setDiagnosisSaveError(null);
+      setPendingDiagnosis(null);
       setScreen("welcome");
     }
   }, [session?.user.id]);
@@ -218,8 +227,13 @@ export function ArchipelagoApp() {
             persisted_mode: persisted,
             event_reason: "no_real_onboarding_data",
           });
-          try { await experience.clearMode(); } catch (e) {
-            console.warn("[experience_mode] clearMode falló:", e);
+          try {
+            await experience.clearMode();
+          } catch (e) {
+            console.error("[experience_mode] clearMode falló:", e);
+            setParentJourneyLoadError("No pudimos actualizar tu configuración. Intenta nuevamente.");
+            setOnboardingChecking(false);
+            return;
           }
         }
         setHasOnboarding(false);
@@ -242,9 +256,7 @@ export function ArchipelagoApp() {
           setOnboardingChecking(false);
           return;
         }
-        // mode = persisted (respetar)
       } else if (hasPJ) {
-        // Caso B: sólo parent_journeys → accompanied_learning.
         mode = "accompanied_learning";
         if (persisted !== "accompanied_learning") {
           try {
@@ -254,10 +266,14 @@ export function ArchipelagoApp() {
               resolved_mode: "accompanied_learning",
               event_reason: "inferred_from_parent_journeys",
             });
-          } catch (e) { console.warn("[experience_mode] repair falló:", e); }
+          } catch (e) {
+            console.error("[experience_mode] repair accompanied falló:", e);
+            setParentJourneyLoadError("No pudimos actualizar tu configuración. Intenta nuevamente.");
+            setOnboardingChecking(false);
+            return;
+          }
         }
       } else if (hasOnb) {
-        // Caso A: sólo user_onboarding → self_learning.
         mode = "self_learning";
         if (persisted !== "self_learning") {
           try {
@@ -267,7 +283,12 @@ export function ArchipelagoApp() {
               resolved_mode: "self_learning",
               event_reason: "inferred_from_user_onboarding",
             });
-          } catch (e) { console.warn("[experience_mode] repair falló:", e); }
+          } catch (e) {
+            console.error("[experience_mode] repair self falló:", e);
+            setParentJourneyLoadError("No pudimos actualizar tu configuración. Intenta nuevamente.");
+            setOnboardingChecking(false);
+            return;
+          }
         }
       }
       if (cancelled) return;
@@ -658,12 +679,15 @@ export function ArchipelagoApp() {
                 throw new Error("No pudimos guardar el viaje musical. Intenta nuevamente.");
               }
 
-              // Éxito: persistir modalidad (sólo si aún no está consolidada) + cache y navegar.
+              // Éxito parent_journeys → consolidar modalidad accompanied_learning.
+              // Si esta consolidación falla, NO mostramos éxito; el usuario puede
+              // reintentar y el upsert es idempotente (mismo user_id, mismo payload).
               if (experience.mode !== "accompanied_learning") {
                 try {
                   await experience.setMode("accompanied_learning");
                 } catch (e) {
-                  console.warn("[experience_mode] setMode post-upsert falló:", e);
+                  console.error("[experience_mode] setMode post-upsert falló:", e);
+                  throw new Error("No pudimos guardar el viaje musical. Intenta nuevamente.");
                 }
               }
               try {
@@ -676,6 +700,7 @@ export function ArchipelagoApp() {
               setRouteStudentName(studentName);
               setJourneyOrigin("parent");
               setHasOnboarding(true);
+              setPendingExperienceMode(null);
               setScreen("parent-journey-created");
             }}
 
@@ -770,63 +795,120 @@ export function ArchipelagoApp() {
             setTimeout(() => setScreen("parent-journey-dashboard"), 0);
             return null;
           }
-          return (
-            <DiagnosisScreen
-              onComplete={(answers, name) => {
-                setDiagAnswers(answers);
-                setUserName(name);
+          const submitDiagnosis = async (answers: DiagAnswers, name: string) => {
+            if (savingDiagnosis) return;
+            setSavingDiagnosis(true);
+            setDiagnosisSaveError(null);
+            try {
+              const { data: sess } = await supabase.auth.getSession();
+              const uid = sess.session?.user.id;
+              if (!uid) throw new Error("No hay sesión activa.");
 
-                // Guardar onboarding en Supabase (fuente MVP1)
-                (async () => {
-                  const { data: sess } = await supabase.auth.getSession();
-                  const uid = sess.session?.user.id;
-                  if (!uid) {
-                    console.error("[onboarding] No hay sesión activa; no se puede guardar onboarding.");
-                    return;
-                  }
-                  // Doble verificación server-side: si la cuenta ya es acompañada
-                  // o tiene un parent_journeys, no escribir onboarding ni name.
-                  const [{ data: prof }, { data: pj }] = await Promise.all([
-                    supabase.from("profiles").select("experience_mode").eq("id", uid).maybeSingle(),
-                    supabase.from("parent_journeys").select("user_id").eq("user_id", uid).maybeSingle(),
-                  ]);
-                  if (prof?.experience_mode === "accompanied_learning" || pj) {
-                    console.warn("[diagnosis] Bloqueado: cuenta ya configurada como acompañada.");
-                    progress.logEvent("diagnosis_blocked_by_mode", {
-                      persisted_mode: prof?.experience_mode ?? null,
-                      has_parent_journey: !!pj,
-                    });
-                    setScreen("parent-journey-dashboard");
-                    return;
-                  }
-                  const payload = { name, answers } as unknown as never;
-                  const { error: onbError } = await supabase.from("user_onboarding").upsert(
-                    {
-                      user_id: uid,
-                      answers: payload,
-                      updated_at: new Date().toISOString(),
-                    },
-                    { onConflict: "user_id" },
-                  );
-                  if (onbError) {
-                    console.error("[onboarding] Error al guardar user_onboarding:", onbError);
-                    return;
-                  }
-                  setHasOnboarding(true);
-                  progress.logEvent("onboarding_completed", { source: "diagnosis" });
-                  const { error: profError } = await supabase
-                    .from("profiles")
-                    .upsert(
-                      { id: uid, name, updated_at: new Date().toISOString() },
-                      { onConflict: "id" },
-                    );
-                  if (profError) {
-                    console.error("[onboarding] Error al guardar profiles.name:", profError);
-                  }
-                })();
-                setScreen("diagnosis-result");
-              }}
-            />
+              // Doble verificación server-side: cuenta acompañada no debe escribir onboarding/name.
+              const [{ data: prof, error: profReadErr }, { data: pj, error: pjReadErr }] = await Promise.all([
+                supabase.from("profiles").select("experience_mode").eq("id", uid).maybeSingle(),
+                supabase.from("parent_journeys").select("user_id").eq("user_id", uid).maybeSingle(),
+              ]);
+              if (profReadErr) throw new Error(profReadErr.message);
+              if (pjReadErr) throw new Error(pjReadErr.message);
+              if (prof?.experience_mode === "accompanied_learning" || pj) {
+                progress.logEvent("diagnosis_blocked_by_mode", {
+                  persisted_mode: prof?.experience_mode ?? null,
+                  has_parent_journey: !!pj,
+                });
+                setPendingDiagnosis(null);
+                setScreen("parent-journey-dashboard");
+                return;
+              }
+
+              // 1) Guardar user_onboarding.
+              const payload = { name, answers } as unknown as never;
+              const { error: onbError } = await supabase.from("user_onboarding").upsert(
+                { user_id: uid, answers: payload, updated_at: new Date().toISOString() },
+                { onConflict: "user_id" },
+              );
+              if (onbError) throw new Error(`user_onboarding: ${onbError.message}`);
+
+              // 2) Consolidar modalidad self_learning (crítico).
+              await experience.setMode("self_learning");
+
+              // 3) profiles.name: no crítico. El nombre ya vive en user_onboarding.answers.
+              const { error: profError } = await supabase
+                .from("profiles")
+                .upsert(
+                  { id: uid, name, updated_at: new Date().toISOString() },
+                  { onConflict: "id" },
+                );
+              if (profError) {
+                console.warn("[onboarding] profiles.name warning (no bloqueante):", profError);
+              }
+
+              // 4) Éxito: hidratar estado local y navegar.
+              setDiagAnswers(answers);
+              setUserName(name);
+              setHasOnboarding(true);
+              setPendingExperienceMode(null);
+              setPendingDiagnosis(null);
+              progress.logEvent("onboarding_completed", { source: "diagnosis" });
+              setScreen("diagnosis-result");
+            } catch (e) {
+              console.error("[onboarding] save failed:", e);
+              setPendingDiagnosis({ answers, name });
+              setDiagnosisSaveError("No pudimos guardar tu viaje musical. Intenta nuevamente.");
+            } finally {
+              setSavingDiagnosis(false);
+            }
+          };
+          return (
+            <>
+              <DiagnosisScreen
+                onComplete={(answers, name) => { void submitDiagnosis(answers, name); }}
+              />
+              {(savingDiagnosis || diagnosisSaveError) && (
+                <div
+                  style={{
+                    position: "fixed", inset: 0, background: "rgba(15,20,25,0.55)",
+                    display: "flex", alignItems: "center", justifyContent: "center",
+                    zIndex: 9000, padding: 24,
+                  }}
+                >
+                  <div style={{
+                    maxWidth: 380, width: "100%", background: B.white, borderRadius: 16,
+                    padding: 20, display: "flex", flexDirection: "column", gap: 12,
+                    fontFamily: "Quicksand, sans-serif", color: B.dark, textAlign: "center",
+                  }}>
+                    {savingDiagnosis && (
+                      <div style={{ fontSize: 14, fontWeight: 700 }}>Guardando tu viaje musical…</div>
+                    )}
+                    {!savingDiagnosis && diagnosisSaveError && (
+                      <>
+                        <div style={{ fontFamily: "Space Grotesk, sans-serif", fontWeight: 800, fontSize: 16 }}>
+                          Algo salió mal
+                        </div>
+                        <div style={{ fontSize: 13, color: B.grayText, lineHeight: 1.5 }}>
+                          {diagnosisSaveError}
+                        </div>
+                        <button
+                          type="button"
+                          disabled={savingDiagnosis}
+                          onClick={() => {
+                            if (!pendingDiagnosis) { setDiagnosisSaveError(null); return; }
+                            void submitDiagnosis(pendingDiagnosis.answers, pendingDiagnosis.name);
+                          }}
+                          style={{
+                            border: "none", background: B.green, color: B.dark,
+                            fontFamily: "Space Grotesk, sans-serif", fontWeight: 800,
+                            fontSize: 14, borderRadius: 12, padding: "10px 18px", cursor: "pointer",
+                          }}
+                        >
+                          Reintentar
+                        </button>
+                      </>
+                    )}
+                  </div>
+                </div>
+              )}
+            </>
           );
         })()}
 
