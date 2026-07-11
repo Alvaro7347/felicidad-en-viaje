@@ -151,6 +151,12 @@ export function ArchipelagoApp() {
   const [pendingExperienceMode, setPendingExperienceMode] = useState<
     "self_learning" | "accompanied_learning" | null
   >(null);
+  // Guardado transaccional del diagnóstico de Alejandra.
+  const [savingDiagnosis, setSavingDiagnosis] = useState(false);
+  const [diagnosisSaveError, setDiagnosisSaveError] = useState<string | null>(null);
+  const [pendingDiagnosis, setPendingDiagnosis] = useState<
+    { answers: DiagAnswers; name: string } | null
+  >(null);
 
   // ── Aislamiento entre sesiones: al cambiar user_id, limpiar estado local
   //    para que la nueva cuenta nunca vea datos de la anterior.
