@@ -3,7 +3,9 @@ import { supabase } from "@/integrations/supabase/client";
 import { B } from "../data/brand";
 import { Btn } from "../components/Btn";
 
-type Mode = "signin" | "signup";
+type Mode = "signin" | "signup" | "forgot";
+
+const RESET_REDIRECT_PATH = "/restablecer-contrasena";
 
 const EMAIL_RE = /^[^\s@]+@[^\s@]+\.[^\s@]+$/;
 const LOGO_SRC = "/isologo-soundkeleles.jpg";
