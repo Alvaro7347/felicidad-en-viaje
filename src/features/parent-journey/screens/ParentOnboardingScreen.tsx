@@ -90,6 +90,23 @@ export function ParentOnboardingScreen({ onComplete, onCancel }: Props) {
       {step === 3 && <Step3 ans={ans} setAns={setAns} />}
       {step === 4 && <Step4 ans={ans} setAns={setAns} />}
 
+      {step === TOTAL && submitError && (
+        <div
+          role="alert"
+          style={{
+            background: "#FFF3F3",
+            border: "1px solid #F5B5B5",
+            color: "#8A1F1F",
+            borderRadius: 12,
+            padding: "12px 14px",
+            fontSize: 13.5,
+            lineHeight: 1.45,
+          }}
+        >
+          {submitError}
+        </div>
+      )}
+
       <div style={{ display: "flex", gap: 10, marginTop: 4 }}>
         <button type="button" onClick={back} style={secondaryBtn}>
           Volver
@@ -100,10 +117,11 @@ export function ParentOnboardingScreen({ onComplete, onCancel }: Props) {
           </button>
         ) : (
           <button type="button" onClick={submit} disabled={submitting} style={{ ...primaryBtn, opacity: submitting ? 0.7 : 1 }}>
-            {submitting ? "Guardando…" : "Crear viaje musical"}
+            {submitting ? "Guardando…" : submitError ? "Reintentar" : "Crear viaje musical"}
           </button>
         )}
       </div>
+
     </div>
   );
 }
