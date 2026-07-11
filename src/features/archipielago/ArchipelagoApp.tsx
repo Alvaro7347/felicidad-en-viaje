@@ -174,6 +174,9 @@ export function ArchipelagoApp() {
       setAmbiguousMode(false);
       setParentJourneyLoadError(null);
       setPendingExperienceMode(null);
+      setSavingDiagnosis(false);
+      setDiagnosisSaveError(null);
+      setPendingDiagnosis(null);
       setScreen("welcome");
     }
   }, [session?.user.id]);
