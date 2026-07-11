@@ -534,17 +534,22 @@ export function ArchipelagoApp() {
         )}
 
 
-        {screen === "parent-journey-intro" && (
-          <ParentJourneyIntroScreen
-            onCreate={() => setScreen("parent-onboarding")}
-            onBack={
-              hasOnboarding
-                ? () => setScreen("parent-journey-dashboard")
-                : undefined
-            }
-            onOpenDashboard={() => setScreen("parent-journey-dashboard")}
-          />
-        )}
+        {screen === "parent-journey-intro" && (() => {
+          // Protección: si la cuenta ya declaró modalidad personal, no debería
+          // ver esta pantalla. Redirigir al retorno de Alejandra.
+          if (experience.mode === "self_learning") {
+            setTimeout(() => setScreen("return-welcome"), 0);
+            return null;
+          }
+          return (
+            <ParentJourneyIntroScreen
+              onCreate={() => setScreen("parent-onboarding")}
+              onOpenDashboard={
+                hasOnboarding ? () => setScreen("parent-journey-dashboard") : undefined
+              }
+            />
+          );
+        })()}
 
         {screen === "parent-onboarding" && (
           <ParentOnboardingScreen
