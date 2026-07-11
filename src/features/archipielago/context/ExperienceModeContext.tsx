@@ -175,6 +175,17 @@ export function ExperienceModeProvider({ children }: { children: ReactNode }) {
     await loadForUid(data.session?.user.id ?? null);
   }, [loadForUid]);
 
+  const clearMode = useCallback(async () => {
+    const uid = userId ?? (await supabase.auth.getSession()).data.session?.user.id ?? null;
+    if (!uid) return;
+    setModeState(null);
+    writePerUserCache(uid, null);
+    await supabase.from("profiles").upsert(
+      { id: uid, experience_mode: null, updated_at: new Date().toISOString() },
+      { onConflict: "id" },
+    );
+  }, [userId]);
+
   const signOutAndClear = useCallback(async () => {
     // Reset in-memory ANTES del signOut para que la próxima sesión arranque limpia.
     setModeState(null);
