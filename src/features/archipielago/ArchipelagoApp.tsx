@@ -53,6 +53,7 @@ import { ParentJourneyIntroScreen } from "./screens/ParentJourneyIntroScreen";
 import { ParentJourneyCreatedScreen } from "./screens/ParentJourneyCreatedScreen";
 import { ParentJourneyDashboardScreen } from "@/features/parent-journey/screens/ParentJourneyDashboardScreen";
 import { ParentOnboardingScreen, type ParentOnboardingAnswers } from "@/features/parent-journey/screens/ParentOnboardingScreen";
+import { ParentJourneyDashboardHydrator } from "@/features/parent-journey/screens/ParentJourneyDashboardHydrator";
 
 
 // Nodo de la ruta → pantalla de revisión. Explícito y fácil de extender.
@@ -655,8 +656,14 @@ export function ArchipelagoApp() {
                 throw new Error("No pudimos guardar el viaje musical. Intenta nuevamente.");
               }
 
-              // Éxito: persistir modalidad + cache y navegar.
-              await experience.setMode("accompanied_learning");
+              // Éxito: persistir modalidad (sólo si aún no está consolidada) + cache y navegar.
+              if (experience.mode !== "accompanied_learning") {
+                try {
+                  await experience.setMode("accompanied_learning");
+                } catch (e) {
+                  console.warn("[experience_mode] setMode post-upsert falló:", e);
+                }
+              }
               try {
                 window.localStorage.setItem(
                   "archipielago_parent_journey_lucia",
@@ -686,33 +693,28 @@ export function ArchipelagoApp() {
         )}
 
         {screen === "parent-journey-dashboard" && (() => {
-          let studentName = parentJourneyAnswers?.student.name;
-          let parentName = parentJourneyAnswers?.parent.name;
-          if ((!studentName || !parentName) && typeof window !== "undefined") {
-            try {
-              const raw = window.localStorage.getItem("archipielago_parent_journey_lucia");
-              if (raw) {
-                const saved = JSON.parse(raw) as {
-                  answers?: {
-                    student?: { name?: string };
-                    parent?: { name?: string };
-                  };
-                };
-                studentName = studentName || saved.answers?.student?.name;
-                parentName = parentName || saved.answers?.parent?.name;
-              }
-            } catch {}
-          }
-          if (!studentName) {
-            // Sin datos guardados: volver a la intro.
-            setTimeout(() => setScreen("parent-journey-intro"), 0);
-            return null;
-          }
+          const uid = session?.user.id;
+          if (!uid) return null;
+          const initStudent = parentJourneyAnswers?.student.name;
+          const initParent = parentJourneyAnswers?.parent.name;
           return (
-            <ParentJourneyDashboardScreen
-              studentName={studentName}
-              parentName={parentName}
-              onOpenJourney={() => {
+            <ParentJourneyDashboardHydrator
+              userId={uid}
+              initialStudentName={initStudent}
+              initialParentName={initParent}
+              onHydrated={({ studentName, parentName, answers }) => {
+                if (answers) setParentJourneyAnswers(answers);
+                setRouteStudentName(studentName);
+                if (parentName) setUserName(parentName);
+                setJourneyOrigin("parent");
+                setHasOnboarding(true);
+              }}
+              onMissing={() => {
+                // Solo Supabase confirmó que NO existe fila → recién ahora al onboarding.
+                setHasOnboarding(false);
+                setScreen("parent-journey-intro");
+              }}
+              onOpenJourney={(studentName) => {
                 setJourneyOrigin("parent");
                 setRouteStudentName(studentName);
                 setScreen("route");
