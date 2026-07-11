@@ -260,9 +260,22 @@ export function ArchipelagoApp() {
   }, [session?.user.id, progress.loading, hasOnboarding, progress]);
 
   const goToRoute = () => {
-    setJourneyOrigin("student");
-    setRouteStudentName(undefined);
+    // Preservar contexto de acompañamiento en modalidad María José.
+    if (experience.mode === "accompanied_learning") {
+      setJourneyOrigin("parent");
+      // routeStudentName se mantiene tal como fue hidratado desde parent_journeys.
+    } else {
+      setJourneyOrigin("student");
+      setRouteStudentName(undefined);
+    }
     setScreen("route");
+  };
+  const goHome = () => {
+    if (experience.mode === "accompanied_learning") {
+      setScreen("parent-journey-dashboard");
+    } else {
+      goToRoute();
+    }
   };
   const isOnboarding = ONBOARDING_SCREENS.includes(screen);
 
