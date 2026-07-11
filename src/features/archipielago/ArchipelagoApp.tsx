@@ -318,7 +318,7 @@ export function ArchipelagoApp() {
 
 
   // ── Compuerta de sesión ────────────────────────────────────────
-  if (authChecking || (session && (onboardingChecking || hasOnboarding === null))) {
+  if (authChecking || experience.loading || (session && (onboardingChecking || hasOnboarding === null))) {
     return (
       <main
         style={{
