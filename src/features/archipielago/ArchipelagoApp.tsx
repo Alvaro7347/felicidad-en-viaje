@@ -743,16 +743,19 @@ export function ArchipelagoApp() {
               onStart={() => setScreen("diagnosis")}
               onSelectProfile={(id) => {
                 if (id === "empezar") {
-                  void experience.setMode("self_learning");
+                  // Selección temporal — NO consolida modalidad hasta guardar user_onboarding.
+                  setPendingExperienceMode("self_learning");
                   setJourneyOrigin("student");
                   setScreen("diagnosis");
                 } else if (id === "acompanar") {
-                  void experience.setMode("accompanied_learning");
+                  // Selección temporal — NO consolida modalidad hasta guardar parent_journeys.
+                  setPendingExperienceMode("accompanied_learning");
                   setJourneyOrigin("parent");
                   setScreen("parent-journey-intro");
                 }
               }}
             />
+
           );
         })()}
 
