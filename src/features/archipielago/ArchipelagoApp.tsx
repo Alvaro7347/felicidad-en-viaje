@@ -385,44 +385,16 @@ export function ArchipelagoApp() {
             onComplete={async (ans: ParentOnboardingAnswers) => {
               const uid = session?.user.id;
               if (!uid) {
-                throw new Error("No pudimos crear el perfil del alumno. Intenta nuevamente.");
+                throw new Error("No pudimos guardar el viaje musical. Intenta nuevamente.");
               }
               const studentName = ans.student.name.trim();
               const parentName = ans.parent.name.trim();
               const planName = ans.practice.planName?.trim() || "Plan Semanal Presencial";
 
-              // 1) Crear Student. Si falla → abortar todo el flujo.
-              let studentId: string;
-              try {
-                const { data: studentRow, error: studentErr } = await supabase
-                  .from("students" as never)
-                  .insert({
-                    owner_user_id: uid,
-                    name: studentName || "Sin nombre",
-                    age: ans.student.age?.trim() || null,
-                    experience: ans.student.experience?.trim() || null,
-                    teacher_name: "Álvaro",
-                    plan_name: planName,
-                    status: "active",
-                  } as never)
-                  .select("id")
-                  .single();
-                if (studentErr || !studentRow || typeof (studentRow as { id?: string }).id !== "string") {
-                  console.warn("[students] insert failed:", studentErr);
-                  throw new Error("No pudimos crear el perfil del alumno. Intenta nuevamente.");
-                }
-                studentId = (studentRow as { id: string }).id;
-              } catch (e) {
-                if (e instanceof Error && e.message.startsWith("No pudimos")) throw e;
-                console.warn("[students] insert threw:", e);
-                throw new Error("No pudimos crear el perfil del alumno. Intenta nuevamente.");
-              }
-
-              // 2) Crear parent_journey vinculando student_id. Si falla → informar y abortar.
+              // Insert directo en parent_journeys. Si falla → informar y abortar.
               try {
                 const { error } = await supabase.from("parent_journeys" as never).insert({
                   user_id: uid,
-                  student_id: studentId,
                   student_name: studentName || null,
                   parent_name: parentName || null,
                   teacher_name: "Álvaro",
@@ -440,14 +412,13 @@ export function ArchipelagoApp() {
                 throw new Error("No pudimos guardar el viaje musical. Intenta nuevamente.");
               }
 
-              // 3) Éxito: persistir cache y navegar.
+              // Éxito: persistir cache y navegar.
               try {
                 window.localStorage.setItem(
                   "archipielago_parent_journey_lucia",
                   JSON.stringify({ answers: ans, savedAt: new Date().toISOString() }),
                 );
                 window.localStorage.setItem("archipielago_selected_profile", "maria_jose");
-                window.localStorage.setItem("current_student_id", studentId);
               } catch {}
               setParentJourneyAnswers(ans);
               setScreen("parent-journey-created");
