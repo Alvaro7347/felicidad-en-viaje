@@ -8,6 +8,8 @@ interface ExperienceModeContextValue {
   loading: boolean;
   userId: string | null;
   setMode: (mode: ExperienceMode, opts?: { allowOverride?: boolean }) => Promise<void>;
+  /** Limpia la modalidad consolidada (profiles.experience_mode = null) + cache. */
+  clearMode: () => Promise<void>;
   refresh: () => Promise<void>;
   /** Cierra sesión y limpia todo caché per-user + claves legacy globales. */
   signOutAndClear: () => Promise<void>;
