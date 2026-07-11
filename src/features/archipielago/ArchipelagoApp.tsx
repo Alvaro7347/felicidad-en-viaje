@@ -692,33 +692,28 @@ export function ArchipelagoApp() {
         )}
 
         {screen === "parent-journey-dashboard" && (() => {
-          let studentName = parentJourneyAnswers?.student.name;
-          let parentName = parentJourneyAnswers?.parent.name;
-          if ((!studentName || !parentName) && typeof window !== "undefined") {
-            try {
-              const raw = window.localStorage.getItem("archipielago_parent_journey_lucia");
-              if (raw) {
-                const saved = JSON.parse(raw) as {
-                  answers?: {
-                    student?: { name?: string };
-                    parent?: { name?: string };
-                  };
-                };
-                studentName = studentName || saved.answers?.student?.name;
-                parentName = parentName || saved.answers?.parent?.name;
-              }
-            } catch {}
-          }
-          if (!studentName) {
-            // Sin datos guardados: volver a la intro.
-            setTimeout(() => setScreen("parent-journey-intro"), 0);
-            return null;
-          }
+          const uid = session?.user.id;
+          if (!uid) return null;
+          const initStudent = parentJourneyAnswers?.student.name;
+          const initParent = parentJourneyAnswers?.parent.name;
           return (
-            <ParentJourneyDashboardScreen
-              studentName={studentName}
-              parentName={parentName}
-              onOpenJourney={() => {
+            <ParentJourneyDashboardHydrator
+              userId={uid}
+              initialStudentName={initStudent}
+              initialParentName={initParent}
+              onHydrated={({ studentName, parentName, answers }) => {
+                if (answers) setParentJourneyAnswers(answers);
+                setRouteStudentName(studentName);
+                if (parentName) setUserName(parentName);
+                setJourneyOrigin("parent");
+                setHasOnboarding(true);
+              }}
+              onMissing={() => {
+                // Solo Supabase confirmó que NO existe fila → recién ahora al onboarding.
+                setHasOnboarding(false);
+                setScreen("parent-journey-intro");
+              }}
+              onOpenJourney={(studentName) => {
                 setJourneyOrigin("parent");
                 setRouteStudentName(studentName);
                 setScreen("route");
