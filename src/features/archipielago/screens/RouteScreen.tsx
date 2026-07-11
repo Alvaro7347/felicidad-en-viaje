@@ -9,7 +9,7 @@ import { Btn } from "../components/Btn";
 import { Card } from "../components/Card";
 import { touchLastVisit } from "../data/musicalFuel";
 
-export function RouteScreen({ onStartMission, onReviewMission, onOpenFirstMelodiesIsland, onOpenPulseIsland, onOpenRhythmIsland, onOpenMusicIsland, onOpenJoyIsland, onOpenChordsIsland, onOpenStrummingIsland, onOpenSongsIsland, userName }: { onStartMission: (lessonId: string) => void; onReviewMission: (id: string) => void; onOpenFirstMelodiesIsland: () => void; onOpenPulseIsland: () => void; onOpenRhythmIsland: () => void; onOpenMusicIsland: () => void; onOpenJoyIsland: () => void; onOpenChordsIsland: () => void; onOpenStrummingIsland: () => void; onOpenSongsIsland: () => void; userName: string }) {
+export function RouteScreen({ onStartMission, onReviewMission, onOpenFirstMelodiesIsland, onOpenPulseIsland, onOpenRhythmIsland, onOpenMusicIsland, onOpenJoyIsland, onOpenChordsIsland, onOpenStrummingIsland, onOpenSongsIsland, userName, journeyOrigin = "student", studentName, onBackToParentDashboard }: { onStartMission: (lessonId: string) => void; onReviewMission: (id: string) => void; onOpenFirstMelodiesIsland: () => void; onOpenPulseIsland: () => void; onOpenRhythmIsland: () => void; onOpenMusicIsland: () => void; onOpenJoyIsland: () => void; onOpenChordsIsland: () => void; onOpenStrummingIsland: () => void; onOpenSongsIsland: () => void; userName: string; journeyOrigin?: "student" | "parent"; studentName?: string; onBackToParentDashboard?: () => void }) {
   const progress = useMvp1ProgressContext();
 
   // Estado real de cada nodo del Puerto = derivado de Supabase (lesson_progress).
