@@ -146,6 +146,11 @@ export function ArchipelagoApp() {
   const [blockedModal, setBlockedModal] = useState<null | "island" | "lesson">(null);
   const [parentJourneyLoadError, setParentJourneyLoadError] = useState<string | null>(null);
   const [ambiguousMode, setAmbiguousMode] = useState(false);
+  // Selección temporal en memoria — NO consolida modalidad hasta que el onboarding
+  // correspondiente se guarde correctamente en Supabase.
+  const [pendingExperienceMode, setPendingExperienceMode] = useState<
+    "self_learning" | "accompanied_learning" | null
+  >(null);
 
   // ── Aislamiento entre sesiones: al cambiar user_id, limpiar estado local
   //    para que la nueva cuenta nunca vea datos de la anterior.
