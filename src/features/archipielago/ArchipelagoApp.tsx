@@ -650,22 +650,34 @@ export function ArchipelagoApp() {
 
         {screen === "welcome" && <WelcomeScreen onStart={() => setScreen("onboarding")} />}
 
-        {screen === "onboarding" && (
-          <OnboardingScreen
-            onStart={() => setScreen("diagnosis")}
-            onSelectProfile={(id) => {
-              if (id === "empezar") {
-                void experience.setMode("self_learning");
-                setJourneyOrigin("student");
-                setScreen("diagnosis");
-              } else if (id === "acompanar") {
-                void experience.setMode("accompanied_learning");
-                setJourneyOrigin("parent");
-                setScreen("parent-journey-intro");
-              }
-            }}
-          />
-        )}
+        {screen === "onboarding" && (() => {
+          // Protección: si la cuenta ya tiene modalidad consolidada, no permitir
+          // que se muestre el selector de experiencia. Redirigir al destino real.
+          if (experience.mode === "accompanied_learning") {
+            setTimeout(() => setScreen("parent-journey-dashboard"), 0);
+            return null;
+          }
+          if (experience.mode === "self_learning") {
+            setTimeout(() => setScreen("return-welcome"), 0);
+            return null;
+          }
+          return (
+            <OnboardingScreen
+              onStart={() => setScreen("diagnosis")}
+              onSelectProfile={(id) => {
+                if (id === "empezar") {
+                  void experience.setMode("self_learning");
+                  setJourneyOrigin("student");
+                  setScreen("diagnosis");
+                } else if (id === "acompanar") {
+                  void experience.setMode("accompanied_learning");
+                  setJourneyOrigin("parent");
+                  setScreen("parent-journey-intro");
+                }
+              }}
+            />
+          );
+        })()}
 
         {screen === "diagnosis" && (
           <DiagnosisScreen
