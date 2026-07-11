@@ -36,12 +36,22 @@ export function LessonCompletionBox({
     submitCheckin,
     logEvent,
   } = useMvp1ProgressContext();
+  const { mode } = useExperienceMode();
+  const isAccompanied = mode === "accompanied_learning";
 
   const effectiveCheckin = useMemo(() => {
     if (checkin) return checkin;
-    if (isChordCheckinLesson(lessonId)) return CHORD_CHANGE_CHECKIN;
+    if (isChordCheckinLesson(lessonId)) {
+      if (isAccompanied) {
+        return {
+          question: "¿Cómo viste a Lucía realizando el cambio de acorde?",
+          options: CHORD_CHANGE_CHECKIN.options,
+        };
+      }
+      return CHORD_CHANGE_CHECKIN;
+    }
     return null;
-  }, [checkin, lessonId]);
+  }, [checkin, lessonId, isAccompanied]);
 
   const alreadyDone = isLessonCompleted(lessonId);
   const [saving, setSaving] = useState(false);
