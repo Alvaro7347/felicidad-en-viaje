@@ -1,6 +1,7 @@
 import { createFileRoute } from "@tanstack/react-router";
 import { ArchipelagoApp } from "@/components/ArchipelagoApp";
 import { Mvp1ProgressProvider } from "@/features/archipielago/context/Mvp1ProgressContext";
+import { ExperienceModeProvider } from "@/features/archipielago/context/ExperienceModeContext";
 
 export const Route = createFileRoute("/")({
   head: () => ({
@@ -22,8 +23,10 @@ export const Route = createFileRoute("/")({
     ],
   }),
   component: () => (
-    <Mvp1ProgressProvider>
-      <ArchipelagoApp />
-    </Mvp1ProgressProvider>
+    <ExperienceModeProvider>
+      <Mvp1ProgressProvider>
+        <ArchipelagoApp />
+      </Mvp1ProgressProvider>
+    </ExperienceModeProvider>
   ),
 });

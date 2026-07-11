@@ -3,6 +3,7 @@ import { B } from "../data/brand";
 import { Card } from "./Card";
 import { Btn } from "./Btn";
 import { useMvp1ProgressContext } from "../context/Mvp1ProgressContext";
+import { useExperienceMode } from "../context/ExperienceModeContext";
 import {
   CHORD_CHANGE_CHECKIN,
   isChordCheckinLesson,
@@ -35,12 +36,22 @@ export function LessonCompletionBox({
     submitCheckin,
     logEvent,
   } = useMvp1ProgressContext();
+  const { mode } = useExperienceMode();
+  const isAccompanied = mode === "accompanied_learning";
 
   const effectiveCheckin = useMemo(() => {
     if (checkin) return checkin;
-    if (isChordCheckinLesson(lessonId)) return CHORD_CHANGE_CHECKIN;
+    if (isChordCheckinLesson(lessonId)) {
+      if (isAccompanied) {
+        return {
+          question: "¿Cómo viste a Lucía realizando el cambio de acorde?",
+          options: CHORD_CHANGE_CHECKIN.options,
+        };
+      }
+      return CHORD_CHANGE_CHECKIN;
+    }
     return null;
-  }, [checkin, lessonId]);
+  }, [checkin, lessonId, isAccompanied]);
 
   const alreadyDone = isLessonCompleted(lessonId);
   const [saving, setSaving] = useState(false);
@@ -100,14 +111,26 @@ export function LessonCompletionBox({
   return (
     <Card>
       <div style={{ fontFamily: "Space Grotesk, sans-serif", fontWeight: 800, fontSize: 15, color: B.dark, marginBottom: 8 }}>
-        ¿Terminaste esta clase?
+        {isAccompanied ? "¿Completaron esta clase?" : "¿Terminaste esta clase?"}
       </div>
       <div style={{ fontSize: 13, color: B.dark, lineHeight: 1.6, marginBottom: 14 }}>
-        Marca esta clase como completada solo si viste la lección, la practicaste con tu ukelele
-        y sientes que entiendes lo suficiente para seguir avanzando.
-        <br />
-        <br />
-        No tiene que salir perfecto. Si tienes dudas, puedes volver a ver la clase o preguntarle a tu profesor.
+        {isAccompanied ? (
+          <>
+            Marca esta clase como completada cuando hayan visto la lección y Lucía haya realizado
+            la práctica propuesta con su ukelele.
+            <br />
+            <br />
+            No tiene que salir perfecto. Si quedan dudas, pueden volver a ver la clase o preguntar a su profesor.
+          </>
+        ) : (
+          <>
+            Marca esta clase como completada solo si viste la lección, la practicaste con tu ukelele
+            y sientes que entiendes lo suficiente para seguir avanzando.
+            <br />
+            <br />
+            No tiene que salir perfecto. Si tienes dudas, puedes volver a ver la clase o preguntarle a tu profesor.
+          </>
+        )}
       </div>
 
       {effectiveCheckin && (

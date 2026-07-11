@@ -8,6 +8,7 @@ import type { DiagAnswers, Screen } from "./types";
 import { AuthScreen } from "./screens/AuthScreen";
 import { BlockedIslandModal } from "./components/BlockedIslandModal";
 import { useMvp1ProgressContext } from "./context/Mvp1ProgressContext";
+import { useExperienceMode } from "./context/ExperienceModeContext";
 import { findMvp1Lesson } from "./data/mvp1Progress";
 
 import { AppHeader } from "./components/AppHeader";
@@ -140,20 +141,65 @@ export function ArchipelagoApp() {
   const [journeyOrigin, setJourneyOrigin] = useState<"student" | "parent">("student");
   const [routeStudentName, setRouteStudentName] = useState<string | undefined>(undefined);
 
-  // ── Progreso MVP1 ──────────────────────────────────────────────
+  // ── Progreso MVP1 + Modo de experiencia ────────────────────────
   const progress = useMvp1ProgressContext();
+  const experience = useExperienceMode();
   const [blockedModal, setBlockedModal] = useState<null | "island" | "lesson">(null);
+  const [parentJourneyLoadError, setParentJourneyLoadError] = useState<string | null>(null);
 
-  // ── Onboarding: leer desde Supabase (fuente de verdad) ─────────
+  // ── Detección de modalidad + estado inicial (Supabase como fuente) ─
   useEffect(() => {
     const uid = session?.user.id;
     if (!uid) {
       setHasOnboarding(null);
       return;
     }
+    // Esperamos a que la modalidad termine de cargarse.
+    if (experience.loading) return;
     let cancelled = false;
     setOnboardingChecking(true);
+    setParentJourneyLoadError(null);
     (async () => {
+      // Fallback: si no hay modo en DB, usar caché legacy.
+      let mode = experience.mode;
+      if (!mode && typeof window !== "undefined") {
+        try {
+          const legacy = window.localStorage.getItem("archipielago_selected_profile");
+          if (legacy === "alejandra") mode = "self_learning";
+          else if (legacy === "maria_jose") mode = "accompanied_learning";
+        } catch { /* noop */ }
+      }
+
+      // ── Modalidad ACOMPAÑADA (María José) ─────────────────────
+      if (mode === "accompanied_learning") {
+        const { data: pj, error } = await supabase
+          .from("parent_journeys")
+          .select("student_name, parent_name, teacher_name, plan_name, status, onboarding_answers")
+          .eq("user_id", uid)
+          .maybeSingle();
+        if (cancelled) return;
+        if (error) {
+          setParentJourneyLoadError("No pudimos cargar el viaje de acompañamiento. Intenta recargar.");
+        }
+        if (pj) {
+          const answers = (pj.onboarding_answers ?? null) as ParentOnboardingAnswers | null;
+          if (answers) setParentJourneyAnswers(answers);
+          const studentName = pj.student_name ?? answers?.student.name ?? "Lucía";
+          const parentName = pj.parent_name ?? answers?.parent.name ?? "";
+          setRouteStudentName(studentName);
+          setUserName(parentName || "Navegante");
+          setJourneyOrigin("parent");
+          setHasOnboarding(true);
+          setScreen("parent-journey-dashboard");
+        } else {
+          setHasOnboarding(false);
+          setScreen("parent-journey-intro");
+        }
+        setOnboardingChecking(false);
+        return;
+      }
+
+      // ── Modalidad PERSONAL (Alejandra) o sin modalidad ───────
       const { data: onb } = await supabase
         .from("user_onboarding")
         .select("answers")
@@ -161,7 +207,6 @@ export function ArchipelagoApp() {
         .maybeSingle();
       if (cancelled) return;
       if (onb) {
-        // Recuperar nombre desde answers.name o profiles.name
         const answers = (onb.answers ?? {}) as { name?: string; answers?: DiagAnswers };
         let name = answers.name ?? "";
         if (!name) {
@@ -175,26 +220,20 @@ export function ArchipelagoApp() {
         }
         setUserName(name || "Navegante");
         if (typeof window !== "undefined") {
-          try { window.localStorage.setItem("archipielago_user_name", name || "Navegante"); } catch {}
+          try { window.localStorage.setItem("archipielago_user_name", name || "Navegante"); } catch { /* noop */ }
         }
+        setJourneyOrigin("student");
         setHasOnboarding(true);
         setScreen("return-welcome");
       } else {
         setHasOnboarding(false);
-        let selectedProfile: string | null = null;
-        if (typeof window !== "undefined") {
-          try { selectedProfile = window.localStorage.getItem("archipielago_selected_profile"); } catch {}
-        }
-        if (selectedProfile === "maria_jose") {
-          setScreen("parent-journey-intro");
-        } else {
-          setScreen("onboarding");
-        }
+        // Sin modo persistido y sin onboarding → selector inicial.
+        setScreen(mode === "self_learning" ? "onboarding" : "onboarding");
       }
       setOnboardingChecking(false);
     })();
     return () => { cancelled = true; };
-  }, [session?.user.id]);
+  }, [session?.user.id, experience.loading, experience.mode]);
 
   // ── Medición: app_opened + return_visit (una vez por carga con sesión) ──
   const appOpenedLoggedRef = useRef(false);
@@ -221,9 +260,22 @@ export function ArchipelagoApp() {
   }, [session?.user.id, progress.loading, hasOnboarding, progress]);
 
   const goToRoute = () => {
-    setJourneyOrigin("student");
-    setRouteStudentName(undefined);
+    // Preservar contexto de acompañamiento en modalidad María José.
+    if (experience.mode === "accompanied_learning") {
+      setJourneyOrigin("parent");
+      // routeStudentName se mantiene tal como fue hidratado desde parent_journeys.
+    } else {
+      setJourneyOrigin("student");
+      setRouteStudentName(undefined);
+    }
     setScreen("route");
+  };
+  const goHome = () => {
+    if (experience.mode === "accompanied_learning") {
+      setScreen("parent-journey-dashboard");
+    } else {
+      goToRoute();
+    }
   };
   const isOnboarding = ONBOARDING_SCREENS.includes(screen);
 
@@ -266,7 +318,7 @@ export function ArchipelagoApp() {
 
 
   // ── Compuerta de sesión ────────────────────────────────────────
-  if (authChecking || (session && (onboardingChecking || hasOnboarding === null))) {
+  if (authChecking || experience.loading || (session && (onboardingChecking || hasOnboarding === null))) {
     return (
       <main
         style={{
@@ -348,10 +400,22 @@ export function ArchipelagoApp() {
         {screen !== "return-welcome" && !isOnboarding && (
           <AppHeader
             screen={screen}
-            onHome={isOnboarding ? undefined : goToRoute}
+            onHome={isOnboarding ? undefined : goHome}
             onOpenGuide={() => setScreen("mission-guide")}
             userName={userName}
           />
+        )}
+        {parentJourneyLoadError && (
+          <div style={{ margin: "8px 0", padding: 12, borderRadius: 12, background: "#FDE7EA", color: B.dark, fontSize: 13 }}>
+            {parentJourneyLoadError}{" "}
+            <button
+              type="button"
+              onClick={() => { void experience.refresh(); }}
+              style={{ background: "transparent", border: "none", color: B.dark, textDecoration: "underline", cursor: "pointer" }}
+            >
+              Reintentar
+            </button>
+          </div>
         )}
 
         {screen === "return-welcome" && (
@@ -399,36 +463,42 @@ export function ArchipelagoApp() {
               const parentName = ans.parent.name.trim();
               const planName = ans.practice.planName?.trim() || "Plan Semanal Presencial";
 
-              // Insert directo en parent_journeys. Si falla → informar y abortar.
+              // Upsert en parent_journeys (una cuenta = un viaje).
               try {
-                const { error } = await supabase.from("parent_journeys" as never).insert({
-                  user_id: uid,
-                  student_name: studentName || null,
-                  parent_name: parentName || null,
-                  teacher_name: "Álvaro",
-                  plan_name: planName,
-                  status: "pilot",
-                  onboarding_answers: ans as unknown as Record<string, unknown>,
-                } as never);
+                const { error } = await supabase.from("parent_journeys").upsert(
+                  {
+                    user_id: uid,
+                    student_name: studentName || "",
+                    parent_name: parentName || "",
+                    teacher_name: "Álvaro",
+                    plan_name: planName,
+                    status: "pilot",
+                    onboarding_answers: ans as unknown as never,
+                  },
+                  { onConflict: "user_id" },
+                );
                 if (error) {
-                  console.warn("[parent_journeys] insert failed:", error);
+                  console.warn("[parent_journeys] upsert failed:", error);
                   throw new Error("No pudimos guardar el viaje musical. Intenta nuevamente.");
                 }
               } catch (e) {
                 if (e instanceof Error && e.message.startsWith("No pudimos")) throw e;
-                console.warn("[parent_journeys] insert threw:", e);
+                console.warn("[parent_journeys] upsert threw:", e);
                 throw new Error("No pudimos guardar el viaje musical. Intenta nuevamente.");
               }
 
-              // Éxito: persistir cache y navegar.
+              // Éxito: persistir modalidad + cache y navegar.
+              await experience.setMode("accompanied_learning");
               try {
                 window.localStorage.setItem(
                   "archipielago_parent_journey_lucia",
                   JSON.stringify({ answers: ans, savedAt: new Date().toISOString() }),
                 );
-                window.localStorage.setItem("archipielago_selected_profile", "maria_jose");
-              } catch {}
+              } catch { /* noop */ }
               setParentJourneyAnswers(ans);
+              setRouteStudentName(studentName);
+              setJourneyOrigin("parent");
+              setHasOnboarding(true);
               setScreen("parent-journey-created");
             }}
 
@@ -491,10 +561,12 @@ export function ArchipelagoApp() {
             onStart={() => setScreen("diagnosis")}
             onSelectProfile={(id) => {
               if (id === "empezar") {
-                try { window.localStorage.setItem("archipielago_selected_profile", "alejandra"); } catch {}
+                void experience.setMode("self_learning");
+                setJourneyOrigin("student");
                 setScreen("diagnosis");
               } else if (id === "acompanar") {
-                try { window.localStorage.setItem("archipielago_selected_profile", "maria_jose"); } catch {}
+                void experience.setMode("accompanied_learning");
+                setJourneyOrigin("parent");
                 setScreen("parent-journey-intro");
               }
             }}
