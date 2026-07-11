@@ -141,9 +141,11 @@ export function ArchipelagoApp() {
   const [journeyOrigin, setJourneyOrigin] = useState<"student" | "parent">("student");
   const [routeStudentName, setRouteStudentName] = useState<string | undefined>(undefined);
 
-  // ── Progreso MVP1 ──────────────────────────────────────────────
+  // ── Progreso MVP1 + Modo de experiencia ────────────────────────
   const progress = useMvp1ProgressContext();
+  const experience = useExperienceMode();
   const [blockedModal, setBlockedModal] = useState<null | "island" | "lesson">(null);
+  const [parentJourneyLoadError, setParentJourneyLoadError] = useState<string | null>(null);
 
   // ── Onboarding: leer desde Supabase (fuente de verdad) ─────────
   useEffect(() => {
