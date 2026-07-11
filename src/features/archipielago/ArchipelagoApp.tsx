@@ -125,10 +125,8 @@ export function ArchipelagoApp() {
   // ── Estado del viaje ───────────────────────────────────────────
   const [screen, setScreen] = useState<Screen>("welcome");
   const [diagAnswers, setDiagAnswers] = useState<DiagAnswers>({});
-  const [userName, setUserName] = useState(() => {
-    if (typeof window === "undefined") return "Navegante";
-    return window.localStorage.getItem("archipielago_user_name") || "Navegante";
-  });
+  // Nombre: no leer de localStorage global (podría pertenecer a otra cuenta).
+  const [userName, setUserName] = useState<string>("Navegante");
   const [firstMelodiesLessonId, setFirstMelodiesLessonId] = useState<string>("m1");
   const [pulseLessonId, setPulseLessonId] = useState<string>("p1");
   const [rhythmLessonId, setRhythmLessonId] = useState<string>("r1");
@@ -146,6 +144,27 @@ export function ArchipelagoApp() {
   const experience = useExperienceMode();
   const [blockedModal, setBlockedModal] = useState<null | "island" | "lesson">(null);
   const [parentJourneyLoadError, setParentJourneyLoadError] = useState<string | null>(null);
+  const [ambiguousMode, setAmbiguousMode] = useState(false);
+
+  // ── Aislamiento entre sesiones: al cambiar user_id, limpiar estado local
+  //    para que la nueva cuenta nunca vea datos de la anterior.
+  const lastUidRef = useRef<string | null>(null);
+  useEffect(() => {
+    const uid = session?.user.id ?? null;
+    if (lastUidRef.current !== uid) {
+      lastUidRef.current = uid;
+      setHasOnboarding(null);
+      setUserName("Navegante");
+      setParentJourneyAnswers(null);
+      setRouteStudentName(undefined);
+      setJourneyOrigin("student");
+      setDiagAnswers({});
+      setAmbiguousMode(false);
+      setParentJourneyLoadError(null);
+      setScreen("welcome");
+    }
+  }, [session?.user.id]);
+
 
   // ── Detección de modalidad + estado inicial (Supabase como fuente) ─
   // Prioridad: profiles.experience_mode > (parent_journeys | user_onboarding) > localStorage
