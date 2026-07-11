@@ -400,10 +400,22 @@ export function ArchipelagoApp() {
         {screen !== "return-welcome" && !isOnboarding && (
           <AppHeader
             screen={screen}
-            onHome={isOnboarding ? undefined : goToRoute}
+            onHome={isOnboarding ? undefined : goHome}
             onOpenGuide={() => setScreen("mission-guide")}
             userName={userName}
           />
+        )}
+        {parentJourneyLoadError && (
+          <div style={{ margin: "8px 0", padding: 12, borderRadius: 12, background: "#FDE7EA", color: B.dark, fontSize: 13 }}>
+            {parentJourneyLoadError}{" "}
+            <button
+              type="button"
+              onClick={() => { void experience.refresh(); }}
+              style={{ background: "transparent", border: "none", color: B.dark, textDecoration: "underline", cursor: "pointer" }}
+            >
+              Reintentar
+            </button>
+          </div>
         )}
 
         {screen === "return-welcome" && (
