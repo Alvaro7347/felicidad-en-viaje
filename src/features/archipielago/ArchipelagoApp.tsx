@@ -537,7 +537,11 @@ export function ArchipelagoApp() {
         {screen === "parent-journey-intro" && (
           <ParentJourneyIntroScreen
             onCreate={() => setScreen("parent-onboarding")}
-            onBack={() => setScreen("onboarding")}
+            onBack={
+              hasOnboarding
+                ? () => setScreen("parent-journey-dashboard")
+                : undefined
+            }
             onOpenDashboard={() => setScreen("parent-journey-dashboard")}
           />
         )}
