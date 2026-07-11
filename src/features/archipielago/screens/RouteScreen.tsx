@@ -48,7 +48,12 @@ export function RouteScreen({ onStartMission, onReviewMission, onOpenFirstMelodi
   }, [progress]);
 
 
-  const firstName = (userName ?? '').trim().split(/\s+/)[0] ?? '';
+  // El título de la ruta pertenece SIEMPRE al protagonista del viaje.
+  // En accompanied_learning ese protagonista es el estudiante, no el apoderado.
+  const learnerFullName = journeyOrigin === 'parent' && studentName?.trim()
+    ? studentName.trim()
+    : (userName ?? '');
+  const firstName = learnerFullName.trim().split(/\s+/)[0] ?? '';
   const routeTitle = firstName ? `${firstName}, esta es tu ruta` : 'Esta es tu ruta';
   // Mantenemos el registro de última visita para futuros usos del combustible musical
   // (celebraciones, perfil), pero ya no lo mostramos como tarjeta permanente en la ruta.

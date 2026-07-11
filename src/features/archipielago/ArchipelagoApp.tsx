@@ -48,6 +48,7 @@ import { OnboardingScreen } from "./screens/OnboardingScreen";
 import { RouteScreen } from "./screens/RouteScreen";
 import { WelcomeScreen } from "./screens/WelcomeScreen";
 import { ReturnWelcomeScreen } from "./screens/ReturnWelcomeScreen";
+import { getJourneyLearnerName } from "./utils/learnerName";
 import { MyProfileScreen } from "./screens/MyProfileScreen";
 import { HelpCenterScreen } from "./screens/HelpCenterScreen";
 import { PrivacyScreen } from "./screens/PrivacyScreen";
@@ -148,6 +149,11 @@ export function ArchipelagoApp() {
   const experience = useExperienceMode();
   const [blockedModal, setBlockedModal] = useState<null | "island" | "lesson">(null);
   const [parentJourneyLoadError, setParentJourneyLoadError] = useState<string | null>(null);
+
+  // Nombre del protagonista pedagógico. Se usa para textos dirigidos al ESTUDIANTE
+  // (ruta, misiones, saludos de lección). Los textos dirigidos al adulto siguen
+  // usando `userName` (Mi perfil, Cerrar sesión, saludo de la cuenta).
+  const learnerName = getJourneyLearnerName(experience.mode, userName, routeStudentName);
   const [ambiguousMode, setAmbiguousMode] = useState(false);
   // Selección temporal en memoria — NO consolida modalidad hasta que el onboarding
   // correspondiente se guarde correctamente en Supabase.
@@ -959,6 +965,7 @@ export function ArchipelagoApp() {
         {screen === "mission-two" && (
           <MissionTwoScreen
             userName={userName}
+            learnerName={learnerName}
             onBack={() => setScreen("route")}
             onNext={() => setScreen("mission-three")}
           />
@@ -1144,7 +1151,7 @@ export function ArchipelagoApp() {
             onBackToIsland={() => setScreen("first-melodies-island")}
           />
         )}
-        {screen === "mission-guide" && <MissionGuideScreen userName={userName} onBack={() => setScreen("route")} />}
+        {screen === "mission-guide" && <MissionGuideScreen userName={userName} learnerName={learnerName} onBack={() => setScreen("route")} />}
 
         {screen === "celebration" && <CelebrationScreen onHome={goToRoute} />}
 

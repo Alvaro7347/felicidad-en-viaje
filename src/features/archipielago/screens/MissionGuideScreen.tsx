@@ -70,8 +70,10 @@ async function saveGuideMessage(payload: GuideMessagePayload) {
   if (error) throw error;
 }
 
-export function MissionGuideScreen({ onBack, userName }: { onBack: () => void; userName?: string }) {
-  const safeName = userName?.trim();
+export function MissionGuideScreen({ onBack, userName, learnerName }: { onBack: () => void; userName?: string; learnerName?: string }) {
+  // El contenido de la lección se dirige al ESTUDIANTE. En accompanied_learning,
+  // learnerName ya viene resuelto por getJourneyLearnerName en el contenedor.
+  const safeName = (learnerName ?? userName)?.trim();
   const firstName = safeName ? safeName.split(' ')[0] : 'Navegante';
   const [showContactModal, setShowContactModal] = useState(false);
   const [contactEmail, setContactEmail] = useState('');
