@@ -214,12 +214,43 @@ export function ArchipelagoApp() {
 
         // Persistir modalidad inferida en profiles + caché (autorreparación).
         try {
-          await experience.setMode(mode);
+          await experience.setMode(mode, { allowOverride: true });
           progress.logEvent("experience_mode_repaired", { resolved_mode: mode });
         } catch (e) {
           console.warn("[experience_mode] repair setMode failed:", e);
         }
         if (cancelled) return;
+      }
+
+      // ── Detección de inconsistencia: mode=self_learning + parent_journeys existente.
+      // Cuenta afectada por el bug de sobrescritura → priorizar accompanied_learning.
+      if (mode === "self_learning") {
+        const { data: pjExisting } = await supabase
+          .from("parent_journeys")
+          .select("user_id")
+          .eq("user_id", uid)
+          .maybeSingle();
+        if (cancelled) return;
+        if (pjExisting) {
+          const { data: onbExisting } = await supabase
+            .from("user_onboarding")
+            .select("user_id")
+            .eq("user_id", uid)
+            .maybeSingle();
+          progress.logEvent("experience_mode_inconsistent", {
+            user_id: uid,
+            persisted_mode: "self_learning",
+            has_parent_journey: true,
+            has_user_onboarding: !!onbExisting,
+            resolved_mode: "accompanied_learning",
+          });
+          mode = "accompanied_learning";
+          try {
+            await experience.setMode("accompanied_learning", { allowOverride: true });
+          } catch (e) {
+            console.warn("[experience_mode] reparación de inconsistencia falló:", e);
+          }
+        }
       }
 
       // ── Modalidad ACOMPAÑADA (María José) ─────────────────────
