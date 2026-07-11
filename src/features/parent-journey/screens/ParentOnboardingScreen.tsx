@@ -58,6 +58,7 @@ export function ParentOnboardingScreen({ onComplete, onCancel }: Props) {
   const [step, setStep] = useState(1);
   const [ans, setAns] = useState<ParentOnboardingAnswers>(empty);
   const [submitting, setSubmitting] = useState(false);
+  const [submitError, setSubmitError] = useState<string | null>(null);
 
   const next = () => setStep((s) => Math.min(TOTAL, s + 1));
   const back = () => (step === 1 ? onCancel() : setStep((s) => s - 1));
@@ -65,9 +66,17 @@ export function ParentOnboardingScreen({ onComplete, onCancel }: Props) {
   const submit = async () => {
     if (submitting) return;
     setSubmitting(true);
+    setSubmitError(null);
     try {
       await onComplete(ans);
+    } catch (e) {
+      setSubmitError(
+        e instanceof Error && e.message
+          ? e.message
+          : "No pudimos crear el perfil del alumno. Intenta nuevamente.",
+      );
     } finally {
+
       setSubmitting(false);
     }
   };
@@ -81,6 +90,23 @@ export function ParentOnboardingScreen({ onComplete, onCancel }: Props) {
       {step === 3 && <Step3 ans={ans} setAns={setAns} />}
       {step === 4 && <Step4 ans={ans} setAns={setAns} />}
 
+      {step === TOTAL && submitError && (
+        <div
+          role="alert"
+          style={{
+            background: "#FFF3F3",
+            border: "1px solid #F5B5B5",
+            color: "#8A1F1F",
+            borderRadius: 12,
+            padding: "12px 14px",
+            fontSize: 13.5,
+            lineHeight: 1.45,
+          }}
+        >
+          {submitError}
+        </div>
+      )}
+
       <div style={{ display: "flex", gap: 10, marginTop: 4 }}>
         <button type="button" onClick={back} style={secondaryBtn}>
           Volver
@@ -91,10 +117,11 @@ export function ParentOnboardingScreen({ onComplete, onCancel }: Props) {
           </button>
         ) : (
           <button type="button" onClick={submit} disabled={submitting} style={{ ...primaryBtn, opacity: submitting ? 0.7 : 1 }}>
-            {submitting ? "Guardando…" : "Crear viaje musical"}
+            {submitting ? "Guardando…" : submitError ? "Reintentar" : "Crear viaje musical"}
           </button>
         )}
       </div>
+
     </div>
   );
 }
