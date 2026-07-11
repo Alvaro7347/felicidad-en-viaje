@@ -203,6 +203,8 @@ export function ParentJourneyDashboardScreen({ studentName, parentName, onBack, 
               El acceso al recorrido se habilitará en la siguiente iteración.
             </div>
           )}
+        </Card>
+
 
         {onBack && (
           <button
