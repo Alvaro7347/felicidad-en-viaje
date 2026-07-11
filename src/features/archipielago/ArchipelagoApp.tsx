@@ -227,8 +227,13 @@ export function ArchipelagoApp() {
             persisted_mode: persisted,
             event_reason: "no_real_onboarding_data",
           });
-          try { await experience.clearMode(); } catch (e) {
-            console.warn("[experience_mode] clearMode falló:", e);
+          try {
+            await experience.clearMode();
+          } catch (e) {
+            console.error("[experience_mode] clearMode falló:", e);
+            setParentJourneyLoadError("No pudimos actualizar tu configuración. Intenta nuevamente.");
+            setOnboardingChecking(false);
+            return;
           }
         }
         setHasOnboarding(false);
@@ -251,9 +256,7 @@ export function ArchipelagoApp() {
           setOnboardingChecking(false);
           return;
         }
-        // mode = persisted (respetar)
       } else if (hasPJ) {
-        // Caso B: sólo parent_journeys → accompanied_learning.
         mode = "accompanied_learning";
         if (persisted !== "accompanied_learning") {
           try {
@@ -263,10 +266,14 @@ export function ArchipelagoApp() {
               resolved_mode: "accompanied_learning",
               event_reason: "inferred_from_parent_journeys",
             });
-          } catch (e) { console.warn("[experience_mode] repair falló:", e); }
+          } catch (e) {
+            console.error("[experience_mode] repair accompanied falló:", e);
+            setParentJourneyLoadError("No pudimos actualizar tu configuración. Intenta nuevamente.");
+            setOnboardingChecking(false);
+            return;
+          }
         }
       } else if (hasOnb) {
-        // Caso A: sólo user_onboarding → self_learning.
         mode = "self_learning";
         if (persisted !== "self_learning") {
           try {
@@ -276,7 +283,12 @@ export function ArchipelagoApp() {
               resolved_mode: "self_learning",
               event_reason: "inferred_from_user_onboarding",
             });
-          } catch (e) { console.warn("[experience_mode] repair falló:", e); }
+          } catch (e) {
+            console.error("[experience_mode] repair self falló:", e);
+            setParentJourneyLoadError("No pudimos actualizar tu configuración. Intenta nuevamente.");
+            setOnboardingChecking(false);
+            return;
+          }
         }
       }
       if (cancelled) return;
