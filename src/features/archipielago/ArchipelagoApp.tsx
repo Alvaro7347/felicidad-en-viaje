@@ -48,6 +48,9 @@ import { OnboardingScreen } from "./screens/OnboardingScreen";
 import { RouteScreen } from "./screens/RouteScreen";
 import { WelcomeScreen } from "./screens/WelcomeScreen";
 import { ReturnWelcomeScreen } from "./screens/ReturnWelcomeScreen";
+import { MyProfileScreen } from "./screens/MyProfileScreen";
+import { HelpCenterScreen } from "./screens/HelpCenterScreen";
+import { PrivacyScreen } from "./screens/PrivacyScreen";
 
 import { ParentJourneyIntroScreen } from "./screens/ParentJourneyIntroScreen";
 import { ParentJourneyCreatedScreen } from "./screens/ParentJourneyCreatedScreen";
@@ -585,7 +588,11 @@ export function ArchipelagoApp() {
             screen={screen}
             onHome={isOnboarding ? undefined : goHome}
             onOpenGuide={() => setScreen("mission-guide")}
+            onOpenProfile={() => setScreen("my-profile")}
+            onOpenHelp={() => setScreen("help-center")}
+            onOpenPrivacy={() => setScreen("privacy")}
             userName={userName}
+            studentName={routeStudentName}
           />
         )}
         {parentJourneyLoadError && (
@@ -1140,6 +1147,27 @@ export function ArchipelagoApp() {
         {screen === "mission-guide" && <MissionGuideScreen userName={userName} onBack={() => setScreen("route")} />}
 
         {screen === "celebration" && <CelebrationScreen onHome={goToRoute} />}
+
+        {screen === "my-profile" && (
+          <MyProfileScreen
+            mode={experience.mode}
+            userName={userName}
+            userEmail={session?.user.email ?? null}
+            studentName={routeStudentName}
+            parentAnswers={parentJourneyAnswers}
+            onBack={goHome}
+          />
+        )}
+
+        {screen === "help-center" && (
+          <HelpCenterScreen
+            mode={experience.mode}
+            onBack={goHome}
+            onOpenPrivacy={() => setScreen("privacy")}
+          />
+        )}
+
+        {screen === "privacy" && <PrivacyScreen onBack={goHome} />}
       </div>
       <BlockedIslandModal
         open={blockedModal !== null}
