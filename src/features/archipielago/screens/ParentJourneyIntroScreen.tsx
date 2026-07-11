@@ -3,7 +3,7 @@ import { B } from "../data/brand";
 
 type Props = {
   onCreate: () => void;
-  onBack: () => void;
+  onBack?: () => void;
   onOpenDashboard?: () => void;
 };
 
