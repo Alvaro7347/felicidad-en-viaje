@@ -137,6 +137,8 @@ export function ArchipelagoApp() {
   const [strummingLessonId, setStrummingLessonId] = useState<string>("strumming1");
   const [songsLessonId, setSongsLessonId] = useState<string>("songs1");
   const [parentJourneyAnswers, setParentJourneyAnswers] = useState<ParentOnboardingAnswers | null>(null);
+  const [journeyOrigin, setJourneyOrigin] = useState<"student" | "parent">("student");
+  const [routeStudentName, setRouteStudentName] = useState<string | undefined>(undefined);
 
   // ── Progreso MVP1 ──────────────────────────────────────────────
   const progress = useMvp1ProgressContext();
@@ -218,7 +220,11 @@ export function ArchipelagoApp() {
     }
   }, [session?.user.id, progress.loading, hasOnboarding, progress]);
 
-  const goToRoute = () => setScreen("route");
+  const goToRoute = () => {
+    setJourneyOrigin("student");
+    setRouteStudentName(undefined);
+    setScreen("route");
+  };
   const isOnboarding = ONBOARDING_SCREENS.includes(screen);
 
   // Intento de abrir isla bloqueada (Ritmo en adelante durante MVP1)
@@ -469,6 +475,11 @@ export function ArchipelagoApp() {
               studentName={studentName}
               parentName={parentName}
               onBack={() => setScreen("parent-journey-intro")}
+              onOpenJourney={() => {
+                setJourneyOrigin("parent");
+                setRouteStudentName(studentName);
+                setScreen("route");
+              }}
             />
           );
         })()}
@@ -559,6 +570,13 @@ export function ArchipelagoApp() {
             onOpenChordsIsland={() => openLockedIsland("chords")}
             onOpenStrummingIsland={() => openLockedIsland("strumming")}
             onOpenSongsIsland={() => openLockedIsland("songs")}
+            journeyOrigin={journeyOrigin}
+            studentName={routeStudentName}
+            onBackToParentDashboard={
+              journeyOrigin === "parent"
+                ? () => setScreen("parent-journey-dashboard")
+                : undefined
+            }
           />
         )}
 

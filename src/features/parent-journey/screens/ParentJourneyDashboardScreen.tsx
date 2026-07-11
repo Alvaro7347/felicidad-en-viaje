@@ -10,6 +10,7 @@ type Props = {
   studentName?: string;
   parentName?: string;
   onBack?: () => void;
+  onOpenJourney?: () => void;
 };
 
 const ISLAND_LABELS: Record<IslandId, string> = {
@@ -29,7 +30,7 @@ function islandLabel(id?: IslandId | null) {
   return ISLAND_LABELS[id] ?? "—";
 }
 
-export function ParentJourneyDashboardScreen({ studentName, parentName, onBack }: Props) {
+export function ParentJourneyDashboardScreen({ studentName, parentName, onBack, onOpenJourney }: Props) {
   const progress = useMvp1ProgressContext();
   const s = studentName?.trim() || "tu hijo/a";
   const p = parentName?.trim() || "";
@@ -176,10 +177,34 @@ export function ParentJourneyDashboardScreen({ studentName, parentName, onBack }
           <p style={{ margin: 0, fontSize: 13.5, color: "#6f6f6d", lineHeight: 1.55 }}>
             Desde aquí podrás revisar el recorrido completo, conocer las clases realizadas y ver lo que viene después.
           </p>
-          <div style={{ fontSize: 12.5, color: B.grayText, fontStyle: "italic" }}>
-            El acceso al recorrido se habilitará en la siguiente iteración.
-          </div>
+          {onOpenJourney ? (
+            <button
+              type="button"
+              onClick={onOpenJourney}
+              style={{
+                width: "100%",
+                border: "none",
+                background: B.green,
+                color: B.dark,
+                fontFamily: "Space Grotesk, sans-serif",
+                fontWeight: 800,
+                fontSize: 15,
+                borderRadius: 12,
+                padding: "13px 18px",
+                cursor: "pointer",
+                boxShadow: "0 6px 18px rgba(46,230,174,0.32)",
+                marginTop: 4,
+              }}
+            >
+              Ver recorrido completo
+            </button>
+          ) : (
+            <div style={{ fontSize: 12.5, color: B.grayText, fontStyle: "italic" }}>
+              El acceso al recorrido se habilitará en la siguiente iteración.
+            </div>
+          )}
         </Card>
+
 
         {onBack && (
           <button
