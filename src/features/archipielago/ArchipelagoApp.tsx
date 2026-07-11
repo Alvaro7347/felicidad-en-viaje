@@ -679,12 +679,15 @@ export function ArchipelagoApp() {
                 throw new Error("No pudimos guardar el viaje musical. Intenta nuevamente.");
               }
 
-              // Éxito: persistir modalidad (sólo si aún no está consolidada) + cache y navegar.
+              // Éxito parent_journeys → consolidar modalidad accompanied_learning.
+              // Si esta consolidación falla, NO mostramos éxito; el usuario puede
+              // reintentar y el upsert es idempotente (mismo user_id, mismo payload).
               if (experience.mode !== "accompanied_learning") {
                 try {
                   await experience.setMode("accompanied_learning");
                 } catch (e) {
-                  console.warn("[experience_mode] setMode post-upsert falló:", e);
+                  console.error("[experience_mode] setMode post-upsert falló:", e);
+                  throw new Error("No pudimos guardar el viaje musical. Intenta nuevamente.");
                 }
               }
               try {
