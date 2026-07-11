@@ -6,7 +6,7 @@ export type ExperienceMode = "self_learning" | "accompanied_learning";
 interface ExperienceModeContextValue {
   mode: ExperienceMode | null;
   loading: boolean;
-  setMode: (mode: ExperienceMode) => Promise<void>;
+  setMode: (mode: ExperienceMode, opts?: { allowOverride?: boolean }) => Promise<void>;
   refresh: () => Promise<void>;
 }
 
