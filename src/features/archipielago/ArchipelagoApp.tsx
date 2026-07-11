@@ -137,6 +137,8 @@ export function ArchipelagoApp() {
   const [strummingLessonId, setStrummingLessonId] = useState<string>("strumming1");
   const [songsLessonId, setSongsLessonId] = useState<string>("songs1");
   const [parentJourneyAnswers, setParentJourneyAnswers] = useState<ParentOnboardingAnswers | null>(null);
+  const [journeyOrigin, setJourneyOrigin] = useState<"student" | "parent">("student");
+  const [routeStudentName, setRouteStudentName] = useState<string | undefined>(undefined);
 
   // ── Progreso MVP1 ──────────────────────────────────────────────
   const progress = useMvp1ProgressContext();
