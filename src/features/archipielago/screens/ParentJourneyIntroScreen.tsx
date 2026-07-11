@@ -130,7 +130,7 @@ export function ParentJourneyIntroScreen({ onCreate, onOpenDashboard }: Props) {
             boxShadow: "0 6px 18px rgba(46,230,174,0.32)",
           }}
         >
-          Crear viaje musical
+          Comenzar configuración
         </button>
       )}
 
