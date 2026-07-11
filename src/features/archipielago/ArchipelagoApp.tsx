@@ -639,7 +639,6 @@ export function ArchipelagoApp() {
             <ParentJourneyDashboardScreen
               studentName={studentName}
               parentName={parentName}
-              onBack={() => setScreen("parent-journey-intro")}
               onOpenJourney={() => {
                 setJourneyOrigin("parent");
                 setRouteStudentName(studentName);
