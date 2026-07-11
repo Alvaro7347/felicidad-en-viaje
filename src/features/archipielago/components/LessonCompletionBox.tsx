@@ -3,6 +3,7 @@ import { B } from "../data/brand";
 import { Card } from "./Card";
 import { Btn } from "./Btn";
 import { useMvp1ProgressContext } from "../context/Mvp1ProgressContext";
+import { useExperienceMode } from "../context/ExperienceModeContext";
 import {
   CHORD_CHANGE_CHECKIN,
   isChordCheckinLesson,
