@@ -48,6 +48,9 @@ import { OnboardingScreen } from "./screens/OnboardingScreen";
 import { RouteScreen } from "./screens/RouteScreen";
 import { WelcomeScreen } from "./screens/WelcomeScreen";
 import { ReturnWelcomeScreen } from "./screens/ReturnWelcomeScreen";
+import { MyProfileScreen } from "./screens/MyProfileScreen";
+import { HelpCenterScreen } from "./screens/HelpCenterScreen";
+import { PrivacyScreen } from "./screens/PrivacyScreen";
 
 import { ParentJourneyIntroScreen } from "./screens/ParentJourneyIntroScreen";
 import { ParentJourneyCreatedScreen } from "./screens/ParentJourneyCreatedScreen";
