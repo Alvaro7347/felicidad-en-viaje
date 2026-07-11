@@ -162,7 +162,6 @@ export function ParentJourneyIntroScreen({ onCreate, onOpenDashboard }: Props) {
           onClick={() => {
             try {
               window.localStorage.removeItem("archipielago_parent_journey_lucia");
-              window.localStorage.setItem("archipielago_selected_profile", "maria_jose");
             } catch {}
             setSaved(null);
             onCreate();
