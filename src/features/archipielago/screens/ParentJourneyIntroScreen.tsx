@@ -26,7 +26,7 @@ function readSaved(): SavedJourney | null {
   }
 }
 
-export function ParentJourneyIntroScreen({ onCreate, onBack }: Props) {
+export function ParentJourneyIntroScreen({ onCreate, onBack, onOpenDashboard }: Props) {
   const [saved, setSaved] = useState<SavedJourney | null>(null);
 
   useEffect(() => {
