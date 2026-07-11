@@ -177,10 +177,32 @@ export function ParentJourneyDashboardScreen({ studentName, parentName, onBack, 
           <p style={{ margin: 0, fontSize: 13.5, color: "#6f6f6d", lineHeight: 1.55 }}>
             Desde aquí podrás revisar el recorrido completo, conocer las clases realizadas y ver lo que viene después.
           </p>
-          <div style={{ fontSize: 12.5, color: B.grayText, fontStyle: "italic" }}>
-            El acceso al recorrido se habilitará en la siguiente iteración.
-          </div>
-        </Card>
+          {onOpenJourney ? (
+            <button
+              type="button"
+              onClick={onOpenJourney}
+              style={{
+                width: "100%",
+                border: "none",
+                background: B.green,
+                color: B.dark,
+                fontFamily: "Space Grotesk, sans-serif",
+                fontWeight: 800,
+                fontSize: 15,
+                borderRadius: 12,
+                padding: "13px 18px",
+                cursor: "pointer",
+                boxShadow: "0 6px 18px rgba(46,230,174,0.32)",
+                marginTop: 4,
+              }}
+            >
+              Ver recorrido completo
+            </button>
+          ) : (
+            <div style={{ fontSize: 12.5, color: B.grayText, fontStyle: "italic" }}>
+              El acceso al recorrido se habilitará en la siguiente iteración.
+            </div>
+          )}
 
         {onBack && (
           <button
