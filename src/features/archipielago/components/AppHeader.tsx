@@ -5,35 +5,23 @@ import { ONBOARDING_SCREENS } from "../data/screens";
 import { ROUTE_STAGES } from "../data/islands";
 import { useExperienceMode } from "../context/ExperienceModeContext";
 
-type InfoModal = null | "settings" | "help" | "policies";
-
-const INFO_CONTENT: Record<Exclude<InfoModal, null>, { title: string; body: string }> = {
-  settings: {
-    title: "Configuración",
-    body: "Muy pronto podrás ajustar tus preferencias del viaje.",
-  },
-  help: {
-    title: "Ayuda",
-    body: 'Si te pierdes, vuelve a tu ruta o revisa "Tu guía". Pronto agregaremos más opciones de soporte.',
-  },
-  policies: {
-    title: "Políticas",
-    body: "Las políticas y términos estarán disponibles próximamente.",
-  },
-};
-
 function UserMenu({
-  userName,
   onHome,
   onOpenGuide,
+  onOpenProfile,
+  onOpenHelp,
+  onOpenPrivacy,
+  tripLabel,
 }: {
-  userName?: string;
   onHome?: () => void;
   onOpenGuide?: () => void;
+  onOpenProfile: () => void;
+  onOpenHelp: () => void;
+  onOpenPrivacy: () => void;
+  tripLabel: string;
 }) {
   const { signOutAndClear } = useExperienceMode();
   const [open, setOpen] = useState(false);
-  const [infoModal, setInfoModal] = useState<InfoModal>(null);
   const wrapRef = useRef<HTMLDivElement>(null);
 
   useEffect(() => {
@@ -52,21 +40,12 @@ function UserMenu({
     };
   }, [open]);
 
-  useEffect(() => {
-    if (!infoModal) return;
-    const onKey = (e: KeyboardEvent) => {
-      if (e.key === "Escape") setInfoModal(null);
-    };
-    document.addEventListener("keydown", onKey);
-    return () => document.removeEventListener("keydown", onKey);
-  }, [infoModal]);
-
   const items: Array<{ key: string; label: string; icon: string; onClick: () => void; disabled?: boolean }> = [
-    { key: "trip", label: "Mi viaje", icon: "👤", onClick: () => { setOpen(false); onHome?.(); }, disabled: !onHome },
+    { key: "trip", label: tripLabel, icon: "🧭", onClick: () => { setOpen(false); onHome?.(); }, disabled: !onHome },
+    { key: "profile", label: "Mi perfil", icon: "👤", onClick: () => { setOpen(false); onOpenProfile(); } },
     { key: "guide", label: "Tu guía", icon: "📖", onClick: () => { setOpen(false); onOpenGuide?.(); }, disabled: !onOpenGuide },
-    { key: "settings", label: "Configuración", icon: "⚙️", onClick: () => { setOpen(false); setInfoModal("settings"); } },
-    { key: "help", label: "Ayuda", icon: "❔", onClick: () => { setOpen(false); setInfoModal("help"); } },
-    { key: "policies", label: "Políticas", icon: "🛡️", onClick: () => { setOpen(false); setInfoModal("policies"); } },
+    { key: "help", label: "Centro de ayuda", icon: "💬", onClick: () => { setOpen(false); onOpenHelp(); } },
+    { key: "privacy", label: "Privacidad y seguridad", icon: "🔒", onClick: () => { setOpen(false); onOpenPrivacy(); } },
     { key: "signout", label: "Cerrar sesión", icon: "🚪", onClick: async () => { setOpen(false); await signOutAndClear(); } },
   ];
 
@@ -105,7 +84,7 @@ function UserMenu({
             position: "absolute",
             top: "calc(100% + 8px)",
             right: 0,
-            width: 232,
+            width: 248,
             background: "#FFFFFF",
             border: `1px solid ${B.grayBorder}`,
             borderRadius: 16,
@@ -147,60 +126,6 @@ function UserMenu({
           ))}
         </div>
       )}
-
-      {infoModal && (
-        <div
-          onClick={() => setInfoModal(null)}
-          style={{
-            position: "fixed",
-            inset: 0,
-            background: "rgba(60,60,59,0.45)",
-            display: "flex",
-            alignItems: "center",
-            justifyContent: "center",
-            padding: 20,
-            zIndex: 100,
-          }}
-        >
-          <div
-            onClick={e => e.stopPropagation()}
-            role="dialog"
-            aria-modal="true"
-            style={{
-              background: "#FFFFFF",
-              borderRadius: 20,
-              padding: 24,
-              maxWidth: 360,
-              width: "100%",
-              boxShadow: "0 20px 60px rgba(0,0,0,0.2)",
-            }}
-          >
-            <div style={{ fontFamily: "Space Grotesk, sans-serif", fontWeight: 800, fontSize: 18, color: B.dark, marginBottom: 10 }}>
-              {INFO_CONTENT[infoModal].title}
-            </div>
-            <div style={{ fontSize: 14, color: B.grayText, lineHeight: 1.5, marginBottom: 20 }}>
-              {INFO_CONTENT[infoModal].body}
-            </div>
-            <button
-              onClick={() => setInfoModal(null)}
-              style={{
-                width: "100%",
-                height: 44,
-                borderRadius: 999,
-                border: "none",
-                background: B.green,
-                color: B.dark,
-                fontFamily: "Quicksand, sans-serif",
-                fontWeight: 800,
-                fontSize: 15,
-                cursor: "pointer",
-              }}
-            >
-              Entendido
-            </button>
-          </div>
-        </div>
-      )}
     </div>
   );
 }
@@ -209,17 +134,32 @@ export function AppHeader({
   screen,
   onHome,
   onOpenGuide,
-  userName,
+  onOpenProfile,
+  onOpenHelp,
+  onOpenPrivacy,
+  studentName,
 }: {
   screen: Screen;
   onHome?: () => void;
   onOpenGuide?: () => void;
+  onOpenProfile: () => void;
+  onOpenHelp: () => void;
+  onOpenPrivacy: () => void;
   userName?: string;
+  studentName?: string;
 }) {
+  const { mode } = useExperienceMode();
+  const isAccompanied = mode === "accompanied_learning";
+  const trimmedStudent = studentName?.trim();
+  const tripLabel = isAccompanied && trimmedStudent ? `Viaje de ${trimmedStudent}` : "Mi viaje";
+  const headerTripTitle = isAccompanied && trimmedStudent
+    ? `Viaje de ${trimmedStudent}`
+    : "Tu viaje musical";
+
   const isOnboarding = ONBOARDING_SCREENS.includes(screen);
   if (screen === 'onboarding' || screen === 'welcome' || screen === 'diagnosis' || screen === 'diagnosis-result') return null;
 
-  const modernHeaderScreens: Screen[] = ['route', 'mission', 'mission-guide', 'mission-two', 'mission-three', 'mission-four', 'celebration', 'first-melodies-island', 'first-melodies-lesson', 'pulse-island', 'pulse-lesson', 'rhythm-island', 'rhythm-lesson', 'music-island', 'music-lesson', 'joy-island', 'joy-lesson', 'chords-island', 'chords-lesson', 'strumming-island', 'strumming-lesson', 'songs-island', 'songs-lesson'];
+  const modernHeaderScreens: Screen[] = ['route', 'mission', 'mission-guide', 'mission-two', 'mission-three', 'mission-four', 'celebration', 'first-melodies-island', 'first-melodies-lesson', 'pulse-island', 'pulse-lesson', 'rhythm-island', 'rhythm-lesson', 'music-island', 'music-lesson', 'joy-island', 'joy-lesson', 'chords-island', 'chords-lesson', 'strumming-island', 'strumming-lesson', 'songs-island', 'songs-lesson', 'my-profile', 'help-center', 'privacy'];
   if (modernHeaderScreens.includes(screen)) {
     const isFirstMelodies = screen === 'first-melodies-island' || screen === 'first-melodies-lesson';
     const isPulse = screen === 'pulse-island' || screen === 'pulse-lesson';
@@ -229,10 +169,13 @@ export function AppHeader({
     const isChords = screen === 'chords-island' || screen === 'chords-lesson';
     const isStrumming = screen === 'strumming-island' || screen === 'strumming-lesson';
     const isSongs = screen === 'songs-island' || screen === 'songs-lesson';
+    const isMenuScreen = screen === 'my-profile' || screen === 'help-center' || screen === 'privacy';
     const isIslandOverride = isFirstMelodies || isPulse || isRhythm || isMusic || isJoy || isChords || isStrumming || isSongs;
     const active = ROUTE_STAGES.find(s => s.status === 'active') ?? ROUTE_STAGES[0];
-    const pct = isIslandOverride ? 0 : active.progress;
-    const title = isFirstMelodies
+    const pct = isIslandOverride || isMenuScreen ? 0 : active.progress;
+    const title = isMenuScreen
+      ? (screen === 'my-profile' ? 'Mi perfil' : screen === 'help-center' ? 'Centro de ayuda' : 'Privacidad y seguridad')
+      : isFirstMelodies
       ? 'Isla de Primeras Melodías'
       : isPulse
       ? 'Isla del Pulso'
@@ -249,7 +192,7 @@ export function AppHeader({
       : isSongs
       ? 'Isla de las Canciones'
       : active.title;
-    const completionText = isIslandOverride ? 'completado' : active.completionText;
+    const completionText = isIslandOverride || isMenuScreen ? '' : active.completionText;
     return (
       <header style={{
         background: '#FFFFFF',
@@ -295,16 +238,28 @@ export function AppHeader({
             overflow: 'hidden',
             textOverflow: 'ellipsis',
           }}>
-            Tu viaje musical
+            {headerTripTitle}
           </div>
           <div style={{ fontSize: 11.5, color: B.grayText, marginTop: 2, lineHeight: 1.3, whiteSpace: 'nowrap', overflow: 'hidden', textOverflow: 'ellipsis' }}>
-            {title} · <span style={{ color: B.greenDark, fontWeight: 700 }}>{pct}% {completionText}</span>
+            {title}
+            {!isMenuScreen && !isIslandOverride && (
+              <> · <span style={{ color: B.greenDark, fontWeight: 700 }}>{pct}% {completionText}</span></>
+            )}
           </div>
-          <div style={{ marginTop: 6, height: 3, background: '#EAF6F0', borderRadius: 999, overflow: 'hidden' }}>
-            <div style={{ width: `${pct}%`, height: '100%', background: B.green, borderRadius: 999, transition: 'width 0.4s ease' }} />
-          </div>
+          {!isMenuScreen && (
+            <div style={{ marginTop: 6, height: 3, background: '#EAF6F0', borderRadius: 999, overflow: 'hidden' }}>
+              <div style={{ width: `${pct}%`, height: '100%', background: B.green, borderRadius: 999, transition: 'width 0.4s ease' }} />
+            </div>
+          )}
         </div>
-        <UserMenu userName={userName} onHome={onHome} onOpenGuide={onOpenGuide} />
+        <UserMenu
+          onHome={onHome}
+          onOpenGuide={onOpenGuide}
+          onOpenProfile={onOpenProfile}
+          onOpenHelp={onOpenHelp}
+          onOpenPrivacy={onOpenPrivacy}
+          tripLabel={tripLabel}
+        />
       </header>
     );
   }
