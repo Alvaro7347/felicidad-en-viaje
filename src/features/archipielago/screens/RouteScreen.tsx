@@ -104,8 +104,53 @@ export function RouteScreen({ onStartMission, onReviewMission, onOpenFirstMelodi
     achievement: { bg: '#FFF5E0', border: '#F5B800', icon: '#F5B800', text: B.dark },
   };
 
+  const isParent = journeyOrigin === "parent";
+  const parentTitle = studentName?.trim()
+    ? `Recorrido musical de ${studentName.trim()}`
+    : "Recorrido musical";
+
   return (
     <div>
+      {isParent && (
+        <div style={{ marginBottom: 14 }}>
+          {onBackToParentDashboard && (
+            <button
+              type="button"
+              onClick={onBackToParentDashboard}
+              style={{
+                background: "transparent",
+                border: `1px solid ${B.grayBorder}`,
+                color: B.grayText,
+                fontFamily: "Space Grotesk, sans-serif",
+                fontWeight: 600,
+                fontSize: 12.5,
+                padding: "7px 12px",
+                borderRadius: 999,
+                cursor: "pointer",
+                marginBottom: 12,
+              }}
+            >
+              ← Volver al panel de acompañamiento
+            </button>
+          )}
+          <div
+            style={{
+              fontFamily: "Space Grotesk, sans-serif",
+              fontWeight: 800,
+              fontSize: 20,
+              color: B.dark,
+              letterSpacing: "-0.01em",
+              lineHeight: 1.2,
+            }}
+          >
+            {parentTitle}
+          </div>
+          <div style={{ marginTop: 6, fontSize: 13.5, color: B.grayText, lineHeight: 1.5 }}>
+            Aquí puedes revisar las clases realizadas y conocer lo que viene después.
+          </div>
+        </div>
+      )}
+
 
 
       {/* ── Island journey strip ── */}
