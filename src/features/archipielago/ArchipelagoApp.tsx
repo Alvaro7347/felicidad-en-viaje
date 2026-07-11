@@ -585,7 +585,11 @@ export function ArchipelagoApp() {
             screen={screen}
             onHome={isOnboarding ? undefined : goHome}
             onOpenGuide={() => setScreen("mission-guide")}
+            onOpenProfile={() => setScreen("my-profile")}
+            onOpenHelp={() => setScreen("help-center")}
+            onOpenPrivacy={() => setScreen("privacy")}
             userName={userName}
+            studentName={routeStudentName}
           />
         )}
         {parentJourneyLoadError && (
