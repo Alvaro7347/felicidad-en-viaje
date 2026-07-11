@@ -58,6 +58,7 @@ export function ParentOnboardingScreen({ onComplete, onCancel }: Props) {
   const [step, setStep] = useState(1);
   const [ans, setAns] = useState<ParentOnboardingAnswers>(empty);
   const [submitting, setSubmitting] = useState(false);
+  const [submitError, setSubmitError] = useState<string | null>(null);
 
   const next = () => setStep((s) => Math.min(TOTAL, s + 1));
   const back = () => (step === 1 ? onCancel() : setStep((s) => s - 1));
@@ -65,9 +66,17 @@ export function ParentOnboardingScreen({ onComplete, onCancel }: Props) {
   const submit = async () => {
     if (submitting) return;
     setSubmitting(true);
+    setSubmitError(null);
     try {
       await onComplete(ans);
+    } catch (e) {
+      setSubmitError(
+        e instanceof Error && e.message
+          ? e.message
+          : "No pudimos crear el perfil del alumno. Intenta nuevamente.",
+      );
     } finally {
+
       setSubmitting(false);
     }
   };
