@@ -72,7 +72,35 @@ export function ExperienceModeProvider({ children }: { children: ReactNode }) {
     return () => { sub.subscription.unsubscribe(); };
   }, [load]);
 
-  const setMode = useCallback(async (next: ExperienceMode) => {
+  const setMode = useCallback(async (next: ExperienceMode, opts?: { allowOverride?: boolean }) => {
+    const allowOverride = opts?.allowOverride === true;
+    // Bloqueo MVP: la modalidad queda consolidada tras el onboarding inicial.
+    // Solo se permite escribir cuando no hay modalidad previa o el llamador
+    // fuerza explícitamente (autorreparación / corrección de inconsistencia).
+    const uid = userId ?? (await supabase.auth.getSession()).data.session?.user.id ?? null;
+    if (!allowOverride && uid) {
+      const { data: existing } = await supabase
+        .from("profiles")
+        .select("experience_mode")
+        .eq("id", uid)
+        .maybeSingle();
+      const current = (existing?.experience_mode ?? null) as ExperienceMode | null;
+      if (current && current !== next) {
+        console.warn("[experience_mode] setMode bloqueado: modalidad ya consolidada", {
+          current,
+          attempted: next,
+        });
+        // Sincronizar estado local con el valor real de la DB.
+        setModeState(current);
+        writeCache(current);
+        return;
+      }
+      if (current === next) {
+        setModeState(current);
+        writeCache(current);
+        return;
+      }
+    }
     setModeState(next);
     writeCache(next);
     // Cache legacy para compatibilidad con código existente.
@@ -84,7 +112,6 @@ export function ExperienceModeProvider({ children }: { children: ReactNode }) {
         );
       } catch { /* noop */ }
     }
-    const uid = userId ?? (await supabase.auth.getSession()).data.session?.user.id ?? null;
     if (!uid) return;
     await supabase.from("profiles").upsert(
       { id: uid, experience_mode: next, updated_at: new Date().toISOString() },
