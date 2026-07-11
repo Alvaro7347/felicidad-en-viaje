@@ -220,7 +220,11 @@ export function ArchipelagoApp() {
     }
   }, [session?.user.id, progress.loading, hasOnboarding, progress]);
 
-  const goToRoute = () => setScreen("route");
+  const goToRoute = () => {
+    setJourneyOrigin("student");
+    setRouteStudentName(undefined);
+    setScreen("route");
+  };
   const isOnboarding = ONBOARDING_SCREENS.includes(screen);
 
   // Intento de abrir isla bloqueada (Ritmo en adelante durante MVP1)
