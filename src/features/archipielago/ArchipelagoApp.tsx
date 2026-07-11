@@ -679,51 +679,78 @@ export function ArchipelagoApp() {
           );
         })()}
 
-        {screen === "diagnosis" && (
-          <DiagnosisScreen
-            onComplete={(answers, name) => {
-              setDiagAnswers(answers);
-              setUserName(name);
-              if (typeof window !== "undefined") {
-                try { window.localStorage.setItem("archipielago_user_name", name); } catch {}
-              }
-              // Guardar onboarding en Supabase (fuente MVP1)
-              (async () => {
-                const { data: sess } = await supabase.auth.getSession();
-                const uid = sess.session?.user.id;
-                if (!uid) {
-                  console.error("[onboarding] No hay sesión activa; no se puede guardar onboarding.");
-                  return;
+        {screen === "diagnosis" && (() => {
+          // Protección: el diagnóstico de Alejandra no debe ejecutarse ni
+          // sobrescribir profiles.name cuando la cuenta ya está en modalidad
+          // acompañada. Redirigir al panel de acompañamiento.
+          if (experience.mode === "accompanied_learning") {
+            progress.logEvent("diagnosis_blocked_by_mode", {
+              persisted_mode: "accompanied_learning",
+            });
+            setTimeout(() => setScreen("parent-journey-dashboard"), 0);
+            return null;
+          }
+          return (
+            <DiagnosisScreen
+              onComplete={(answers, name) => {
+                setDiagAnswers(answers);
+                setUserName(name);
+                if (typeof window !== "undefined") {
+                  try { window.localStorage.setItem("archipielago_user_name", name); } catch {}
                 }
-                const payload = { name, answers } as unknown as never;
-                const { error: onbError } = await supabase.from("user_onboarding").upsert(
-                  {
-                    user_id: uid,
-                    answers: payload,
-                    updated_at: new Date().toISOString(),
-                  },
-                  { onConflict: "user_id" },
-                );
-                if (onbError) {
-                  console.error("[onboarding] Error al guardar user_onboarding:", onbError);
-                  return;
-                }
-                setHasOnboarding(true);
-                progress.logEvent("onboarding_completed", { source: "diagnosis" });
-                const { error: profError } = await supabase
-                  .from("profiles")
-                  .upsert(
-                    { id: uid, name, updated_at: new Date().toISOString() },
-                    { onConflict: "id" },
+                // Guardar onboarding en Supabase (fuente MVP1)
+                (async () => {
+                  const { data: sess } = await supabase.auth.getSession();
+                  const uid = sess.session?.user.id;
+                  if (!uid) {
+                    console.error("[onboarding] No hay sesión activa; no se puede guardar onboarding.");
+                    return;
+                  }
+                  // Doble verificación server-side: si la cuenta ya es acompañada
+                  // o tiene un parent_journeys, no escribir onboarding ni name.
+                  const [{ data: prof }, { data: pj }] = await Promise.all([
+                    supabase.from("profiles").select("experience_mode").eq("id", uid).maybeSingle(),
+                    supabase.from("parent_journeys").select("user_id").eq("user_id", uid).maybeSingle(),
+                  ]);
+                  if (prof?.experience_mode === "accompanied_learning" || pj) {
+                    console.warn("[diagnosis] Bloqueado: cuenta ya configurada como acompañada.");
+                    progress.logEvent("diagnosis_blocked_by_mode", {
+                      persisted_mode: prof?.experience_mode ?? null,
+                      has_parent_journey: !!pj,
+                    });
+                    setScreen("parent-journey-dashboard");
+                    return;
+                  }
+                  const payload = { name, answers } as unknown as never;
+                  const { error: onbError } = await supabase.from("user_onboarding").upsert(
+                    {
+                      user_id: uid,
+                      answers: payload,
+                      updated_at: new Date().toISOString(),
+                    },
+                    { onConflict: "user_id" },
                   );
-                if (profError) {
-                  console.error("[onboarding] Error al guardar profiles.name:", profError);
-                }
-              })();
-              setScreen("diagnosis-result");
-            }}
-          />
-        )}
+                  if (onbError) {
+                    console.error("[onboarding] Error al guardar user_onboarding:", onbError);
+                    return;
+                  }
+                  setHasOnboarding(true);
+                  progress.logEvent("onboarding_completed", { source: "diagnosis" });
+                  const { error: profError } = await supabase
+                    .from("profiles")
+                    .upsert(
+                      { id: uid, name, updated_at: new Date().toISOString() },
+                      { onConflict: "id" },
+                    );
+                  if (profError) {
+                    console.error("[onboarding] Error al guardar profiles.name:", profError);
+                  }
+                })();
+                setScreen("diagnosis-result");
+              }}
+            />
+          );
+        })()}
 
         {screen === "diagnosis-result" && (
           <DiagnosisResultScreen
