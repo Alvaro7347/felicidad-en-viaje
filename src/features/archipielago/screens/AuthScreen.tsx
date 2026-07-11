@@ -3,7 +3,9 @@ import { supabase } from "@/integrations/supabase/client";
 import { B } from "../data/brand";
 import { Btn } from "../components/Btn";
 
-type Mode = "signin" | "signup";
+type Mode = "signin" | "signup" | "forgot";
+
+const RESET_REDIRECT_PATH = "/restablecer-contrasena";
 
 const EMAIL_RE = /^[^\s@]+@[^\s@]+\.[^\s@]+$/;
 const LOGO_SRC = "/isologo-soundkeleles.jpg";
@@ -43,6 +45,33 @@ export function AuthScreen() {
   const [loading, setLoading] = useState(false);
   const [error, setError] = useState<string | null>(null);
   const [info, setInfo] = useState<string | null>(null);
+  const [resetSent, setResetSent] = useState(false);
+
+  const requestReset = async () => {
+    setError(null);
+    setInfo(null);
+    const clean = email.trim().toLowerCase();
+    if (!EMAIL_RE.test(clean)) {
+      setError("Ingresa un correo válido.");
+      return;
+    }
+    setLoading(true);
+    const redirectTo =
+      typeof window !== "undefined"
+        ? `${window.location.origin}${RESET_REDIRECT_PATH}`
+        : RESET_REDIRECT_PATH;
+    const { error: err } = await supabase.auth.resetPasswordForEmail(clean, {
+      redirectTo,
+    });
+    setLoading(false);
+    // Mensaje neutral aunque haya error, para no revelar existencia de la cuenta.
+    if (err) {
+      logEvent("auth_reset_error", { message: err.message });
+    } else {
+      logEvent("auth_reset_requested", { email: clean });
+    }
+    setResetSent(true);
+  };
 
   const submit = async () => {
     setError(null);
@@ -224,162 +253,257 @@ export function AuthScreen() {
             border: "1px solid rgba(46, 230, 174, 0.18)",
           }}
         >
-          {/* Toggle Login / Signup */}
-          <div
-            style={{
-              display: "flex",
-              gap: 6,
-              background: "rgba(46, 230, 174, 0.10)",
-              padding: 4,
-              borderRadius: 12,
-              marginBottom: 16,
-            }}
-          >
-            {(["signin", "signup"] as Mode[]).map((m) => {
-              const active = mode === m;
-              return (
+          {mode === "forgot" ? (
+            <>
+              <h2
+                style={{
+                  fontFamily: "Space Grotesk, sans-serif",
+                  fontWeight: 800,
+                  fontSize: 20,
+                  margin: 0,
+                  color: B.dark,
+                }}
+              >
+                Recupera tu contraseña
+              </h2>
+              <p style={{ fontSize: 14, color: B.dark, marginTop: 8, lineHeight: 1.5 }}>
+                {resetSent
+                  ? "Si existe una cuenta asociada a ese correo, recibirás un enlace para restablecer tu contraseña."
+                  : "Ingresa el correo con el que creaste tu cuenta y te enviaremos un enlace para crear una nueva contraseña."}
+              </p>
+
+              {!resetSent && (
+                <form
+                  onSubmit={(e) => {
+                    e.preventDefault();
+                    if (!loading) requestReset();
+                  }}
+                >
+                  <div style={{ marginTop: 16 }}>
+                    <label htmlFor="email-reset" style={labelStyle}>
+                      Correo electrónico
+                    </label>
+                    <input
+                      id="email-reset"
+                      type="email"
+                      autoComplete="email"
+                      inputMode="email"
+                      value={email}
+                      onChange={(e) => setEmail(e.target.value)}
+                      placeholder="tu@correo.com"
+                      style={inputStyle}
+                      disabled={loading}
+                    />
+                  </div>
+
+                  {error && (
+                    <div style={{ color: B.pink, fontSize: 13, marginTop: 10 }}>{error}</div>
+                  )}
+
+                  <div style={{ marginTop: 18 }}>
+                    <Btn type="submit" variant="primary" fullWidth disabled={loading}>
+                      {loading ? "Enviando..." : "Enviar enlace"}
+                    </Btn>
+                  </div>
+                </form>
+              )}
+
+              <div style={{ marginTop: 12, textAlign: "center" }}>
                 <button
-                  key={m}
                   type="button"
                   onClick={() => {
                     if (loading) return;
-                    setMode(m);
+                    setMode("signin");
+                    setError(null);
+                    setInfo(null);
+                    setResetSent(false);
+                  }}
+                  style={linkBtn}
+                >
+                  Volver a iniciar sesión
+                </button>
+              </div>
+            </>
+          ) : (
+            <>
+              {/* Toggle Login / Signup */}
+              <div
+                style={{
+                  display: "flex",
+                  gap: 6,
+                  background: "rgba(46, 230, 174, 0.10)",
+                  padding: 4,
+                  borderRadius: 12,
+                  marginBottom: 16,
+                  marginTop: -4,
+                }}
+              >
+                {(["signin", "signup"] as Mode[]).map((m) => {
+                  const active = mode === m;
+                  return (
+                    <button
+                      key={m}
+                      type="button"
+                      onClick={() => {
+                        if (loading) return;
+                        setMode(m);
+                        setError(null);
+                        setInfo(null);
+                      }}
+                      style={{
+                        flex: 1,
+                        padding: "10px 8px",
+                        borderRadius: 10,
+                        border: "none",
+                        cursor: "pointer",
+                        fontFamily: "Quicksand, sans-serif",
+                        fontWeight: 700,
+                        fontSize: 14,
+                        background: active ? B.white : "transparent",
+                        color: active ? B.dark : B.greenDark,
+                        boxShadow: active ? "0 4px 12px -6px rgba(28, 196, 142, 0.5)" : "none",
+                      }}
+                    >
+                      {m === "signin" ? "Iniciar sesión" : "Crear cuenta"}
+                    </button>
+                  );
+                })}
+              </div>
+
+              <h2
+                style={{
+                  fontFamily: "Space Grotesk, sans-serif",
+                  fontWeight: 800,
+                  fontSize: 20,
+                  margin: 0,
+                  color: B.dark,
+                }}
+              >
+                {isSignup ? "Crea tu cuenta" : "Bienvenido de vuelta"}
+              </h2>
+              <p style={{ fontSize: 14, color: B.dark, marginTop: 8, lineHeight: 1.5 }}>
+                {isSignup
+                  ? "Usa tu correo y una contraseña de al menos 6 caracteres."
+                  : "Ingresa con tu correo y contraseña."}
+              </p>
+
+              <form
+                onSubmit={(e) => {
+                  e.preventDefault();
+                  if (!loading) submit();
+                }}
+              >
+                <div style={{ marginTop: 16 }}>
+                  <label htmlFor="email" style={labelStyle}>
+                    Correo electrónico
+                  </label>
+                  <input
+                    id="email"
+                    type="email"
+                    autoComplete="email"
+                    inputMode="email"
+                    value={email}
+                    onChange={(e) => setEmail(e.target.value)}
+                    placeholder="tu@correo.com"
+                    style={inputStyle}
+                    disabled={loading}
+                  />
+                </div>
+
+                <div style={{ marginTop: 14 }}>
+                  <label htmlFor="password" style={labelStyle}>
+                    Contraseña
+                  </label>
+                  <div style={{ position: "relative" }}>
+                    <input
+                      id="password"
+                      type={showPass ? "text" : "password"}
+                      autoComplete={isSignup ? "new-password" : "current-password"}
+                      value={password}
+                      onChange={(e) => setPassword(e.target.value)}
+                      placeholder="Mínimo 6 caracteres"
+                      style={{ ...inputStyle, paddingRight: 68 }}
+                      disabled={loading}
+                    />
+                    <button
+                      type="button"
+                      onClick={() => setShowPass((v) => !v)}
+                      style={{
+                        position: "absolute",
+                        top: "50%",
+                        right: 10,
+                        transform: "translateY(-50%)",
+                        background: "transparent",
+                        border: "none",
+                        color: B.greenDark,
+                        fontFamily: "Quicksand, sans-serif",
+                        fontWeight: 700,
+                        fontSize: 12,
+                        cursor: "pointer",
+                        padding: "6px 8px",
+                      }}
+                      tabIndex={-1}
+                    >
+                      {showPass ? "Ocultar" : "Ver"}
+                    </button>
+                  </div>
+                </div>
+
+                {!isSignup && (
+                  <div style={{ marginTop: 8, textAlign: "right" }}>
+                    <button
+                      type="button"
+                      onClick={() => {
+                        if (loading) return;
+                        setMode("forgot");
+                        setPassword("");
+                        setError(null);
+                        setInfo(null);
+                        setResetSent(false);
+                      }}
+                      style={{ ...linkBtn, fontSize: 13, padding: "4px 0" }}
+                    >
+                      ¿Olvidaste tu contraseña?
+                    </button>
+                  </div>
+                )}
+
+                {error && (
+                  <div style={{ color: B.pink, fontSize: 13, marginTop: 10 }}>{error}</div>
+                )}
+                {info && (
+                  <div style={{ color: B.greenDark, fontSize: 13, marginTop: 10 }}>{info}</div>
+                )}
+
+                <div style={{ marginTop: 18 }}>
+                  <Btn type="submit" variant="primary" fullWidth disabled={loading}>
+                    {loading
+                      ? isSignup
+                        ? "Creando cuenta..."
+                        : "Ingresando..."
+                      : isSignup
+                        ? "Crear cuenta"
+                        : "Entrar al Archipiélago"}
+                  </Btn>
+                </div>
+              </form>
+
+              <div style={{ marginTop: 10, textAlign: "center" }}>
+                <button
+                  type="button"
+                  onClick={() => {
+                    if (loading) return;
+                    setMode(isSignup ? "signin" : "signup");
                     setError(null);
                     setInfo(null);
                   }}
-                  style={{
-                    flex: 1,
-                    padding: "10px 8px",
-                    borderRadius: 10,
-                    border: "none",
-                    cursor: "pointer",
-                    fontFamily: "Quicksand, sans-serif",
-                    fontWeight: 700,
-                    fontSize: 14,
-                    background: active ? B.white : "transparent",
-                    color: active ? B.dark : B.greenDark,
-                    boxShadow: active ? "0 4px 12px -6px rgba(28, 196, 142, 0.5)" : "none",
-                  }}
+                  style={linkBtn}
                 >
-                  {m === "signin" ? "Iniciar sesión" : "Crear cuenta"}
-                </button>
-              );
-            })}
-          </div>
-
-          <h2
-            style={{
-              fontFamily: "Space Grotesk, sans-serif",
-              fontWeight: 800,
-              fontSize: 20,
-              margin: 0,
-              color: B.dark,
-            }}
-          >
-            {isSignup ? "Crea tu cuenta" : "Bienvenido de vuelta"}
-          </h2>
-          <p style={{ fontSize: 14, color: B.dark, marginTop: 8, lineHeight: 1.5 }}>
-            {isSignup
-              ? "Usa tu correo y una contraseña de al menos 6 caracteres."
-              : "Ingresa con tu correo y contraseña."}
-          </p>
-
-          <form
-            onSubmit={(e) => {
-              e.preventDefault();
-              if (!loading) submit();
-            }}
-          >
-            <div style={{ marginTop: 16 }}>
-              <label htmlFor="email" style={labelStyle}>
-                Correo electrónico
-              </label>
-              <input
-                id="email"
-                type="email"
-                autoComplete="email"
-                inputMode="email"
-                value={email}
-                onChange={(e) => setEmail(e.target.value)}
-                placeholder="tu@correo.com"
-                style={inputStyle}
-                disabled={loading}
-              />
-            </div>
-
-            <div style={{ marginTop: 14 }}>
-              <label htmlFor="password" style={labelStyle}>
-                Contraseña
-              </label>
-              <div style={{ position: "relative" }}>
-                <input
-                  id="password"
-                  type={showPass ? "text" : "password"}
-                  autoComplete={isSignup ? "new-password" : "current-password"}
-                  value={password}
-                  onChange={(e) => setPassword(e.target.value)}
-                  placeholder="Mínimo 6 caracteres"
-                  style={{ ...inputStyle, paddingRight: 68 }}
-                  disabled={loading}
-                />
-                <button
-                  type="button"
-                  onClick={() => setShowPass((v) => !v)}
-                  style={{
-                    position: "absolute",
-                    top: "50%",
-                    right: 10,
-                    transform: "translateY(-50%)",
-                    background: "transparent",
-                    border: "none",
-                    color: B.greenDark,
-                    fontFamily: "Quicksand, sans-serif",
-                    fontWeight: 700,
-                    fontSize: 12,
-                    cursor: "pointer",
-                    padding: "6px 8px",
-                  }}
-                  tabIndex={-1}
-                >
-                  {showPass ? "Ocultar" : "Ver"}
+                  {isSignup ? "¿Ya tienes cuenta? Inicia sesión" : "¿Nuevo? Crea tu cuenta"}
                 </button>
               </div>
-            </div>
-
-            {error && (
-              <div style={{ color: B.pink, fontSize: 13, marginTop: 10 }}>{error}</div>
-            )}
-            {info && (
-              <div style={{ color: B.greenDark, fontSize: 13, marginTop: 10 }}>{info}</div>
-            )}
-
-            <div style={{ marginTop: 18 }}>
-              <Btn type="submit" variant="primary" fullWidth disabled={loading}>
-                {loading
-                  ? isSignup
-                    ? "Creando cuenta..."
-                    : "Ingresando..."
-                  : isSignup
-                    ? "Crear cuenta"
-                    : "Entrar al Archipiélago"}
-              </Btn>
-            </div>
-          </form>
-
-          <div style={{ marginTop: 10, textAlign: "center" }}>
-            <button
-              type="button"
-              onClick={() => {
-                if (loading) return;
-                setMode(isSignup ? "signin" : "signup");
-                setError(null);
-                setInfo(null);
-              }}
-              style={linkBtn}
-            >
-              {isSignup ? "¿Ya tienes cuenta? Inicia sesión" : "¿Nuevo? Crea tu cuenta"}
-            </button>
-          </div>
+            </>
+          )}
         </div>
 
         <p
