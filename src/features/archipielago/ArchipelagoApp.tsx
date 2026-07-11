@@ -8,6 +8,7 @@ import type { DiagAnswers, Screen } from "./types";
 import { AuthScreen } from "./screens/AuthScreen";
 import { BlockedIslandModal } from "./components/BlockedIslandModal";
 import { useMvp1ProgressContext } from "./context/Mvp1ProgressContext";
+import { useExperienceMode } from "./context/ExperienceModeContext";
 import { findMvp1Lesson } from "./data/mvp1Progress";
 
 import { AppHeader } from "./components/AppHeader";
