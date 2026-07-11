@@ -709,9 +709,7 @@ export function ArchipelagoApp() {
               onComplete={(answers, name) => {
                 setDiagAnswers(answers);
                 setUserName(name);
-                if (typeof window !== "undefined") {
-                  try { window.localStorage.setItem("archipielago_user_name", name); } catch {}
-                }
+
                 // Guardar onboarding en Supabase (fuente MVP1)
                 (async () => {
                   const { data: sess } = await supabase.auth.getSession();
