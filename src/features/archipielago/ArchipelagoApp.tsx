@@ -293,7 +293,7 @@ export function ArchipelagoApp() {
       setOnboardingChecking(false);
     })();
     return () => { cancelled = true; };
-  }, [session?.user.id, experience.loading, experience.mode, experience, progress]);
+  }, [session?.user.id, experience.loading, experience.mode]);
 
   // ── Medición: app_opened + return_visit (una vez por carga con sesión) ──
   const appOpenedLoggedRef = useRef(false);
