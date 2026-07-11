@@ -69,17 +69,21 @@ function capitalize(s: string) {
 
 export function MissionTwoScreen({
   userName,
+  learnerName,
   onBack,
   onNext,
 }: {
   userName: string;
+  learnerName?: string;
   onBack: () => void;
   onNext: () => void;
 }) {
+  // "Hola, soy X y quiero aprender ukelele" es la voz del ESTUDIANTE.
   const firstName = useMemo(() => {
-    const n = (userName ?? "").trim().split(/\s+/)[0];
-    return n && n !== "Navegante" ? n : "Navegante";
-  }, [userName]);
+    const source = (learnerName ?? userName ?? "").trim();
+    const n = source.split(/\s+/)[0];
+    return n || "Navegante";
+  }, [learnerName, userName]);
 
   const initialMotivation = readLS(LS.motivation);
   const initialEmotionsRaw = readLS(LS.emotions);
