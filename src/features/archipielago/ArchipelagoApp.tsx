@@ -475,6 +475,11 @@ export function ArchipelagoApp() {
               studentName={studentName}
               parentName={parentName}
               onBack={() => setScreen("parent-journey-intro")}
+              onOpenJourney={() => {
+                setJourneyOrigin("parent");
+                setRouteStudentName(studentName);
+                setScreen("route");
+              }}
             />
           );
         })()}
