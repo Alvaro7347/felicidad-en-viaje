@@ -147,16 +147,59 @@ export function ArchipelagoApp() {
   const [blockedModal, setBlockedModal] = useState<null | "island" | "lesson">(null);
   const [parentJourneyLoadError, setParentJourneyLoadError] = useState<string | null>(null);
 
-  // ── Onboarding: leer desde Supabase (fuente de verdad) ─────────
+  // ── Detección de modalidad + estado inicial (Supabase como fuente) ─
   useEffect(() => {
     const uid = session?.user.id;
     if (!uid) {
       setHasOnboarding(null);
       return;
     }
+    // Esperamos a que la modalidad termine de cargarse.
+    if (experience.loading) return;
     let cancelled = false;
     setOnboardingChecking(true);
+    setParentJourneyLoadError(null);
     (async () => {
+      // Fallback: si no hay modo en DB, usar caché legacy.
+      let mode = experience.mode;
+      if (!mode && typeof window !== "undefined") {
+        try {
+          const legacy = window.localStorage.getItem("archipielago_selected_profile");
+          if (legacy === "alejandra") mode = "self_learning";
+          else if (legacy === "maria_jose") mode = "accompanied_learning";
+        } catch { /* noop */ }
+      }
+
+      // ── Modalidad ACOMPAÑADA (María José) ─────────────────────
+      if (mode === "accompanied_learning") {
+        const { data: pj, error } = await supabase
+          .from("parent_journeys")
+          .select("student_name, parent_name, teacher_name, plan_name, status, onboarding_answers")
+          .eq("user_id", uid)
+          .maybeSingle();
+        if (cancelled) return;
+        if (error) {
+          setParentJourneyLoadError("No pudimos cargar el viaje de acompañamiento. Intenta recargar.");
+        }
+        if (pj) {
+          const answers = (pj.onboarding_answers ?? null) as ParentOnboardingAnswers | null;
+          if (answers) setParentJourneyAnswers(answers);
+          const studentName = pj.student_name ?? answers?.student.name ?? "Lucía";
+          const parentName = pj.parent_name ?? answers?.parent.name ?? "";
+          setRouteStudentName(studentName);
+          setUserName(parentName || "Navegante");
+          setJourneyOrigin("parent");
+          setHasOnboarding(true);
+          setScreen("parent-journey-dashboard");
+        } else {
+          setHasOnboarding(false);
+          setScreen("parent-journey-intro");
+        }
+        setOnboardingChecking(false);
+        return;
+      }
+
+      // ── Modalidad PERSONAL (Alejandra) o sin modalidad ───────
       const { data: onb } = await supabase
         .from("user_onboarding")
         .select("answers")
@@ -164,7 +207,6 @@ export function ArchipelagoApp() {
         .maybeSingle();
       if (cancelled) return;
       if (onb) {
-        // Recuperar nombre desde answers.name o profiles.name
         const answers = (onb.answers ?? {}) as { name?: string; answers?: DiagAnswers };
         let name = answers.name ?? "";
         if (!name) {
@@ -178,26 +220,20 @@ export function ArchipelagoApp() {
         }
         setUserName(name || "Navegante");
         if (typeof window !== "undefined") {
-          try { window.localStorage.setItem("archipielago_user_name", name || "Navegante"); } catch {}
+          try { window.localStorage.setItem("archipielago_user_name", name || "Navegante"); } catch { /* noop */ }
         }
+        setJourneyOrigin("student");
         setHasOnboarding(true);
         setScreen("return-welcome");
       } else {
         setHasOnboarding(false);
-        let selectedProfile: string | null = null;
-        if (typeof window !== "undefined") {
-          try { selectedProfile = window.localStorage.getItem("archipielago_selected_profile"); } catch {}
-        }
-        if (selectedProfile === "maria_jose") {
-          setScreen("parent-journey-intro");
-        } else {
-          setScreen("onboarding");
-        }
+        // Sin modo persistido y sin onboarding → selector inicial.
+        setScreen(mode === "self_learning" ? "onboarding" : "onboarding");
       }
       setOnboardingChecking(false);
     })();
     return () => { cancelled = true; };
-  }, [session?.user.id]);
+  }, [session?.user.id, experience.loading, experience.mode]);
 
   // ── Medición: app_opened + return_visit (una vez por carga con sesión) ──
   const appOpenedLoggedRef = useRef(false);
