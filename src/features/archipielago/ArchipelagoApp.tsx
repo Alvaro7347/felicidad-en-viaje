@@ -570,6 +570,13 @@ export function ArchipelagoApp() {
             onOpenChordsIsland={() => openLockedIsland("chords")}
             onOpenStrummingIsland={() => openLockedIsland("strumming")}
             onOpenSongsIsland={() => openLockedIsland("songs")}
+            journeyOrigin={journeyOrigin}
+            studentName={routeStudentName}
+            onBackToParentDashboard={
+              journeyOrigin === "parent"
+                ? () => setScreen("parent-journey-dashboard")
+                : undefined
+            }
           />
         )}
 
