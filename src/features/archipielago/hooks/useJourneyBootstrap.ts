@@ -212,7 +212,7 @@ export function useJourneyBootstrap({
         if (cancelled) return;
         if (pj) {
           const answers = pj.onboarding_answers;
-          const studentName = pj.student_name ?? answers?.student.name ?? "Lucía";
+          const studentName = pj.student_name ?? answers?.student.name ?? "tu estudiante";
           const parentName = pj.parent_name ?? answers?.parent.name ?? "";
           setReady({
             hasOnboarding: true,
