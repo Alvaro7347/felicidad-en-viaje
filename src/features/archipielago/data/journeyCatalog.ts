@@ -29,20 +29,20 @@ export const ISLAND_ORDER: IslandId[] = [
 export const ISLAND_TITLES: Record<IslandId, string> = {
   "start-port": "Puerto de Inicio",
   "first-melodies": "Isla de Primeras Melodías",
-  "pulse": "Isla del Pulso",
-  "rhythm": "Isla del Ritmo",
-  "music": "Isla Musical",
-  "joy": "Isla de la Alegría",
-  "chords": "Isla de los Acordes",
-  "strumming": "Isla del Rasgueo",
-  "songs": "Isla de las Canciones",
+  pulse: "Isla del Pulso",
+  rhythm: "Isla del Ritmo",
+  music: "Isla Musical",
+  joy: "Isla de la Alegría",
+  chords: "Isla de los Acordes",
+  strumming: "Isla del Rasgueo",
+  songs: "Isla de las Canciones",
 };
 
 // Pantalla actual → isla a la que pertenece (usado por AppHeader para calcular
 // el título y el porcentaje que se muestran en la barra superior).
 export const SCREEN_TO_ISLAND: Partial<Record<Screen, IslandId>> = {
-  "route": "start-port",
-  "mission": "start-port",
+  route: "start-port",
+  mission: "start-port",
   "mission-guide": "start-port",
   "mission-two": "start-port",
   "mission-three": "start-port",
@@ -51,7 +51,7 @@ export const SCREEN_TO_ISLAND: Partial<Record<Screen, IslandId>> = {
   "mission-seven": "start-port",
   "mission-eight": "start-port",
   "mission-nine": "start-port",
-  "celebration": "start-port",
+  celebration: "start-port",
   "first-melodies-island": "first-melodies",
   "first-melodies-lesson": "first-melodies",
   "pulse-island": "pulse",
@@ -74,13 +74,13 @@ export const SCREEN_TO_ISLAND: Partial<Record<Screen, IslandId>> = {
 export const ISLAND_TO_ISLAND_SCREEN: Record<IslandId, Screen> = {
   "start-port": "route",
   "first-melodies": "first-melodies-island",
-  "pulse": "pulse-island",
-  "rhythm": "rhythm-island",
-  "music": "music-island",
-  "joy": "joy-island",
-  "chords": "chords-island",
-  "strumming": "strumming-island",
-  "songs": "songs-island",
+  pulse: "pulse-island",
+  rhythm: "rhythm-island",
+  music: "music-island",
+  joy: "joy-island",
+  chords: "chords-island",
+  strumming: "strumming-island",
+  songs: "songs-island",
 };
 
 // Isla → pantalla de lección genérica de esa isla.
@@ -89,11 +89,11 @@ export const ISLAND_TO_ISLAND_SCREEN: Record<IslandId, Screen> = {
 export const ISLAND_TO_LESSON_SCREEN: Record<IslandId, Screen> = {
   "start-port": "route",
   "first-melodies": "first-melodies-lesson",
-  "pulse": "pulse-lesson",
-  "rhythm": "rhythm-lesson",
-  "music": "music-lesson",
-  "joy": "joy-lesson",
-  "chords": "chords-lesson",
-  "strumming": "strumming-lesson",
-  "songs": "songs-lesson",
+  pulse: "pulse-lesson",
+  rhythm: "rhythm-lesson",
+  music: "music-lesson",
+  joy: "joy-lesson",
+  chords: "chords-lesson",
+  strumming: "strumming-lesson",
+  songs: "songs-lesson",
 };
