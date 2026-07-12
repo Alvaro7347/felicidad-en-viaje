@@ -261,7 +261,9 @@ export function ArchipelagoApp() {
 
 
   // ── Medición: app_opened + return_visit (una vez por carga con sesión) ──
-  const appOpenedLoggedRef = useRef(false);
+  // `appOpenedLoggedRef` se declara arriba (junto a `lastUidRef`) para
+  // reiniciarse cuando cambia el usuario.
+
   useEffect(() => {
     if (appOpenedLoggedRef.current) return;
     if (!session?.user.id) return;
