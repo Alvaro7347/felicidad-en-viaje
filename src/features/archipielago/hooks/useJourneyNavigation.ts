@@ -42,8 +42,6 @@ export interface UseJourneyNavigationArgs {
 }
 
 export interface JourneyNavigation {
-  /** Devuelve la pantalla de destino de un lessonId, o null si no aplica. */
-  resolveScreenForLesson: (lessonId: string) => Screen | null;
   /** Abre el dashboard según la modalidad (self → self-journey, parent → parent-journey-dashboard). */
   goHome: () => void;
   /** Abre RouteScreen preservando journeyOrigin según la modalidad. */
@@ -63,6 +61,7 @@ export interface JourneyNavigation {
   /** Muestra el modal de isla bloqueada y registra el evento. */
   openLockedIsland: (islandId: string) => void;
 }
+
 
 export function useJourneyNavigation(args: UseJourneyNavigationArgs): JourneyNavigation {
   const {
