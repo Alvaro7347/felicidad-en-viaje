@@ -136,7 +136,7 @@ export function DiscussionPostForm({ onSubmit, isSubmitting, errorCode }: Props)
         rows={4}
         maxLength={MAX_LEN}
         disabled={isSubmitting}
-        aria-describedby={counterId}
+        aria-describedby={visibleError ? `${counterId} ${errorId}` : counterId}
         aria-invalid={overLimit || tooShort ? true : undefined}
         style={{
           width: "100%",
