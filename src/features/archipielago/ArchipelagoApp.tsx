@@ -202,182 +202,50 @@ export function ArchipelagoApp() {
   }, [session?.user.id]);
 
 
-  // ── Detección de modalidad + estado inicial (Supabase como fuente) ─
-  // Regla:
-  //  1) Si profiles.experience_mode tiene valor → respetarlo SIEMPRE.
-  //  2) Si es null → inferir usando SOLO parent_journeys/user_onboarding del
-  //     MISMO user_id. Nunca usar cachés globales de otra cuenta.
-  //  3) Caso ambiguo (ambas tablas + mode=null) → estado neutro, no elegir.
+  // ── Bootstrap del viaje (extraído a useJourneyBootstrap) ──────
+  // Determina modalidad, repara experience_mode y elige la pantalla inicial.
+  const bootstrap = useJourneyBootstrap({
+    userId: session?.user.id ?? null,
+    experience,
+    progress,
+  });
+
+  // Sincronización una única vez por corrida del bootstrap: cuando `ready`
+  // cambia de identidad, seedeamos el estado local. Evita loops porque el
+  // hook produce una nueva referencia SÓLO al terminar cada corrida.
+  const lastReadyRef = useRef<typeof bootstrap.ready>(null);
   useEffect(() => {
-    const uid = session?.user.id;
-    if (!uid) {
-      setHasOnboarding(null);
+    if (bootstrap.status === "ambiguous") {
+      lastReadyRef.current = null;
+      setAmbiguousMode(true);
+      setParentJourneyLoadError(null);
       return;
     }
-    if (experience.loading) return;
-    let cancelled = false;
-    setOnboardingChecking(true);
-    setParentJourneyLoadError(null);
+    if (bootstrap.status === "error") {
+      lastReadyRef.current = null;
+      setParentJourneyLoadError(bootstrap.error);
+      return;
+    }
+    if (bootstrap.status !== "ready" || !bootstrap.ready) return;
+    if (lastReadyRef.current === bootstrap.ready) return;
+    lastReadyRef.current = bootstrap.ready;
+    const r = bootstrap.ready;
     setAmbiguousMode(false);
+    setParentJourneyLoadError(null);
+    setHasOnboarding(r.hasOnboarding);
+    setUserName(r.userName);
+    setJourneyOrigin(r.journeyOrigin);
+    setRouteStudentName(r.studentName);
+    if (r.parentJourneyAnswers !== undefined) {
+      setParentJourneyAnswers(r.parentJourneyAnswers);
+    }
+    setScreen(r.initialScreen);
+  }, [bootstrap.status, bootstrap.ready, bootstrap.error]);
 
-    (async () => {
-      // Consultar SIEMPRE ambas tablas: la existencia real de datos manda
-      // sobre profiles.experience_mode.
-      let cfg;
-      try {
-        cfg = await getJourneyConfiguration(uid);
-      } catch {
-        if (cancelled) return;
-        setParentJourneyLoadError("No pudimos cargar tu viaje. Revisa tu conexión y reintenta.");
-        setOnboardingChecking(false);
-        return;
-      }
-      if (cancelled) return;
+  const onboardingChecking =
+    !!session && (bootstrap.status === "loading" || bootstrap.status === "idle");
 
-      const hasPJ = cfg.hasParentJourney;
-      const hasOnb = cfg.hasUserOnboarding;
-      const persisted = experience.mode;
 
-      // Caso C: ninguna tabla real → cuenta no configurada.
-      // Si hay un experience_mode "fantasma", limpiarlo y volver al selector.
-      if (!hasPJ && !hasOnb) {
-        if (persisted) {
-          progress.logEvent("experience_mode_cleared_phantom", {
-            user_id: uid,
-            persisted_mode: persisted,
-            event_reason: "no_real_onboarding_data",
-          });
-          try {
-            await experience.clearMode();
-          } catch (e) {
-            console.error("[experience_mode] clearMode falló:", e);
-            setParentJourneyLoadError("No pudimos actualizar tu configuración. Intenta nuevamente.");
-            setOnboardingChecking(false);
-            return;
-          }
-        }
-        setHasOnboarding(false);
-        setScreen("onboarding");
-        setOnboardingChecking(false);
-        return;
-      }
-
-      // Caso D: ambas tablas → ambiguo. Respetar persisted si es válido; si no, bloquear.
-      let mode: typeof persisted = persisted;
-      if (hasPJ && hasOnb) {
-        progress.logEvent("experience_mode_ambiguous", {
-          user_id: uid,
-          persisted_mode: persisted,
-          has_parent_journey: true,
-          has_user_onboarding: true,
-        });
-        if (!persisted) {
-          setAmbiguousMode(true);
-          setOnboardingChecking(false);
-          return;
-        }
-      } else if (hasPJ) {
-        mode = "accompanied_learning";
-        if (persisted !== "accompanied_learning") {
-          try {
-            await experience.setMode("accompanied_learning", { allowOverride: true });
-            progress.logEvent("experience_mode_repaired", {
-              user_id: uid,
-              resolved_mode: "accompanied_learning",
-              event_reason: "inferred_from_parent_journeys",
-            });
-          } catch (e) {
-            console.error("[experience_mode] repair accompanied falló:", e);
-            setParentJourneyLoadError("No pudimos actualizar tu configuración. Intenta nuevamente.");
-            setOnboardingChecking(false);
-            return;
-          }
-        }
-      } else if (hasOnb) {
-        mode = "self_learning";
-        if (persisted !== "self_learning") {
-          try {
-            await experience.setMode("self_learning", { allowOverride: true });
-            progress.logEvent("experience_mode_repaired", {
-              user_id: uid,
-              resolved_mode: "self_learning",
-              event_reason: "inferred_from_user_onboarding",
-            });
-          } catch (e) {
-            console.error("[experience_mode] repair self falló:", e);
-            setParentJourneyLoadError("No pudimos actualizar tu configuración. Intenta nuevamente.");
-            setOnboardingChecking(false);
-            return;
-          }
-        }
-      }
-      if (cancelled) return;
-
-      // ── Modalidad ACOMPAÑADA (María José) ─────────────────────
-      if (mode === "accompanied_learning") {
-        let pj;
-        try {
-          pj = await loadParentJourney(uid);
-        } catch {
-          if (cancelled) return;
-          setParentJourneyLoadError("No pudimos cargar el viaje de acompañamiento. Intenta recargar.");
-          setOnboardingChecking(false);
-          return;
-        }
-        if (cancelled) return;
-        if (pj) {
-          const answers = pj.onboarding_answers;
-          if (answers) setParentJourneyAnswers(answers);
-          const studentName = pj.student_name ?? answers?.student.name ?? "Lucía";
-          const parentName = pj.parent_name ?? answers?.parent.name ?? "";
-          setRouteStudentName(studentName);
-          setUserName(parentName || "Navegante");
-          setJourneyOrigin("parent");
-          setHasOnboarding(true);
-          setScreen("parent-journey-dashboard");
-        } else {
-          setHasOnboarding(false);
-          setScreen("parent-journey-intro");
-        }
-        setOnboardingChecking(false);
-        return;
-      }
-
-      // ── Modalidad PERSONAL (Alejandra) ───────────────────────
-      let onb;
-      try {
-        onb = await loadSelfOnboarding(uid);
-      } catch {
-        if (cancelled) return;
-        setParentJourneyLoadError("No pudimos cargar tu viaje. Revisa tu conexión y reintenta.");
-        setOnboardingChecking(false);
-        return;
-      }
-      if (cancelled) return;
-      if (onb) {
-        let name = onb.name ?? "";
-        if (!name) {
-          try {
-            const prof = await loadProfile(uid);
-            if (cancelled) return;
-            name = prof?.name ?? "Navegante";
-          } catch {
-            if (cancelled) return;
-            name = "Navegante";
-          }
-        }
-        setUserName(name || "Navegante");
-        setJourneyOrigin("student");
-        setHasOnboarding(true);
-        setScreen("return-welcome");
-      } else {
-        setHasOnboarding(false);
-        setScreen("diagnosis");
-      }
-      setOnboardingChecking(false);
-    })();
-    return () => { cancelled = true; };
-  }, [session?.user.id, experience.loading, experience.mode]);
 
 
   // ── Medición: app_opened + return_visit (una vez por carga con sesión) ──
