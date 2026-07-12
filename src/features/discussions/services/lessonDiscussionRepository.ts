@@ -252,9 +252,7 @@ function normalizePost(row: RawPostRow, currentUserId: string | null): LessonDis
  * tiene una publicación **visible y activa** (deleted_at IS NULL AND
  * is_hidden = false), lo que refleja el nuevo índice único parcial.
  */
-export async function listLessonDiscussion(
-  lessonId: string,
-): Promise<LessonDiscussionResult> {
+export async function listLessonDiscussion(lessonId: string): Promise<LessonDiscussionResult> {
   const safeLessonId = assertLessonId(lessonId);
   const currentUserId = await resolveCurrentUserId();
 
@@ -321,7 +319,9 @@ export async function listLessonDiscussion(
  * Crea una nueva publicación (pregunta o comentario) firmada por el usuario
  * autenticado. El `author_display_name` real lo calcula el servidor.
  */
-export async function createLessonPost(input: CreateLessonPostInput): Promise<LessonDiscussionPost> {
+export async function createLessonPost(
+  input: CreateLessonPostInput,
+): Promise<LessonDiscussionPost> {
   const userId = await requireUserId();
   const lessonId = assertLessonId(input.lessonId);
   const content = assertContent(input.postType, input.content);
@@ -352,10 +352,7 @@ export async function createLessonPost(input: CreateLessonPostInput): Promise<Le
   }
 
   const row = data as unknown as Omit<RawPostRow, "replies" | "reactions">;
-  return normalizePost(
-    { ...row, replies: [], reactions: [] } as RawPostRow,
-    userId,
-  );
+  return normalizePost({ ...row, replies: [], reactions: [] } as RawPostRow, userId);
 }
 
 /**
@@ -371,7 +368,11 @@ export async function softDeleteOwnPost(postId: string): Promise<void> {
   const { error } = await supabase.rpc("soft_delete_own_post", { _post_id: postId });
   if (error) {
     const message = (error.message ?? "").toLowerCase();
-    if (message.includes("not found") || message.includes("not owned") || message.includes("already deleted")) {
+    if (
+      message.includes("not found") ||
+      message.includes("not owned") ||
+      message.includes("already deleted")
+    ) {
       throw new LessonDiscussionError(
         "post_not_visible",
         "La publicación ya no está disponible.",
