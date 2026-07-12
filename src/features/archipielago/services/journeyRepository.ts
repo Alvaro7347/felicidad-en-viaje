@@ -12,7 +12,7 @@
 
 import { supabase } from "@/integrations/supabase/client";
 import type { DiagAnswers } from "../types";
-import type { ParentOnboardingAnswers } from "@/features/parent-journey/screens/ParentOnboardingScreen";
+import type { ParentOnboardingAnswers } from "@/features/parent-journey/types";
 
 // ── Tipos de retorno ──────────────────────────────────────────────
 
