@@ -2,7 +2,7 @@ import { useEffect, useRef, useState } from "react";
 import { B } from "../data/brand";
 import type { Screen } from "../types";
 import { ONBOARDING_SCREENS } from "../data/screens";
-import { ROUTE_STAGES } from "../data/islands";
+
 import { useExperienceMode } from "../context/ExperienceModeContext";
 import { useMvp1ProgressContext } from "../context/Mvp1ProgressContext";
 import { getIslandProgress } from "../utils/islandProgress";
