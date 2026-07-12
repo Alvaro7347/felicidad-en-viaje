@@ -46,7 +46,11 @@ export type CreateLessonPostInput = {
 /** Resultado de la carga de discusión de una clase. */
 export type LessonDiscussionResult = {
   posts: LessonDiscussionPost[];
-  /** Si el usuario autenticado ya tiene una publicación activa en esta clase. */
+  /**
+   * Verdadero cuando el usuario autenticado tiene una publicación
+   * **visible y activa** en esta clase (deleted_at IS NULL AND is_hidden = false).
+   * Un post soft-deleted o oculto por moderación NO cuenta como activo.
+   */
   currentUserHasActivePost: boolean;
 };
 

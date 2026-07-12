@@ -26,10 +26,10 @@
 
 import { supabase } from "@/integrations/supabase/client";
 import type { PostgrestError } from "@supabase/supabase-js";
+import { MVP1_LESSON_IDS } from "@/features/archipielago/data/mvp1Progress";
 import type {
   CreateLessonPostInput,
   DiscussionPostType,
-  LessonDiscussionErrorCode,
   LessonDiscussionPost,
   LessonDiscussionReply,
   LessonDiscussionResult,
@@ -40,8 +40,13 @@ import { LessonDiscussionError } from "../types";
 
 const MAX_VISIBLE_POSTS = 20;
 const MIN_CONTENT_LENGTH = 3;
-const MAX_CONTENT_QUESTION = 1000;
-const MAX_CONTENT_COMMENT = 2000;
+// Alineado con el CHECK `posts_content_len` de la DB (3..1000 para todo post
+// principal). Los 2000 caracteres corresponden a `replies` oficiales futuras.
+const MAX_POST_CONTENT_LENGTH = 1000;
+
+// Set con los lesson_id válidos del MVP1 (misma fuente que el catálogo
+// pedagógico). La DB sigue siendo la autoridad final vía CHECK.
+const VALID_LESSON_IDS = new Set<string>(MVP1_LESSON_IDS);
 
 // Valor técnico enviado al INSERT: el trigger de servidor SIEMPRE lo
 // sobrescribe con el primer nombre real (o el fallback correspondiente),
@@ -65,8 +70,10 @@ async function requireUserId(): Promise<string> {
 function mapPgError(error: PostgrestError | null): LessonDiscussionError | null {
   if (!error) return null;
   // 23505 = unique_violation; 23503 = fk_violation; 23514 = check_violation;
-  // 42501 = insufficient_privilege; 42P17 = infinite recursion (RLS).
+  // 42501 = insufficient_privilege; 22P02 = invalid_text_representation (enum).
   const code = error.code ?? "";
+  const detail = `${error.message ?? ""} ${error.details ?? ""}`.toLowerCase();
+
   if (code === "23505") {
     return new LessonDiscussionError(
       "duplicate_active_post",
@@ -75,9 +82,31 @@ function mapPgError(error: PostgrestError | null): LessonDiscussionError | null 
     );
   }
   if (code === "23514") {
+    // Distinguir por nombre de la constraint (aparece en message/details).
+    if (detail.includes("posts_lesson_id_valid")) {
+      return new LessonDiscussionError(
+        "invalid_lesson",
+        "La clase indicada no pertenece al catálogo MVP1.",
+        error,
+      );
+    }
+    if (detail.includes("posts_content_len")) {
+      return new LessonDiscussionError(
+        "invalid_content",
+        "El contenido debe tener entre 3 y 1000 caracteres.",
+        error,
+      );
+    }
+    if (detail.includes("posts_post_type")) {
+      return new LessonDiscussionError(
+        "invalid_content",
+        "Tipo de publicación no permitido.",
+        error,
+      );
+    }
     return new LessonDiscussionError(
       "invalid_content",
-      "El contenido no cumple con los requisitos mínimos.",
+      "El contenido no cumple con las reglas de la clase.",
       error,
     );
   }
@@ -85,6 +114,13 @@ function mapPgError(error: PostgrestError | null): LessonDiscussionError | null 
     return new LessonDiscussionError(
       "invalid_lesson",
       "La clase indicada no existe o no es válida.",
+      error,
+    );
+  }
+  if (code === "22P02") {
+    return new LessonDiscussionError(
+      "invalid_content",
+      "Valor no aceptado por el servidor.",
       error,
     );
   }
@@ -103,7 +139,7 @@ function mapPgError(error: PostgrestError | null): LessonDiscussionError | null 
   );
 }
 
-function assertContent(postType: DiscussionPostType, raw: string): string {
+function assertContent(_postType: DiscussionPostType, raw: string): string {
   const trimmed = raw.trim();
   if (trimmed.length < MIN_CONTENT_LENGTH) {
     throw new LessonDiscussionError(
@@ -111,11 +147,10 @@ function assertContent(postType: DiscussionPostType, raw: string): string {
       "El contenido debe tener al menos 3 caracteres.",
     );
   }
-  const max = postType === "question" ? MAX_CONTENT_QUESTION : MAX_CONTENT_COMMENT;
-  if (trimmed.length > max) {
+  if (trimmed.length > MAX_POST_CONTENT_LENGTH) {
     throw new LessonDiscussionError(
       "invalid_content",
-      `El contenido supera el máximo de ${max} caracteres.`,
+      `El contenido supera el máximo de ${MAX_POST_CONTENT_LENGTH} caracteres.`,
     );
   }
   return trimmed;
@@ -126,7 +161,22 @@ function assertLessonId(lessonId: string): string {
   if (!value) {
     throw new LessonDiscussionError("invalid_lesson", "Clase no especificada.");
   }
+  if (!VALID_LESSON_IDS.has(value)) {
+    throw new LessonDiscussionError(
+      "invalid_lesson",
+      "La clase indicada no pertenece al catálogo MVP1.",
+    );
+  }
   return value;
+}
+
+/**
+ * Resuelve el usuario autenticado sin lanzar. Útil para lecturas: si no hay
+ * sesión, las banderas dependientes del usuario se calculan como `false`.
+ */
+async function resolveCurrentUserId(): Promise<string | null> {
+  const { data } = await supabase.auth.getUser();
+  return data?.user?.id ?? null;
 }
 
 // ── Tipos internos de la fila cruda de Supabase ───────────────────
@@ -193,19 +243,18 @@ function normalizePost(row: RawPostRow, currentUserId: string | null): LessonDis
 /**
  * Carga la discusión visible de una clase.
  *
- * @param lessonId Identificador de la clase (validado también por CHECK en DB).
- * @param currentUserId Identidad conocida (para banderas de UI). Puede ser
- * `null` si aún no hay sesión resuelta. Nunca se usa para escrituras.
+ * Resuelve la identidad del usuario autenticado internamente (no la recibe
+ * como argumento) para calcular `hasCurrentUserReacted`, `isCurrentUserAuthor`
+ * y `currentUserHasActivePost`. Si no hay sesión, esas banderas son `false`.
  *
  * Estrategia: 2 consultas máximo. Una con relaciones anidadas para los posts,
- * respuestas oficiales y aplausos; otra corta para saber si el usuario tiene
- * una publicación activa (usada por la UI para bloquear el formulario).
+ * respuestas oficiales y aplausos; otra corta para determinar si el usuario
+ * tiene una publicación **visible y activa** (deleted_at IS NULL AND
+ * is_hidden = false), lo que refleja el nuevo índice único parcial.
  */
-export async function listLessonDiscussion(
-  lessonId: string,
-  currentUserId: string | null,
-): Promise<LessonDiscussionResult> {
+export async function listLessonDiscussion(lessonId: string): Promise<LessonDiscussionResult> {
   const safeLessonId = assertLessonId(lessonId);
+  const currentUserId = await resolveCurrentUserId();
 
   const postsQuery = supabase
     .from("lesson_discussion_posts")
@@ -234,6 +283,7 @@ export async function listLessonDiscussion(
         .eq("lesson_id", safeLessonId)
         .eq("user_id", currentUserId)
         .is("deleted_at", null)
+        .eq("is_hidden", false)
         .limit(1)
         .maybeSingle()
     : Promise.resolve({ data: null, error: null } as {
@@ -269,7 +319,9 @@ export async function listLessonDiscussion(
  * Crea una nueva publicación (pregunta o comentario) firmada por el usuario
  * autenticado. El `author_display_name` real lo calcula el servidor.
  */
-export async function createLessonPost(input: CreateLessonPostInput): Promise<LessonDiscussionPost> {
+export async function createLessonPost(
+  input: CreateLessonPostInput,
+): Promise<LessonDiscussionPost> {
   const userId = await requireUserId();
   const lessonId = assertLessonId(input.lessonId);
   const content = assertContent(input.postType, input.content);
@@ -300,10 +352,7 @@ export async function createLessonPost(input: CreateLessonPostInput): Promise<Le
   }
 
   const row = data as unknown as Omit<RawPostRow, "replies" | "reactions">;
-  return normalizePost(
-    { ...row, replies: [], reactions: [] } as RawPostRow,
-    userId,
-  );
+  return normalizePost({ ...row, replies: [], reactions: [] } as RawPostRow, userId);
 }
 
 /**
@@ -319,7 +368,11 @@ export async function softDeleteOwnPost(postId: string): Promise<void> {
   const { error } = await supabase.rpc("soft_delete_own_post", { _post_id: postId });
   if (error) {
     const message = (error.message ?? "").toLowerCase();
-    if (message.includes("not found") || message.includes("not owned") || message.includes("already deleted")) {
+    if (
+      message.includes("not found") ||
+      message.includes("not owned") ||
+      message.includes("already deleted")
+    ) {
       throw new LessonDiscussionError(
         "post_not_visible",
         "La publicación ya no está disponible.",
