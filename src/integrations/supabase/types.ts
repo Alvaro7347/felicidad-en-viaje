@@ -395,6 +395,7 @@ export type Database = {
       }
       is_soundkeleles_team: { Args: never; Returns: boolean }
       reaction_post_visible: { Args: { _post_id: string }; Returns: boolean }
+      soft_delete_own_post: { Args: { _post_id: string }; Returns: undefined }
     }
     Enums: {
       app_role: "soundkeleles_team"
