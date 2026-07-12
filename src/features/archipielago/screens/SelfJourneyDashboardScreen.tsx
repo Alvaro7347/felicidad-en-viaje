@@ -1,4 +1,5 @@
 import type { CSSProperties } from "react";
+import { B } from "../data/brand";
 import { Btn } from "../components/Btn";
 import { useMvp1ProgressContext } from "../context/Mvp1ProgressContext";
 import {
