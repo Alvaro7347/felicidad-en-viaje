@@ -48,6 +48,7 @@ import { OnboardingScreen } from "./screens/OnboardingScreen";
 import { RouteScreen } from "./screens/RouteScreen";
 import { WelcomeScreen } from "./screens/WelcomeScreen";
 import { ReturnWelcomeScreen } from "./screens/ReturnWelcomeScreen";
+import { SelfJourneyDashboardScreen } from "./screens/SelfJourneyDashboardScreen";
 import { getJourneyLearnerName } from "./utils/learnerName";
 import { MyProfileScreen } from "./screens/MyProfileScreen";
 import { HelpCenterScreen } from "./screens/HelpCenterScreen";
@@ -407,8 +408,22 @@ export function ArchipelagoApp() {
     if (experience.mode === "accompanied_learning") {
       setScreen("parent-journey-dashboard");
     } else {
-      goToRoute();
+      // Alejandra (self_learning): "Mi viaje" es el nuevo dashboard personal,
+      // no el Archipiélago pedagógico.
+      setScreen("self-journey");
     }
+  };
+
+  // Continuar desde SelfJourneyDashboardScreen: usa la lógica existente
+  // (openMissionGuarded / openLessonGuarded) para respetar bloqueos.
+  const continueSelfJourney = (lessonId: string | null) => {
+    if (progress.loading) return;
+    const cur = lessonId ?? progress.getCurrentLessonId();
+    if (!cur) { setScreen("route"); return; }
+    if (cur.startsWith("n")) { openMissionGuarded(cur); return; }
+    if (cur.startsWith("m")) { openLessonGuarded(cur, "first-melodies-lesson", setFirstMelodiesLessonId); return; }
+    if (cur.startsWith("p")) { openLessonGuarded(cur, "pulse-lesson", setPulseLessonId); return; }
+    setScreen("route");
   };
   const isOnboarding = ONBOARDING_SCREENS.includes(screen);
 
