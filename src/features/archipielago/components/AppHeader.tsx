@@ -264,7 +264,7 @@ export function AppHeader({
           </div>
           <div style={{ fontSize: 11.5, color: B.grayText, marginTop: 2, lineHeight: 1.3, whiteSpace: 'nowrap', overflow: 'hidden', textOverflow: 'ellipsis' }}>
             {title}
-            {!isMenuScreen && !isIslandOverride && (
+            {!isMenuScreen && islandId && (
               <> · <span style={{ color: B.greenDark, fontWeight: 700 }}>{pct}% {completionText}</span></>
             )}
           </div>
