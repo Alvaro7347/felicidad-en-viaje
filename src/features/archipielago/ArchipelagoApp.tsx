@@ -181,6 +181,10 @@ export function ArchipelagoApp() {
   // ── Aislamiento entre sesiones: al cambiar user_id, limpiar estado local
   //    para que la nueva cuenta nunca vea datos de la anterior.
   const lastUidRef = useRef<string | null>(null);
+  // Telemetría: `app_opened` se registra una vez por usuario. Se declara aquí
+  // (antes del effect de cambio de UID) para reiniciarlo en logout/login.
+  const appOpenedLoggedRef = useRef(false);
+
   useEffect(() => {
     const uid = session?.user.id ?? null;
     if (lastUidRef.current !== uid) {
@@ -198,8 +202,12 @@ export function ArchipelagoApp() {
       setDiagnosisSaveError(null);
       setPendingDiagnosis(null);
       setScreen("welcome");
+      // Reiniciar telemetría por cuenta: app_opened debe registrarse una vez
+      // por usuario, incluso tras logout + login con otra cuenta.
+      appOpenedLoggedRef.current = false;
     }
   }, [session?.user.id]);
+
 
 
   // ── Bootstrap del viaje (extraído a useJourneyBootstrap) ──────
@@ -253,7 +261,9 @@ export function ArchipelagoApp() {
 
 
   // ── Medición: app_opened + return_visit (una vez por carga con sesión) ──
-  const appOpenedLoggedRef = useRef(false);
+  // `appOpenedLoggedRef` se declara arriba (junto a `lastUidRef`) para
+  // reiniciarse cuando cambia el usuario.
+
   useEffect(() => {
     if (appOpenedLoggedRef.current) return;
     if (!session?.user.id) return;
@@ -367,6 +377,68 @@ export function ArchipelagoApp() {
       </main>
     );
   }
+  // Compuerta bloqueante: si el bootstrap falló, no dejar pasar ninguna
+  // pantalla normal detrás (Welcome, Onboarding, etc.). Reutiliza el estilo
+  // del estado ambiguo.
+  if (session && bootstrap.status === "error") {
+    return (
+      <main
+        style={{
+          minHeight: "100vh",
+          background: B.gray,
+          color: B.dark,
+          fontFamily: "Quicksand, Arial, sans-serif",
+          display: "flex",
+          alignItems: "center",
+          justifyContent: "center",
+          padding: 24,
+        }}
+      >
+        <div style={{ maxWidth: 420, textAlign: "center", display: "flex", flexDirection: "column", gap: 14 }}>
+          <div style={{ fontFamily: "Space Grotesk, sans-serif", fontWeight: 800, fontSize: 20, color: B.dark }}>
+            No pudimos preparar tu viaje
+          </div>
+          <div style={{ fontSize: 14, color: B.grayText, lineHeight: 1.55 }}>
+            {bootstrap.error ?? "Ocurrió un problema al cargar tu configuración."}
+          </div>
+          <button
+            type="button"
+            onClick={() => bootstrap.retry()}
+            style={{
+              alignSelf: "center",
+              border: "none",
+              background: B.green,
+              color: B.dark,
+              fontFamily: "Space Grotesk, sans-serif",
+              fontWeight: 800,
+              fontSize: 14,
+              borderRadius: 12,
+              padding: "10px 18px",
+              cursor: "pointer",
+            }}
+          >
+            Reintentar
+          </button>
+          <button
+            type="button"
+            onClick={() => { void experience.signOutAndClear(); }}
+            style={{
+              alignSelf: "center",
+              border: "none",
+              background: "transparent",
+              color: B.grayText,
+              fontSize: 13,
+              textDecoration: "underline",
+              cursor: "pointer",
+            }}
+          >
+            Cerrar sesión
+          </button>
+        </div>
+      </main>
+    );
+  }
+
   if (authChecking || experience.loading || (session && bootstrapChecking)) {
     return (
       <main
@@ -508,11 +580,9 @@ export function ArchipelagoApp() {
           return (
             <ParentJourneyIntroScreen
               onCreate={() => setScreen("parent-onboarding")}
-              onOpenDashboard={
-                hasOnboarding ? () => setScreen("parent-journey-dashboard") : undefined
-              }
             />
           );
+
         })()}
 
         {screen === "parent-onboarding" && (
