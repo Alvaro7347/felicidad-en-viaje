@@ -10,36 +10,13 @@ import {
 } from "../data/mvp1Progress";
 import { getIslandProgress } from "../utils/islandProgress";
 import { LEARNING_OUTCOMES } from "../data/learningOutcomes";
+import { ISLAND_ORDER, ISLAND_TITLES } from "../data/journeyCatalog";
 
 interface Props {
   userName: string;
   onContinue: (nextLessonId: string | null) => void;
   onReview: () => void;
 }
-
-const ISLAND_ORDER: IslandId[] = [
-  "start-port",
-  "first-melodies",
-  "pulse",
-  "rhythm",
-  "music",
-  "joy",
-  "chords",
-  "strumming",
-  "songs",
-];
-
-const ISLAND_TITLES: Record<IslandId, string> = {
-  "start-port": "Puerto de Inicio",
-  "first-melodies": "Isla de Primeras Melodías",
-  "pulse": "Isla del Pulso",
-  "rhythm": "Isla del Ritmo",
-  "music": "Isla Musical",
-  "joy": "Isla de la Alegría",
-  "chords": "Isla de los Acordes",
-  "strumming": "Isla del Rasgueo",
-  "songs": "Isla de las Canciones",
-};
 
 const CARD: CSSProperties = {
   background: "#FFFFFF",
