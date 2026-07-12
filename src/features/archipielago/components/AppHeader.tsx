@@ -193,9 +193,9 @@ export function AppHeader({
   const isOnboarding = ONBOARDING_SCREENS.includes(screen);
   if (screen === 'onboarding' || screen === 'welcome' || screen === 'diagnosis' || screen === 'diagnosis-result') return null;
 
-  const modernHeaderScreens: Screen[] = ['route', 'mission', 'mission-guide', 'mission-two', 'mission-three', 'mission-four', 'mission-six', 'mission-seven', 'mission-eight', 'mission-nine', 'celebration', 'first-melodies-island', 'first-melodies-lesson', 'pulse-island', 'pulse-lesson', 'rhythm-island', 'rhythm-lesson', 'music-island', 'music-lesson', 'joy-island', 'joy-lesson', 'chords-island', 'chords-lesson', 'strumming-island', 'strumming-lesson', 'songs-island', 'songs-lesson', 'my-profile', 'help-center', 'privacy'];
+  const modernHeaderScreens: Screen[] = ['route', 'self-journey', 'mission', 'mission-guide', 'mission-two', 'mission-three', 'mission-four', 'mission-six', 'mission-seven', 'mission-eight', 'mission-nine', 'celebration', 'first-melodies-island', 'first-melodies-lesson', 'pulse-island', 'pulse-lesson', 'rhythm-island', 'rhythm-lesson', 'music-island', 'music-lesson', 'joy-island', 'joy-lesson', 'chords-island', 'chords-lesson', 'strumming-island', 'strumming-lesson', 'songs-island', 'songs-lesson', 'my-profile', 'help-center', 'privacy'];
   if (modernHeaderScreens.includes(screen)) {
-    const isMenuScreen = screen === 'my-profile' || screen === 'help-center' || screen === 'privacy';
+    const isMenuScreen = screen === 'my-profile' || screen === 'help-center' || screen === 'privacy' || screen === 'self-journey';
     const islandId = SCREEN_TO_ISLAND[screen];
     const islandTitles: Record<IslandId, string> = {
       'start-port': 'Puerto de Inicio',
@@ -210,7 +210,10 @@ export function AppHeader({
     };
     const pct = !isMenuScreen && islandId ? getIslandProgress(progress, islandId).pct : 0;
     const title = isMenuScreen
-      ? (screen === 'my-profile' ? 'Mi perfil' : screen === 'help-center' ? 'Centro de ayuda' : 'Privacidad y seguridad')
+      ? (screen === 'my-profile' ? 'Mi perfil'
+        : screen === 'help-center' ? 'Centro de ayuda'
+        : screen === 'privacy' ? 'Privacidad y seguridad'
+        : 'Mi viaje')
       : islandId
       ? islandTitles[islandId]
       : '';
