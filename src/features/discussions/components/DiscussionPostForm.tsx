@@ -111,7 +111,7 @@ export function DiscussionPostForm({ onSubmit, isSubmitting, errorCode }: Props)
         display: "grid",
         gap: 12,
       }}
-      aria-describedby={visibleError ? errorId : undefined}
+      aria-describedby={visibleError ? `${counterId} ${errorId}` : counterId}
     >
       <div
         role="radiogroup"
