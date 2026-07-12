@@ -10,7 +10,7 @@ import { BlockedIslandModal } from "./components/BlockedIslandModal";
 import { useMvp1ProgressContext } from "./context/Mvp1ProgressContext";
 import { useExperienceMode } from "./context/ExperienceModeContext";
 import { findMvp1Lesson } from "./data/mvp1Progress";
-import { ISLAND_TO_ISLAND_SCREEN } from "./data/journeyCatalog";
+
 import { useJourneyNavigation } from "./hooks/useJourneyNavigation";
 import {
   getJourneyConfiguration,
@@ -413,8 +413,10 @@ export function ArchipelagoApp() {
     openMission,
     openLesson,
     continueJourney,
+    openIsland,
     openLockedIsland,
   } = useJourneyNavigation({
+
     progress,
     experienceMode: experience.mode,
     setScreen,
@@ -616,11 +618,12 @@ export function ArchipelagoApp() {
               if (progress.loading) return;
               const cur = progress.getCurrentLessonId();
               // cur === null → completó todo MVP1 (hasta p11). Mostrar Isla del Pulso.
-              if (!cur) { setScreen("pulse-island"); return; }
+              if (!cur) { openIsland("pulse"); return; }
               const island = findMvp1Lesson(cur)?.islandId;
-              if (!island || island === "start-port") { setScreen("route"); return; }
-              setScreen(ISLAND_TO_ISLAND_SCREEN[island]);
+              if (!island) { openIsland("start-port"); return; }
+              openIsland(island);
             }}
+
           />
         )}
 
