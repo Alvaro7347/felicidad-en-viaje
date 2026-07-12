@@ -26,10 +26,10 @@
 
 import { supabase } from "@/integrations/supabase/client";
 import type { PostgrestError } from "@supabase/supabase-js";
+import { MVP1_LESSON_IDS } from "@/features/archipielago/data/mvp1Progress";
 import type {
   CreateLessonPostInput,
   DiscussionPostType,
-  LessonDiscussionErrorCode,
   LessonDiscussionPost,
   LessonDiscussionReply,
   LessonDiscussionResult,
@@ -40,8 +40,13 @@ import { LessonDiscussionError } from "../types";
 
 const MAX_VISIBLE_POSTS = 20;
 const MIN_CONTENT_LENGTH = 3;
-const MAX_CONTENT_QUESTION = 1000;
-const MAX_CONTENT_COMMENT = 2000;
+// Alineado con el CHECK `posts_content_len` de la DB (3..1000 para todo post
+// principal). Los 2000 caracteres corresponden a `replies` oficiales futuras.
+const MAX_POST_CONTENT_LENGTH = 1000;
+
+// Set con los lesson_id válidos del MVP1 (misma fuente que el catálogo
+// pedagógico). La DB sigue siendo la autoridad final vía CHECK.
+const VALID_LESSON_IDS = new Set<string>(MVP1_LESSON_IDS);
 
 // Valor técnico enviado al INSERT: el trigger de servidor SIEMPRE lo
 // sobrescribe con el primer nombre real (o el fallback correspondiente),
@@ -65,8 +70,10 @@ async function requireUserId(): Promise<string> {
 function mapPgError(error: PostgrestError | null): LessonDiscussionError | null {
   if (!error) return null;
   // 23505 = unique_violation; 23503 = fk_violation; 23514 = check_violation;
-  // 42501 = insufficient_privilege; 42P17 = infinite recursion (RLS).
+  // 42501 = insufficient_privilege; 22P02 = invalid_text_representation (enum).
   const code = error.code ?? "";
+  const detail = `${error.message ?? ""} ${error.details ?? ""}`.toLowerCase();
+
   if (code === "23505") {
     return new LessonDiscussionError(
       "duplicate_active_post",
@@ -75,9 +82,31 @@ function mapPgError(error: PostgrestError | null): LessonDiscussionError | null 
     );
   }
   if (code === "23514") {
+    // Distinguir por nombre de la constraint (aparece en message/details).
+    if (detail.includes("posts_lesson_id_valid")) {
+      return new LessonDiscussionError(
+        "invalid_lesson",
+        "La clase indicada no pertenece al catálogo MVP1.",
+        error,
+      );
+    }
+    if (detail.includes("posts_content_len")) {
+      return new LessonDiscussionError(
+        "invalid_content",
+        "El contenido debe tener entre 3 y 1000 caracteres.",
+        error,
+      );
+    }
+    if (detail.includes("posts_post_type")) {
+      return new LessonDiscussionError(
+        "invalid_content",
+        "Tipo de publicación no permitido.",
+        error,
+      );
+    }
     return new LessonDiscussionError(
       "invalid_content",
-      "El contenido no cumple con los requisitos mínimos.",
+      "El contenido no cumple con las reglas de la clase.",
       error,
     );
   }
@@ -85,6 +114,13 @@ function mapPgError(error: PostgrestError | null): LessonDiscussionError | null 
     return new LessonDiscussionError(
       "invalid_lesson",
       "La clase indicada no existe o no es válida.",
+      error,
+    );
+  }
+  if (code === "22P02") {
+    return new LessonDiscussionError(
+      "invalid_content",
+      "Valor no aceptado por el servidor.",
       error,
     );
   }
@@ -103,7 +139,7 @@ function mapPgError(error: PostgrestError | null): LessonDiscussionError | null 
   );
 }
 
-function assertContent(postType: DiscussionPostType, raw: string): string {
+function assertContent(_postType: DiscussionPostType, raw: string): string {
   const trimmed = raw.trim();
   if (trimmed.length < MIN_CONTENT_LENGTH) {
     throw new LessonDiscussionError(
@@ -111,11 +147,10 @@ function assertContent(postType: DiscussionPostType, raw: string): string {
       "El contenido debe tener al menos 3 caracteres.",
     );
   }
-  const max = postType === "question" ? MAX_CONTENT_QUESTION : MAX_CONTENT_COMMENT;
-  if (trimmed.length > max) {
+  if (trimmed.length > MAX_POST_CONTENT_LENGTH) {
     throw new LessonDiscussionError(
       "invalid_content",
-      `El contenido supera el máximo de ${max} caracteres.`,
+      `El contenido supera el máximo de ${MAX_POST_CONTENT_LENGTH} caracteres.`,
     );
   }
   return trimmed;
@@ -126,7 +161,22 @@ function assertLessonId(lessonId: string): string {
   if (!value) {
     throw new LessonDiscussionError("invalid_lesson", "Clase no especificada.");
   }
+  if (!VALID_LESSON_IDS.has(value)) {
+    throw new LessonDiscussionError(
+      "invalid_lesson",
+      "La clase indicada no pertenece al catálogo MVP1.",
+    );
+  }
   return value;
+}
+
+/**
+ * Resuelve el usuario autenticado sin lanzar. Útil para lecturas: si no hay
+ * sesión, las banderas dependientes del usuario se calculan como `false`.
+ */
+async function resolveCurrentUserId(): Promise<string | null> {
+  const { data } = await supabase.auth.getUser();
+  return data?.user?.id ?? null;
 }
 
 // ── Tipos internos de la fila cruda de Supabase ───────────────────
