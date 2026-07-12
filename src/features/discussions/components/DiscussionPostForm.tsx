@@ -134,9 +134,9 @@ export function DiscussionPostForm({ onSubmit, isSubmitting, errorCode }: Props)
         onChange={(e) => setContent(e.target.value)}
         placeholder={PLACEHOLDERS[postType]}
         rows={4}
-        maxLength={MAX_LEN + 100 /* soft; server enforces 1000 */}
+        maxLength={MAX_LEN}
         disabled={isSubmitting}
-        aria-describedby={counterId}
+        aria-describedby={visibleError ? `${counterId} ${errorId}` : counterId}
         aria-invalid={overLimit || tooShort ? true : undefined}
         style={{
           width: "100%",

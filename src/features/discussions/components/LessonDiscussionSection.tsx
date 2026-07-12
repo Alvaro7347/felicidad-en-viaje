@@ -1,7 +1,7 @@
 // Sección "Preguntas y comentarios de la clase".
 // Componente autónomo: recibe únicamente `lessonId` y resuelve todo por sí.
 // NO conoce progreso, navegación ni estado de finalización de clase.
-import { useState } from "react";
+import { useCallback, useEffect, useRef, useState } from "react";
 import { B } from "@/features/archipielago/data/brand";
 import { useLessonDiscussion } from "../hooks/useLessonDiscussion";
 import type { LessonDiscussionPost, LessonDiscussionErrorCode } from "../types";
@@ -24,22 +24,59 @@ function extractCode(err: unknown): LessonDiscussionErrorCode | null {
 
 export function LessonDiscussionSection({ lessonId }: LessonDiscussionSectionProps) {
   const d = useLessonDiscussion(lessonId);
-  const [applauseTargetId, setApplauseTargetId] = useState<string | null>(null);
+  const [pendingApplauseIds, setPendingApplauseIds] = useState<Set<string>>(
+    () => new Set(),
+  );
   const [successMsg, setSuccessMsg] = useState<string | null>(null);
+  const isMountedRef = useRef(true);
+  const successTimeoutRef = useRef<number | null>(null);
+
+  useEffect(() => {
+    isMountedRef.current = true;
+    return () => {
+      isMountedRef.current = false;
+      if (successTimeoutRef.current !== null) {
+        window.clearTimeout(successTimeoutRef.current);
+        successTimeoutRef.current = null;
+      }
+    };
+  }, []);
+
+  const scheduleSuccessClear = useCallback(() => {
+    if (successTimeoutRef.current !== null) {
+      window.clearTimeout(successTimeoutRef.current);
+    }
+    successTimeoutRef.current = window.setTimeout(() => {
+      successTimeoutRef.current = null;
+      if (isMountedRef.current) setSuccessMsg(null);
+    }, 4000);
+  }, []);
 
   const handleSubmit = async (input: { postType: "question" | "comment"; content: string }) => {
     setSuccessMsg(null);
     await d.createPost(input);
+    if (!isMountedRef.current) return;
     setSuccessMsg("Tu publicación fue enviada.");
-    window.setTimeout(() => setSuccessMsg(null), 4000);
+    scheduleSuccessClear();
   };
 
   const handleToggleApplause = (post: LessonDiscussionPost) => {
-    setApplauseTargetId(post.id);
+    // No permitir doble clic sobre el mismo post mientras esté pendiente.
+    if (pendingApplauseIds.has(post.id)) return;
+    setPendingApplauseIds((prev) => {
+      const next = new Set(prev);
+      next.add(post.id);
+      return next;
+    });
     const action = post.hasCurrentUserReacted ? d.removeApplause : d.addApplause;
     void action(post.id).finally(() => {
-      // Limpiar el target al terminar (éxito o error), pero solo si sigue siendo el mismo.
-      setApplauseTargetId((prev) => (prev === post.id ? null : prev));
+      if (!isMountedRef.current) return;
+      setPendingApplauseIds((prev) => {
+        if (!prev.has(post.id)) return prev;
+        const next = new Set(prev);
+        next.delete(post.id);
+        return next;
+      });
     });
   };
 
@@ -114,8 +151,7 @@ export function LessonDiscussionSection({ lessonId }: LessonDiscussionSectionPro
               <DiscussionPostItem
                 post={post}
                 onToggleApplause={handleToggleApplause}
-                isTogglingApplause={d.isTogglingApplause}
-                applauseTargetId={applauseTargetId}
+                isApplausePending={pendingApplauseIds.has(post.id)}
                 onDelete={handleDelete}
                 isDeleting={d.isDeletingPost}
                 deleteError={resolveDiscussionErrorMessage(extractCode(d.deleteOwnPostError))}
