@@ -343,25 +343,27 @@ export function ArchipelagoApp() {
       }
 
       // ── Modalidad PERSONAL (Alejandra) ───────────────────────
-      const { data: onb, error: onbError } = await supabase
-        .from("user_onboarding")
-        .select("answers")
-        .eq("user_id", uid)
-        .maybeSingle();
-      if (cancelled) return;
-      if (onbError) {
+      let onb;
+      try {
+        onb = await loadSelfOnboarding(uid);
+      } catch {
+        if (cancelled) return;
         setParentJourneyLoadError("No pudimos cargar tu viaje. Revisa tu conexión y reintenta.");
         setOnboardingChecking(false);
         return;
       }
+      if (cancelled) return;
       if (onb) {
-        const answers = (onb.answers ?? {}) as { name?: string; answers?: DiagAnswers };
-        let name = answers.name ?? "";
+        let name = onb.name ?? "";
         if (!name) {
-          const { data: prof } = await supabase
-            .from("profiles").select("name").eq("id", uid).maybeSingle();
-          if (cancelled) return;
-          name = prof?.name ?? "Navegante";
+          try {
+            const prof = await loadProfile(uid);
+            if (cancelled) return;
+            name = prof?.name ?? "Navegante";
+          } catch {
+            if (cancelled) return;
+            name = "Navegante";
+          }
         }
         setUserName(name || "Navegante");
         setJourneyOrigin("student");
