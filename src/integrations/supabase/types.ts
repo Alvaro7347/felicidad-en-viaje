@@ -68,6 +68,109 @@ export type Database = {
         }
         Relationships: []
       }
+      lesson_discussion_posts: {
+        Row: {
+          author_display_name: string
+          content: string
+          created_at: string
+          deleted_at: string | null
+          id: string
+          is_hidden: boolean
+          lesson_id: string
+          post_type: string
+          updated_at: string
+          user_id: string
+        }
+        Insert: {
+          author_display_name: string
+          content: string
+          created_at?: string
+          deleted_at?: string | null
+          id?: string
+          is_hidden?: boolean
+          lesson_id: string
+          post_type: string
+          updated_at?: string
+          user_id: string
+        }
+        Update: {
+          author_display_name?: string
+          content?: string
+          created_at?: string
+          deleted_at?: string | null
+          id?: string
+          is_hidden?: boolean
+          lesson_id?: string
+          post_type?: string
+          updated_at?: string
+          user_id?: string
+        }
+        Relationships: []
+      }
+      lesson_discussion_reactions: {
+        Row: {
+          created_at: string
+          post_id: string
+          user_id: string
+        }
+        Insert: {
+          created_at?: string
+          post_id: string
+          user_id: string
+        }
+        Update: {
+          created_at?: string
+          post_id?: string
+          user_id?: string
+        }
+        Relationships: [
+          {
+            foreignKeyName: "lesson_discussion_reactions_post_id_fkey"
+            columns: ["post_id"]
+            isOneToOne: false
+            referencedRelation: "lesson_discussion_posts"
+            referencedColumns: ["id"]
+          },
+        ]
+      }
+      lesson_discussion_replies: {
+        Row: {
+          content: string
+          created_at: string
+          id: string
+          is_hidden: boolean
+          post_id: string
+          updated_at: string
+          user_id: string
+        }
+        Insert: {
+          content: string
+          created_at?: string
+          id?: string
+          is_hidden?: boolean
+          post_id: string
+          updated_at?: string
+          user_id: string
+        }
+        Update: {
+          content?: string
+          created_at?: string
+          id?: string
+          is_hidden?: boolean
+          post_id?: string
+          updated_at?: string
+          user_id?: string
+        }
+        Relationships: [
+          {
+            foreignKeyName: "lesson_discussion_replies_post_id_fkey"
+            columns: ["post_id"]
+            isOneToOne: false
+            referencedRelation: "lesson_discussion_posts"
+            referencedColumns: ["id"]
+          },
+        ]
+      }
       lesson_progress: {
         Row: {
           completed_at: string | null
@@ -239,15 +342,45 @@ export type Database = {
         }
         Relationships: []
       }
+      user_roles: {
+        Row: {
+          created_at: string
+          id: string
+          role: Database["public"]["Enums"]["app_role"]
+          user_id: string
+        }
+        Insert: {
+          created_at?: string
+          id?: string
+          role: Database["public"]["Enums"]["app_role"]
+          user_id: string
+        }
+        Update: {
+          created_at?: string
+          id?: string
+          role?: Database["public"]["Enums"]["app_role"]
+          user_id?: string
+        }
+        Relationships: []
+      }
     }
     Views: {
       [_ in never]: never
     }
     Functions: {
-      [_ in never]: never
+      has_role: {
+        Args: {
+          _role: Database["public"]["Enums"]["app_role"]
+          _user_id: string
+        }
+        Returns: boolean
+      }
+      is_soundkeleles_team: { Args: never; Returns: boolean }
+      reaction_post_visible: { Args: { _post_id: string }; Returns: boolean }
+      soft_delete_own_post: { Args: { _post_id: string }; Returns: undefined }
     }
     Enums: {
-      [_ in never]: never
+      app_role: "soundkeleles_team"
     }
     CompositeTypes: {
       [_ in never]: never
@@ -374,6 +507,8 @@ export type CompositeTypes<
 
 export const Constants = {
   public: {
-    Enums: {},
+    Enums: {
+      app_role: ["soundkeleles_team"],
+    },
   },
 } as const
