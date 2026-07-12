@@ -243,19 +243,20 @@ function normalizePost(row: RawPostRow, currentUserId: string | null): LessonDis
 /**
  * Carga la discusión visible de una clase.
  *
- * @param lessonId Identificador de la clase (validado también por CHECK en DB).
- * @param currentUserId Identidad conocida (para banderas de UI). Puede ser
- * `null` si aún no hay sesión resuelta. Nunca se usa para escrituras.
+ * Resuelve la identidad del usuario autenticado internamente (no la recibe
+ * como argumento) para calcular `hasCurrentUserReacted`, `isCurrentUserAuthor`
+ * y `currentUserHasActivePost`. Si no hay sesión, esas banderas son `false`.
  *
  * Estrategia: 2 consultas máximo. Una con relaciones anidadas para los posts,
- * respuestas oficiales y aplausos; otra corta para saber si el usuario tiene
- * una publicación activa (usada por la UI para bloquear el formulario).
+ * respuestas oficiales y aplausos; otra corta para determinar si el usuario
+ * tiene una publicación **visible y activa** (deleted_at IS NULL AND
+ * is_hidden = false), lo que refleja el nuevo índice único parcial.
  */
 export async function listLessonDiscussion(
   lessonId: string,
-  currentUserId: string | null,
 ): Promise<LessonDiscussionResult> {
   const safeLessonId = assertLessonId(lessonId);
+  const currentUserId = await resolveCurrentUserId();
 
   const postsQuery = supabase
     .from("lesson_discussion_posts")
@@ -284,6 +285,7 @@ export async function listLessonDiscussion(
         .eq("lesson_id", safeLessonId)
         .eq("user_id", currentUserId)
         .is("deleted_at", null)
+        .eq("is_hidden", false)
         .limit(1)
         .maybeSingle()
     : Promise.resolve({ data: null, error: null } as {
