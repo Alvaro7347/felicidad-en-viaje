@@ -10,6 +10,15 @@ import { BlockedIslandModal } from "./components/BlockedIslandModal";
 import { useMvp1ProgressContext } from "./context/Mvp1ProgressContext";
 import { useExperienceMode } from "./context/ExperienceModeContext";
 import { findMvp1Lesson } from "./data/mvp1Progress";
+import {
+  getJourneyConfiguration,
+  loadParentJourney,
+  loadProfile,
+  loadSelfOnboarding,
+  saveParentJourney,
+  saveSelfOnboarding,
+  updateProfileName,
+} from "./services/journeyRepository";
 
 import { AppHeader } from "./components/AppHeader";
 import { DevNav, SHOW_DEV_NAV } from "./components/DevNav";
@@ -213,19 +222,19 @@ export function ArchipelagoApp() {
     (async () => {
       // Consultar SIEMPRE ambas tablas: la existencia real de datos manda
       // sobre profiles.experience_mode.
-      const [pjRes, onbRes] = await Promise.all([
-        supabase.from("parent_journeys").select("user_id").eq("user_id", uid).maybeSingle(),
-        supabase.from("user_onboarding").select("user_id").eq("user_id", uid).maybeSingle(),
-      ]);
-      if (cancelled) return;
-      if (pjRes.error || onbRes.error) {
+      let cfg;
+      try {
+        cfg = await getJourneyConfiguration(uid);
+      } catch {
+        if (cancelled) return;
         setParentJourneyLoadError("No pudimos cargar tu viaje. Revisa tu conexión y reintenta.");
         setOnboardingChecking(false);
         return;
       }
+      if (cancelled) return;
 
-      const hasPJ = !!pjRes.data;
-      const hasOnb = !!onbRes.data;
+      const hasPJ = cfg.hasParentJourney;
+      const hasOnb = cfg.hasUserOnboarding;
       const persisted = experience.mode;
 
       // Caso C: ninguna tabla real → cuenta no configurada.
@@ -305,19 +314,18 @@ export function ArchipelagoApp() {
 
       // ── Modalidad ACOMPAÑADA (María José) ─────────────────────
       if (mode === "accompanied_learning") {
-        const { data: pj, error } = await supabase
-          .from("parent_journeys")
-          .select("student_name, parent_name, teacher_name, plan_name, status, onboarding_answers")
-          .eq("user_id", uid)
-          .maybeSingle();
-        if (cancelled) return;
-        if (error) {
+        let pj;
+        try {
+          pj = await loadParentJourney(uid);
+        } catch {
+          if (cancelled) return;
           setParentJourneyLoadError("No pudimos cargar el viaje de acompañamiento. Intenta recargar.");
           setOnboardingChecking(false);
           return;
         }
+        if (cancelled) return;
         if (pj) {
-          const answers = (pj.onboarding_answers ?? null) as ParentOnboardingAnswers | null;
+          const answers = pj.onboarding_answers;
           if (answers) setParentJourneyAnswers(answers);
           const studentName = pj.student_name ?? answers?.student.name ?? "Lucía";
           const parentName = pj.parent_name ?? answers?.parent.name ?? "";
@@ -335,25 +343,27 @@ export function ArchipelagoApp() {
       }
 
       // ── Modalidad PERSONAL (Alejandra) ───────────────────────
-      const { data: onb, error: onbError } = await supabase
-        .from("user_onboarding")
-        .select("answers")
-        .eq("user_id", uid)
-        .maybeSingle();
-      if (cancelled) return;
-      if (onbError) {
+      let onb;
+      try {
+        onb = await loadSelfOnboarding(uid);
+      } catch {
+        if (cancelled) return;
         setParentJourneyLoadError("No pudimos cargar tu viaje. Revisa tu conexión y reintenta.");
         setOnboardingChecking(false);
         return;
       }
+      if (cancelled) return;
       if (onb) {
-        const answers = (onb.answers ?? {}) as { name?: string; answers?: DiagAnswers };
-        let name = answers.name ?? "";
+        let name = onb.name ?? "";
         if (!name) {
-          const { data: prof } = await supabase
-            .from("profiles").select("name").eq("id", uid).maybeSingle();
-          if (cancelled) return;
-          name = prof?.name ?? "Navegante";
+          try {
+            const prof = await loadProfile(uid);
+            if (cancelled) return;
+            name = prof?.name ?? "Navegante";
+          } catch {
+            if (cancelled) return;
+            name = "Navegante";
+          }
         }
         setUserName(name || "Navegante");
         setJourneyOrigin("student");
@@ -680,30 +690,12 @@ export function ArchipelagoApp() {
                 throw new Error("No pudimos guardar el viaje musical. Intenta nuevamente.");
               }
               const studentName = ans.student.name.trim();
-              const parentName = ans.parent.name.trim();
-              const planName = ans.practice.planName?.trim() || "Plan Semanal Presencial";
 
               // Upsert en parent_journeys (una cuenta = un viaje).
               try {
-                const { error } = await supabase.from("parent_journeys").upsert(
-                  {
-                    user_id: uid,
-                    student_name: studentName || "",
-                    parent_name: parentName || "",
-                    teacher_name: "Álvaro",
-                    plan_name: planName,
-                    status: "pilot",
-                    onboarding_answers: ans as unknown as never,
-                  },
-                  { onConflict: "user_id" },
-                );
-                if (error) {
-                  console.warn("[parent_journeys] upsert failed:", error);
-                  throw new Error("No pudimos guardar el viaje musical. Intenta nuevamente.");
-                }
+                await saveParentJourney(uid, ans);
               } catch (e) {
-                if (e instanceof Error && e.message.startsWith("No pudimos")) throw e;
-                console.warn("[parent_journeys] upsert threw:", e);
+                console.warn("[parent_journeys] upsert failed:", e);
                 throw new Error("No pudimos guardar el viaje musical. Intenta nuevamente.");
               }
 
@@ -833,16 +825,14 @@ export function ArchipelagoApp() {
               if (!uid) throw new Error("No hay sesión activa.");
 
               // Doble verificación server-side: cuenta acompañada no debe escribir onboarding/name.
-              const [{ data: prof, error: profReadErr }, { data: pj, error: pjReadErr }] = await Promise.all([
-                supabase.from("profiles").select("experience_mode").eq("id", uid).maybeSingle(),
-                supabase.from("parent_journeys").select("user_id").eq("user_id", uid).maybeSingle(),
+              const [prof, cfg] = await Promise.all([
+                loadProfile(uid),
+                getJourneyConfiguration(uid),
               ]);
-              if (profReadErr) throw new Error(profReadErr.message);
-              if (pjReadErr) throw new Error(pjReadErr.message);
-              if (prof?.experience_mode === "accompanied_learning" || pj) {
+              if (prof?.experience_mode === "accompanied_learning" || cfg.hasParentJourney) {
                 progress.logEvent("diagnosis_blocked_by_mode", {
                   persisted_mode: prof?.experience_mode ?? null,
-                  has_parent_journey: !!pj,
+                  has_parent_journey: cfg.hasParentJourney,
                 });
                 setPendingDiagnosis(null);
                 setScreen("parent-journey-dashboard");
@@ -850,24 +840,15 @@ export function ArchipelagoApp() {
               }
 
               // 1) Guardar user_onboarding.
-              const payload = { name, answers } as unknown as never;
-              const { error: onbError } = await supabase.from("user_onboarding").upsert(
-                { user_id: uid, answers: payload, updated_at: new Date().toISOString() },
-                { onConflict: "user_id" },
-              );
-              if (onbError) throw new Error(`user_onboarding: ${onbError.message}`);
+              await saveSelfOnboarding(uid, name, answers);
 
               // 2) Consolidar modalidad self_learning (crítico).
               await experience.setMode("self_learning");
 
               // 3) profiles.name: no crítico. El nombre ya vive en user_onboarding.answers.
-              const { error: profError } = await supabase
-                .from("profiles")
-                .upsert(
-                  { id: uid, name, updated_at: new Date().toISOString() },
-                  { onConflict: "id" },
-                );
-              if (profError) {
+              try {
+                await updateProfileName(uid, name);
+              } catch (profError) {
                 console.warn("[onboarding] profiles.name warning (no bloqueante):", profError);
               }
 

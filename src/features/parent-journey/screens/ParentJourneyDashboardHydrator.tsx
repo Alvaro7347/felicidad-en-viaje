@@ -1,5 +1,5 @@
 import { useCallback, useEffect, useState } from "react";
-import { supabase } from "@/integrations/supabase/client";
+import { loadParentJourney } from "@/features/archipielago/services/journeyRepository";
 import { ParentJourneyDashboardScreen } from "./ParentJourneyDashboardScreen";
 import type { ParentOnboardingAnswers } from "./ParentOnboardingScreen";
 
@@ -69,21 +69,13 @@ export function ParentJourneyDashboardHydrator({
 
     // 2) Supabase.
     try {
-      const { data, error } = await supabase
-        .from("parent_journeys")
-        .select("student_name, parent_name, onboarding_answers")
-        .eq("user_id", userId)
-        .maybeSingle();
-      if (error) {
-        setStatus("error");
-        return;
-      }
+      const data = await loadParentJourney(userId);
       if (!data) {
         setStatus("missing");
         onMissing();
         return;
       }
-      const answers = (data.onboarding_answers ?? null) as ParentOnboardingAnswers | null;
+      const answers = data.onboarding_answers;
       const s = data.student_name ?? answers?.student?.name ?? "";
       const p = data.parent_name ?? answers?.parent?.name ?? "";
       if (!s) {
