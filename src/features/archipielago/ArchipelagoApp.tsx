@@ -12,11 +12,10 @@ import { useExperienceMode } from "./context/ExperienceModeContext";
 import { findMvp1Lesson } from "./data/mvp1Progress";
 
 import { useJourneyNavigation } from "./hooks/useJourneyNavigation";
+import { useJourneyBootstrap } from "./hooks/useJourneyBootstrap";
 import {
   getJourneyConfiguration,
-  loadParentJourney,
   loadProfile,
-  loadSelfOnboarding,
   saveParentJourney,
   saveSelfOnboarding,
   updateProfileName,
