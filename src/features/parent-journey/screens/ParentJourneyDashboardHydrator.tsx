@@ -18,27 +18,6 @@ type Props = {
   onMissing: () => void;
 };
 
-function readLocalCache(): { studentName?: string; parentName?: string; answers?: ParentOnboardingAnswers } | null {
-  if (typeof window === "undefined") return null;
-  try {
-    const raw = window.localStorage.getItem("archipielago_parent_journey_lucia");
-    if (!raw) return null;
-    const saved = JSON.parse(raw) as {
-      answers?: ParentOnboardingAnswers & {
-        student?: { name?: string };
-        parent?: { name?: string };
-      };
-    };
-    return {
-      studentName: saved.answers?.student?.name,
-      parentName: saved.answers?.parent?.name,
-      answers: saved.answers as ParentOnboardingAnswers | undefined,
-    };
-  } catch {
-    return null;
-  }
-}
-
 export function ParentJourneyDashboardHydrator({
   userId,
   initialStudentName,
@@ -53,21 +32,8 @@ export function ParentJourneyDashboardHydrator({
   const [attempt, setAttempt] = useState(0);
 
   const hydrate = useCallback(async () => {
-    // 1) Intento local (sólo mismo user_id ya validado por effect superior).
-    const cached = readLocalCache();
-    if (cached?.studentName) {
-      setStudentName((prev) => prev ?? cached.studentName);
-      setParentName((prev) => prev ?? cached.parentName);
-      onHydrated({
-        studentName: cached.studentName,
-        parentName: cached.parentName,
-        answers: cached.answers ?? null,
-      });
-      setStatus("ready");
-      return;
-    }
+    // Supabase es la única fuente de verdad para el viaje acompañado.
 
-    // 2) Supabase.
     try {
       const data = await loadParentJourney(userId);
       if (!data) {
