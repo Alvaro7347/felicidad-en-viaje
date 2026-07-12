@@ -1,3 +1,29 @@
+/**
+ * ArchipelagoApp
+ * ──────────────────────────────────────────────────────────────────────────
+ * Orquestador principal del MVP1 del Archipiélago de la Felicidad.
+ *
+ * Responsabilidades que CONSERVA este archivo:
+ *   - Renderizado de pantallas (switch por `screen`).
+ *   - Coordinación general de sesión, splash y estado local de UI.
+ *   - Guardas de compuerta (loading / error / ambiguo) antes de renderizar.
+ *   - Sincronización única del resultado del bootstrap con el estado local.
+ *
+ * Responsabilidades que YA NO viven aquí (arquitectura MVP1 congelada):
+ *   - Bootstrap y clasificación de modalidad  →  hooks/useJourneyBootstrap.ts
+ *   - Navegación pedagógica (goHome, openLesson, continueJourney, …)
+ *                                              →  hooks/useJourneyNavigation.ts
+ *   - Acceso a Supabase (parent_journeys, user_onboarding, profiles)
+ *                                              →  services/journeyRepository.ts
+ *   - Metadatos de islas / pantallas / orden   →  data/journeyCatalog.ts
+ *   - Modalidad de experiencia (persistencia)  →  context/ExperienceModeContext
+ *   - Progreso MVP1 (fuente única de verdad)   →  context/Mvp1ProgressContext
+ *
+ * Reglas para futuros cambios:
+ *   - No reintroducir lógica de Supabase, bootstrap o navegación aquí.
+ *   - Ampliar los hooks/servicios correspondientes en su lugar.
+ *   - Este archivo debe seguir siendo "vista + coordinación", no negocio.
+ */
 import { useEffect, useRef, useState } from "react";
 import type { Session } from "@supabase/supabase-js";
 
