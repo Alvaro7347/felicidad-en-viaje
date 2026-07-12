@@ -105,7 +105,6 @@ export function ArchipelagoApp() {
   // ── Sesión (Supabase Auth OTP) ─────────────────────────────────
   const [session, setSession] = useState<Session | null>(null);
   const [authChecking, setAuthChecking] = useState(true);
-  const [onboardingChecking, setOnboardingChecking] = useState(false);
   const [hasOnboarding, setHasOnboarding] = useState<boolean | null>(null);
 
   useEffect(() => {
