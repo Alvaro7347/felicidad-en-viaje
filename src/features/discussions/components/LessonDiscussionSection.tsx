@@ -151,8 +151,7 @@ export function LessonDiscussionSection({ lessonId }: LessonDiscussionSectionPro
               <DiscussionPostItem
                 post={post}
                 onToggleApplause={handleToggleApplause}
-                isTogglingApplause={d.isTogglingApplause}
-                applauseTargetId={applauseTargetId}
+                isApplausePending={pendingApplauseIds.has(post.id)}
                 onDelete={handleDelete}
                 isDeleting={d.isDeletingPost}
                 deleteError={resolveDiscussionErrorMessage(extractCode(d.deleteOwnPostError))}
