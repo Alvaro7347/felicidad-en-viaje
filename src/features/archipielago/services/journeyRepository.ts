@@ -42,9 +42,7 @@ export type SelfOnboardingRecord = {
 
 // ── Configuración global (presencia de datos) ─────────────────────
 
-export async function getJourneyConfiguration(
-  userId: string,
-): Promise<JourneyConfiguration> {
+export async function getJourneyConfiguration(userId: string): Promise<JourneyConfiguration> {
   const [pjRes, onbRes] = await Promise.all([
     supabase.from("parent_journeys").select("user_id").eq("user_id", userId).maybeSingle(),
     supabase.from("user_onboarding").select("user_id").eq("user_id", userId).maybeSingle(),
@@ -72,18 +70,13 @@ export async function loadProfile(userId: string): Promise<ProfileRecord | null>
 export async function updateProfileName(userId: string, name: string): Promise<void> {
   const { error } = await supabase
     .from("profiles")
-    .upsert(
-      { id: userId, name, updated_at: new Date().toISOString() },
-      { onConflict: "id" },
-    );
+    .upsert({ id: userId, name, updated_at: new Date().toISOString() }, { onConflict: "id" });
   if (error) throw new Error(`profiles: ${error.message}`);
 }
 
 // ── Parent journey (María José) ───────────────────────────────────
 
-export async function loadParentJourney(
-  userId: string,
-): Promise<ParentJourneyRecord | null> {
+export async function loadParentJourney(userId: string): Promise<ParentJourneyRecord | null> {
   const { data, error } = await supabase
     .from("parent_journeys")
     .select("student_name, parent_name, teacher_name, plan_name, status, onboarding_answers")
@@ -126,9 +119,7 @@ export async function saveParentJourney(
 
 // ── Self onboarding (Alejandra) ───────────────────────────────────
 
-export async function loadSelfOnboarding(
-  userId: string,
-): Promise<SelfOnboardingRecord | null> {
+export async function loadSelfOnboarding(userId: string): Promise<SelfOnboardingRecord | null> {
   const { data, error } = await supabase
     .from("user_onboarding")
     .select("answers")
@@ -145,9 +136,11 @@ export async function saveSelfOnboarding(
   answers: DiagAnswers,
 ): Promise<void> {
   const payload = { name, answers } as unknown as never;
-  const { error } = await supabase.from("user_onboarding").upsert(
-    { user_id: userId, answers: payload, updated_at: new Date().toISOString() },
-    { onConflict: "user_id" },
-  );
+  const { error } = await supabase
+    .from("user_onboarding")
+    .upsert(
+      { user_id: userId, answers: payload, updated_at: new Date().toISOString() },
+      { onConflict: "user_id" },
+    );
   if (error) throw new Error(`user_onboarding: ${error.message}`);
 }
