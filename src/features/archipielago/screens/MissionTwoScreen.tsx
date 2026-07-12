@@ -316,7 +316,8 @@ export function MissionTwoScreen({
         </Btn>
         {saveError && <div style={{ ...errStyle, marginTop: 10 }}>{saveError}</div>}
       </Card>
-      
+
+      <LessonDiscussionSection lessonId="n2" />
     </div>
   );
 }
