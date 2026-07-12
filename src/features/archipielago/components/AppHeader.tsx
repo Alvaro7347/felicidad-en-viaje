@@ -195,38 +195,26 @@ export function AppHeader({
 
   const modernHeaderScreens: Screen[] = ['route', 'mission', 'mission-guide', 'mission-two', 'mission-three', 'mission-four', 'mission-six', 'mission-seven', 'mission-eight', 'mission-nine', 'celebration', 'first-melodies-island', 'first-melodies-lesson', 'pulse-island', 'pulse-lesson', 'rhythm-island', 'rhythm-lesson', 'music-island', 'music-lesson', 'joy-island', 'joy-lesson', 'chords-island', 'chords-lesson', 'strumming-island', 'strumming-lesson', 'songs-island', 'songs-lesson', 'my-profile', 'help-center', 'privacy'];
   if (modernHeaderScreens.includes(screen)) {
-    const isFirstMelodies = screen === 'first-melodies-island' || screen === 'first-melodies-lesson';
-    const isPulse = screen === 'pulse-island' || screen === 'pulse-lesson';
-    const isRhythm = screen === 'rhythm-island' || screen === 'rhythm-lesson';
-    const isMusic = screen === 'music-island' || screen === 'music-lesson';
-    const isJoy = screen === 'joy-island' || screen === 'joy-lesson';
-    const isChords = screen === 'chords-island' || screen === 'chords-lesson';
-    const isStrumming = screen === 'strumming-island' || screen === 'strumming-lesson';
-    const isSongs = screen === 'songs-island' || screen === 'songs-lesson';
     const isMenuScreen = screen === 'my-profile' || screen === 'help-center' || screen === 'privacy';
-    const isIslandOverride = isFirstMelodies || isPulse || isRhythm || isMusic || isJoy || isChords || isStrumming || isSongs;
-    const active = ROUTE_STAGES.find(s => s.status === 'active') ?? ROUTE_STAGES[0];
-    const pct = isIslandOverride || isMenuScreen ? 0 : active.progress;
+    const islandId = SCREEN_TO_ISLAND[screen];
+    const islandTitles: Record<IslandId, string> = {
+      'start-port': 'Puerto de Inicio',
+      'first-melodies': 'Isla de Primeras Melodías',
+      'pulse': 'Isla del Pulso',
+      'rhythm': 'Isla del Ritmo',
+      'music': 'Isla Musical',
+      'joy': 'Isla de la Alegría',
+      'chords': 'Isla de los Acordes',
+      'strumming': 'Isla del Rasgueo',
+      'songs': 'Isla de las Canciones',
+    };
+    const pct = !isMenuScreen && islandId ? getIslandProgress(progress, islandId).pct : 0;
     const title = isMenuScreen
       ? (screen === 'my-profile' ? 'Mi perfil' : screen === 'help-center' ? 'Centro de ayuda' : 'Privacidad y seguridad')
-      : isFirstMelodies
-      ? 'Isla de Primeras Melodías'
-      : isPulse
-      ? 'Isla del Pulso'
-      : isRhythm
-      ? 'Isla del Ritmo'
-      : isMusic
-      ? 'Isla Musical'
-      : isJoy
-      ? 'Isla de la Alegría'
-      : isChords
-      ? 'Isla de los Acordes'
-      : isStrumming
-      ? 'Isla del Rasgueo'
-      : isSongs
-      ? 'Isla de las Canciones'
-      : active.title;
-    const completionText = isIslandOverride || isMenuScreen ? '' : active.completionText;
+      : islandId
+      ? islandTitles[islandId]
+      : '';
+    const completionText = islandId === 'start-port' ? 'completado' : 'completada';
     return (
       <header style={{
         background: '#FFFFFF',
