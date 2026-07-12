@@ -1,4 +1,3 @@
-import { useEffect, useState } from "react";
 import { B } from "../data/brand";
 
 type Props = {
@@ -6,43 +5,10 @@ type Props = {
   onOpenDashboard?: () => void;
 };
 
-type SavedJourney = {
-  answers?: {
-    parent?: { name?: string; relationship?: string };
-    student?: { name?: string; experience?: string };
-    practice?: { planName?: string };
-  };
-};
-
-function readSaved(): SavedJourney | null {
-  if (typeof window === "undefined") return null;
-  try {
-    const raw = window.localStorage.getItem("archipielago_parent_journey_lucia");
-    if (!raw) return null;
-    return JSON.parse(raw) as SavedJourney;
-  } catch {
-    return null;
-  }
-}
-
-export function ParentJourneyIntroScreen({ onCreate, onOpenDashboard }: Props) {
-  const [saved, setSaved] = useState<SavedJourney | null>(null);
-
-  useEffect(() => {
-    setSaved(readSaved());
-  }, []);
-
-  const student = saved?.answers?.student;
-  const parent = saved?.answers?.parent;
-  const practice = saved?.answers?.practice;
-  const hasSaved = !!(student?.name && student.name.trim());
-
-  const studentName = student?.name?.trim() || "";
-  const parentName = parent?.name?.trim() || "";
-  const relationship = parent?.relationship?.trim() || "";
-  const planName = practice?.planName?.trim() || "Plan Semanal Presencial";
-  const experience = student?.experience?.trim() || "Desde cero";
-
+// Nota: esta pantalla se muestra únicamente cuando Supabase confirma que la
+// cuenta no tiene un viaje acompañado registrado (parent_journeys sin fila).
+// La fuente de verdad es Supabase; no leemos localStorage aquí.
+export function ParentJourneyIntroScreen({ onCreate }: Props) {
   return (
     <div style={{ display: "flex", flexDirection: "column", gap: 18, paddingTop: 8 }}>
       <div
@@ -73,38 +39,18 @@ export function ParentJourneyIntroScreen({ onCreate, onOpenDashboard }: Props) {
             letterSpacing: "-0.02em",
           }}
         >
-          {hasSaved ? (
-            <>
-              Viaje musical de <span style={{ color: B.green }}>{studentName}</span>
-            </>
-          ) : (
-            <>Crea el viaje musical de tu hijo/a</>
-          )}
+          Crea el viaje musical de tu hijo/a
         </h1>
         <p style={{ marginTop: 10, color: "#6f6f6d", fontSize: 14.5, lineHeight: 1.55 }}>
-          {hasSaved
-            ? `${parentName || "Aquí"}, aquí podrás acompañar el aprendizaje musical paso a paso.`
-            : "En pocos pasos prepararemos una experiencia para acompañar su aprendizaje musical."}
+          En pocos pasos prepararemos una experiencia para acompañar su aprendizaje musical.
         </p>
       </div>
 
-      {hasSaved ? (
-        <InfoCard title="Datos del viaje">
-          <Row label="Alumno/a" value={studentName} />
-          {parentName && <Row label="Apoderado/a" value={parentName} />}
-          {relationship && <Row label="Relación" value={relationship} />}
-          <Row label="Profesor guía" value="Álvaro" />
-          <Row label="Plan" value={planName} />
-          <Row label="Nivel inicial" value={experience} />
-          <Row label="Estado" value="Preparando primera clase" />
-        </InfoCard>
-      ) : (
-        <InfoCard title="Cómo funciona">
-          <p style={{ margin: 0, fontSize: 13.5, color: "#6f6f6d", lineHeight: 1.55 }}>
-            Este espacio permitirá que el apoderado pueda revisar avances, tareas, observaciones y acompañar el proceso sin sentirse saturado.
-          </p>
-        </InfoCard>
-      )}
+      <InfoCard title="Cómo funciona">
+        <p style={{ margin: 0, fontSize: 13.5, color: "#6f6f6d", lineHeight: 1.55 }}>
+          Este espacio permitirá que el apoderado pueda revisar avances, tareas, observaciones y acompañar el proceso sin sentirse saturado.
+        </p>
+      </InfoCard>
 
       <InfoCard title="Cómo funciona este viaje">
         <Block emoji="🎶" title="Aprende" text="Vive las clases, practica y desbloquea pequeñas victorias musicales." />
@@ -112,77 +58,25 @@ export function ParentJourneyIntroScreen({ onCreate, onOpenDashboard }: Props) {
         <Block emoji="🧭" title="El profesor guía" text="Registra lo visto en clase, define tareas y ajusta el camino según el avance real." />
       </InfoCard>
 
-      {!hasSaved && (
-        <button
-          type="button"
-          onClick={onCreate}
-          style={{
-            width: "100%",
-            border: "none",
-            background: B.green,
-            color: B.dark,
-            fontFamily: "Space Grotesk, sans-serif",
-            fontWeight: 800,
-            fontSize: 16,
-            borderRadius: 14,
-            padding: "15px 20px",
-            cursor: "pointer",
-            boxShadow: "0 6px 18px rgba(46,230,174,0.32)",
-          }}
-        >
-          Comenzar configuración
-        </button>
-      )}
-
-      {hasSaved && onOpenDashboard && (
-        <button
-          type="button"
-          onClick={onOpenDashboard}
-          style={{
-            width: "100%",
-            border: "none",
-            background: B.green,
-            color: B.dark,
-            fontFamily: "Space Grotesk, sans-serif",
-            fontWeight: 800,
-            fontSize: 16,
-            borderRadius: 14,
-            padding: "15px 20px",
-            cursor: "pointer",
-            boxShadow: "0 6px 18px rgba(46,230,174,0.32)",
-          }}
-        >
-          Continuar viaje musical
-        </button>
-      )}
-
-      {hasSaved && (
-        <button
-          type="button"
-          onClick={() => {
-            try {
-              window.localStorage.removeItem("archipielago_parent_journey_lucia");
-            } catch {}
-            setSaved(null);
-            onCreate();
-          }}
-          style={{
-            alignSelf: "center",
-            border: "none",
-            background: "transparent",
-            color: B.grayText,
-            fontFamily: "Space Grotesk, sans-serif",
-            fontWeight: 600,
-            fontSize: 13,
-            padding: "6px 10px",
-            cursor: "pointer",
-            textDecoration: "underline",
-          }}
-        >
-          Recrear viaje musical
-        </button>
-      )}
-
+      <button
+        type="button"
+        onClick={onCreate}
+        style={{
+          width: "100%",
+          border: "none",
+          background: B.green,
+          color: B.dark,
+          fontFamily: "Space Grotesk, sans-serif",
+          fontWeight: 800,
+          fontSize: 16,
+          borderRadius: 14,
+          padding: "15px 20px",
+          cursor: "pointer",
+          boxShadow: "0 6px 18px rgba(46,230,174,0.32)",
+        }}
+      >
+        Comenzar configuración
+      </button>
     </div>
   );
 }
@@ -213,15 +107,6 @@ function InfoCard({ title, children }: { title: string; children: React.ReactNod
         {title}
       </div>
       {children}
-    </div>
-  );
-}
-
-function Row({ label, value }: { label: string; value: string }) {
-  return (
-    <div style={{ display: "flex", justifyContent: "space-between", gap: 12, alignItems: "baseline" }}>
-      <div style={{ fontSize: 13, color: B.grayText }}>{label}</div>
-      <div style={{ fontSize: 14, color: B.dark, fontWeight: 600, textAlign: "right" }}>{value}</div>
     </div>
   );
 }
