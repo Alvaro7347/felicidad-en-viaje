@@ -901,7 +901,7 @@ export function ArchipelagoApp() {
           return (
             <SelfJourneyDashboardScreen
               userName={userName}
-              onContinue={(lessonId) => continueSelfJourney(lessonId)}
+              onContinue={(lessonId) => continueJourney(lessonId)}
               onReview={() => setScreen("route")}
             />
           );
@@ -910,8 +910,8 @@ export function ArchipelagoApp() {
         {screen === "route" && (
           <RouteScreen
             userName={userName}
-            onStartMission={(id) => openMissionGuarded(id)}
-            onReviewMission={(id) => openMissionGuarded(id)}
+            onStartMission={(id) => openMission(id)}
+            onReviewMission={(id) => openMission(id)}
             onOpenFirstMelodiesIsland={() => setScreen("first-melodies-island")}
             onOpenPulseIsland={() => setScreen("pulse-island")}
             onOpenRhythmIsland={() => openLockedIsland("rhythm")}
@@ -953,7 +953,7 @@ export function ArchipelagoApp() {
           <FirstMelodiesIslandScreen
             onBack={() => setScreen("route")}
             onOpenLesson={(lessonId) =>
-              openLessonGuarded(lessonId, "first-melodies-lesson", setFirstMelodiesLessonId)
+              openLesson(lessonId)
             }
             onOpenPulseIsland={() => setScreen("pulse-island")}
             onOpenRhythmIsland={() => openLockedIsland("rhythm")}
@@ -975,7 +975,7 @@ export function ArchipelagoApp() {
             onOpenStrummingIsland={() => openLockedIsland("strumming")}
             onOpenSongsIsland={() => openLockedIsland("songs")}
             onOpenLesson={(lessonId) =>
-              openLessonGuarded(lessonId, "pulse-lesson", setPulseLessonId)
+              openLesson(lessonId)
             }
           />
         )}
