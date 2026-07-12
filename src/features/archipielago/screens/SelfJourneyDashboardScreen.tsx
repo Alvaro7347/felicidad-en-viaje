@@ -1,4 +1,4 @@
-import { B } from "../data/brand";
+import type { CSSProperties } from "react";
 import { Btn } from "../components/Btn";
 import { useMvp1ProgressContext } from "../context/Mvp1ProgressContext";
 import {
@@ -40,7 +40,7 @@ const ISLAND_TITLES: Record<IslandId, string> = {
   "songs": "Isla de las Canciones",
 };
 
-const CARD: React.CSSProperties = {
+const CARD: CSSProperties = {
   background: "#FFFFFF",
   border: `1px solid ${B.grayBorder}`,
   borderRadius: 18,
@@ -48,7 +48,7 @@ const CARD: React.CSSProperties = {
   boxShadow: "0 2px 10px rgba(46,230,174,0.06)",
 };
 
-const SECTION_TITLE: React.CSSProperties = {
+const SECTION_TITLE: CSSProperties = {
   fontFamily: "Space Grotesk, sans-serif",
   fontWeight: 800,
   fontSize: 16,
