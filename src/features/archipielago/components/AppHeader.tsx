@@ -182,6 +182,7 @@ export function AppHeader({
   studentName?: string;
 }) {
   const { mode } = useExperienceMode();
+  const progress = useMvp1ProgressContext();
   const isAccompanied = mode === "accompanied_learning";
   const trimmedStudent = studentName?.trim();
   const tripLabel = isAccompanied && trimmedStudent ? `Viaje de ${trimmedStudent}` : "Mi viaje";
