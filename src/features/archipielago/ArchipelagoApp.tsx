@@ -198,8 +198,12 @@ export function ArchipelagoApp() {
       setDiagnosisSaveError(null);
       setPendingDiagnosis(null);
       setScreen("welcome");
+      // Reiniciar telemetría por cuenta: app_opened debe registrarse una vez
+      // por usuario, incluso tras logout + login con otra cuenta.
+      appOpenedLoggedRef.current = false;
     }
   }, [session?.user.id]);
+
 
 
   // ── Bootstrap del viaje (extraído a useJourneyBootstrap) ──────
