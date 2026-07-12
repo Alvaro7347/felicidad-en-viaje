@@ -1,5 +1,5 @@
 import { useCallback, useEffect, useState } from "react";
-import { supabase } from "@/integrations/supabase/client";
+import { loadParentJourney } from "@/features/archipielago/services/journeyRepository";
 import { ParentJourneyDashboardScreen } from "./ParentJourneyDashboardScreen";
 import type { ParentOnboardingAnswers } from "./ParentOnboardingScreen";
 
