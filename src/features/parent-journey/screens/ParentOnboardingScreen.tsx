@@ -3,8 +3,6 @@ import { B } from "@/features/archipielago/data/brand";
 import { OnboardingProgressHeader } from "@/features/archipielago/components/OnboardingProgressHeader";
 import type { ParentOnboardingAnswers } from "@/features/parent-journey/types";
 
-export type { ParentOnboardingAnswers };
-
 const empty: ParentOnboardingAnswers = {
   parent: { name: "", relationship: "", email: "", motivation: "" },
   student: { name: "", age: "", experience: "", hasUkulele: "", likes: "" },
