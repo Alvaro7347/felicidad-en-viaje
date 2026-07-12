@@ -2,8 +2,8 @@ import { B } from "../data/brand";
 
 type Props = {
   onCreate: () => void;
-  onOpenDashboard?: () => void;
 };
+
 
 // Nota: esta pantalla se muestra únicamente cuando Supabase confirma que la
 // cuenta no tiene un viaje acompañado registrado (parent_journeys sin fila).
