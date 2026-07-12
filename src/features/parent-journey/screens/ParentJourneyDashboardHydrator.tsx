@@ -1,7 +1,7 @@
 import { useCallback, useEffect, useState } from "react";
 import { loadParentJourney } from "@/features/archipielago/services/journeyRepository";
 import { ParentJourneyDashboardScreen } from "./ParentJourneyDashboardScreen";
-import type { ParentOnboardingAnswers } from "./ParentOnboardingScreen";
+import type { ParentOnboardingAnswers } from "@/features/parent-journey/types";
 
 type Status = "ready" | "loading" | "error" | "missing";
 

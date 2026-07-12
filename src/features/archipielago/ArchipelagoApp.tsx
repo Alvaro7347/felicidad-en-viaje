@@ -66,7 +66,8 @@ import { PrivacyScreen } from "./screens/PrivacyScreen";
 import { ParentJourneyIntroScreen } from "./screens/ParentJourneyIntroScreen";
 import { ParentJourneyCreatedScreen } from "./screens/ParentJourneyCreatedScreen";
 import { ParentJourneyDashboardScreen } from "@/features/parent-journey/screens/ParentJourneyDashboardScreen";
-import { ParentOnboardingScreen, type ParentOnboardingAnswers } from "@/features/parent-journey/screens/ParentOnboardingScreen";
+import { ParentOnboardingScreen } from "@/features/parent-journey/screens/ParentOnboardingScreen";
+import type { ParentOnboardingAnswers } from "@/features/parent-journey/types";
 import { ParentJourneyDashboardHydrator } from "@/features/parent-journey/screens/ParentJourneyDashboardHydrator";
 
 

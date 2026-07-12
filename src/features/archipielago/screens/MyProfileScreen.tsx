@@ -1,6 +1,6 @@
 import { B } from "../data/brand";
 import { Card } from "../components/Card";
-import type { ParentOnboardingAnswers } from "@/features/parent-journey/screens/ParentOnboardingScreen";
+import type { ParentOnboardingAnswers } from "@/features/parent-journey/types";
 
 export const APP_VERSION = "MVP1 · 1.0.0";
 
