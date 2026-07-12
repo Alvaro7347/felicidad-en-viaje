@@ -7,36 +7,8 @@ import { useExperienceMode } from "../context/ExperienceModeContext";
 import { useMvp1ProgressContext } from "../context/Mvp1ProgressContext";
 import { getIslandProgress } from "../utils/islandProgress";
 import type { IslandId } from "../data/mvp1Progress";
+import { SCREEN_TO_ISLAND, ISLAND_TITLES } from "../data/journeyCatalog";
 
-const SCREEN_TO_ISLAND: Partial<Record<Screen, IslandId>> = {
-  'route': 'start-port',
-  'mission': 'start-port',
-  'mission-guide': 'start-port',
-  'mission-two': 'start-port',
-  'mission-three': 'start-port',
-  'mission-four': 'start-port',
-  'mission-six': 'start-port',
-  'mission-seven': 'start-port',
-  'mission-eight': 'start-port',
-  'mission-nine': 'start-port',
-  'celebration': 'start-port',
-  'first-melodies-island': 'first-melodies',
-  'first-melodies-lesson': 'first-melodies',
-  'pulse-island': 'pulse',
-  'pulse-lesson': 'pulse',
-  'rhythm-island': 'rhythm',
-  'rhythm-lesson': 'rhythm',
-  'music-island': 'music',
-  'music-lesson': 'music',
-  'joy-island': 'joy',
-  'joy-lesson': 'joy',
-  'chords-island': 'chords',
-  'chords-lesson': 'chords',
-  'strumming-island': 'strumming',
-  'strumming-lesson': 'strumming',
-  'songs-island': 'songs',
-  'songs-lesson': 'songs',
-};
 
 function UserMenu({
   onHome,
