@@ -222,19 +222,19 @@ export function ArchipelagoApp() {
     (async () => {
       // Consultar SIEMPRE ambas tablas: la existencia real de datos manda
       // sobre profiles.experience_mode.
-      const [pjRes, onbRes] = await Promise.all([
-        supabase.from("parent_journeys").select("user_id").eq("user_id", uid).maybeSingle(),
-        supabase.from("user_onboarding").select("user_id").eq("user_id", uid).maybeSingle(),
-      ]);
-      if (cancelled) return;
-      if (pjRes.error || onbRes.error) {
+      let cfg;
+      try {
+        cfg = await getJourneyConfiguration(uid);
+      } catch {
+        if (cancelled) return;
         setParentJourneyLoadError("No pudimos cargar tu viaje. Revisa tu conexión y reintenta.");
         setOnboardingChecking(false);
         return;
       }
+      if (cancelled) return;
 
-      const hasPJ = !!pjRes.data;
-      const hasOnb = !!onbRes.data;
+      const hasPJ = cfg.hasParentJourney;
+      const hasOnb = cfg.hasUserOnboarding;
       const persisted = experience.mode;
 
       // Caso C: ninguna tabla real → cuenta no configurada.
