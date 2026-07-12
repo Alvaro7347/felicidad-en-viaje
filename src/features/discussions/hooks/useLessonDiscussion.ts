@@ -5,12 +5,7 @@
 // No emite toasts. Los errores se propagan como `LessonDiscussionError` para
 // que la capa visual decida el mensaje.
 
-import {
-  useMutation,
-  useQuery,
-  useQueryClient,
-  type QueryKey,
-} from "@tanstack/react-query";
+import { useMutation, useQuery, useQueryClient, type QueryKey } from "@tanstack/react-query";
 
 import {
   addReaction,
@@ -19,11 +14,7 @@ import {
   removeReaction,
   softDeleteOwnPost,
 } from "../services/lessonDiscussionRepository";
-import type {
-  CreateLessonPostInput,
-  LessonDiscussionPost,
-  LessonDiscussionResult,
-} from "../types";
+import type { CreateLessonPostInput, LessonDiscussionPost, LessonDiscussionResult } from "../types";
 import { LessonDiscussionError } from "../types";
 
 /**
@@ -75,8 +66,7 @@ export function useLessonDiscussion(lessonId: string) {
     retry: 1,
   });
 
-  const invalidate = () =>
-    queryClient.invalidateQueries({ queryKey, exact: true });
+  const invalidate = () => queryClient.invalidateQueries({ queryKey, exact: true });
 
   const createPostMutation = useMutation<
     LessonDiscussionPost,
@@ -106,12 +96,7 @@ export function useLessonDiscussion(lessonId: string) {
   // Optimistic update seguro y simple: alternamos la bandera y el conteo,
   // con rollback ante error. Cualquier cambio del servidor se reconcilia
   // vía invalidación al finalizar.
-  const addApplauseMutation = useMutation<
-    void,
-    LessonDiscussionError,
-    string,
-    ReactionSnapshot
-  >({
+  const addApplauseMutation = useMutation<void, LessonDiscussionError, string, ReactionSnapshot>({
     mutationFn: (postId) => addReaction(postId),
     onMutate: async (postId) => {
       await queryClient.cancelQueries({ queryKey, exact: true });
@@ -131,36 +116,32 @@ export function useLessonDiscussion(lessonId: string) {
     },
   });
 
-  const removeApplauseMutation = useMutation<
-    void,
-    LessonDiscussionError,
-    string,
-    ReactionSnapshot
-  >({
-    mutationFn: (postId) => removeReaction(postId),
-    onMutate: async (postId) => {
-      await queryClient.cancelQueries({ queryKey, exact: true });
-      const previous = queryClient.getQueryData<LessonDiscussionResult>(queryKey);
-      queryClient.setQueryData<LessonDiscussionResult>(queryKey, (cache) =>
-        applyReactionDelta(cache, postId, false),
-      );
-      return { previous };
+  const removeApplauseMutation = useMutation<void, LessonDiscussionError, string, ReactionSnapshot>(
+    {
+      mutationFn: (postId) => removeReaction(postId),
+      onMutate: async (postId) => {
+        await queryClient.cancelQueries({ queryKey, exact: true });
+        const previous = queryClient.getQueryData<LessonDiscussionResult>(queryKey);
+        queryClient.setQueryData<LessonDiscussionResult>(queryKey, (cache) =>
+          applyReactionDelta(cache, postId, false),
+        );
+        return { previous };
+      },
+      onError: (_error, _postId, ctx) => {
+        if (ctx?.previous) {
+          queryClient.setQueryData(queryKey, ctx.previous);
+        }
+      },
+      onSettled: () => {
+        void invalidate();
+      },
     },
-    onError: (_error, _postId, ctx) => {
-      if (ctx?.previous) {
-        queryClient.setQueryData(queryKey, ctx.previous);
-      }
-    },
-    onSettled: () => {
-      void invalidate();
-    },
-  });
+  );
 
   const posts: LessonDiscussionPost[] = query.data?.posts ?? [];
   const currentUserHasActivePost = query.data?.currentUserHasActivePost ?? false;
 
-  const isTogglingApplause =
-    addApplauseMutation.isPending || removeApplauseMutation.isPending;
+  const isTogglingApplause = addApplauseMutation.isPending || removeApplauseMutation.isPending;
 
   return {
     // Lectura
@@ -188,8 +169,7 @@ export function useLessonDiscussion(lessonId: string) {
     addApplause: (postId: string) => addApplauseMutation.mutateAsync(postId),
     removeApplause: (postId: string) => removeApplauseMutation.mutateAsync(postId),
     isTogglingApplause,
-    applauseError:
-      addApplauseMutation.error ?? removeApplauseMutation.error ?? null,
+    applauseError: addApplauseMutation.error ?? removeApplauseMutation.error ?? null,
   } as const;
 }
 
