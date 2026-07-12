@@ -1,7 +1,7 @@
 // Sección "Preguntas y comentarios de la clase".
 // Componente autónomo: recibe únicamente `lessonId` y resuelve todo por sí.
 // NO conoce progreso, navegación ni estado de finalización de clase.
-import { useState } from "react";
+import { useCallback, useEffect, useRef, useState } from "react";
 import { B } from "@/features/archipielago/data/brand";
 import { useLessonDiscussion } from "../hooks/useLessonDiscussion";
 import type { LessonDiscussionPost, LessonDiscussionErrorCode } from "../types";
