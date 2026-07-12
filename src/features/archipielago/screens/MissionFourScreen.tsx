@@ -4,6 +4,7 @@ import { Card } from "../components/Card";
 import { BackBtn } from "../components/BackBtn";
 import { MissionIntroHeader } from "../components/MissionIntroHeader";
 import { LessonCompletionBox } from "../components/LessonCompletionBox";
+import { LessonDiscussionSection } from "@/features/discussions/components/LessonDiscussionSection";
 
 const VIDEO_ID = "_ysGIgRumis";
 const VIDEO_THUMB = `https://img.youtube.com/vi/${VIDEO_ID}/hqdefault.jpg`;
@@ -153,6 +154,7 @@ export function MissionFourScreen({ onBack }: { onBack: () => void }) {
         </div>
       )}
       <LessonCompletionBox lessonId="n4" islandId="start-port" onCompleted={onBack} />
+      <LessonDiscussionSection lessonId="n4" />
     </div>
   );
 }

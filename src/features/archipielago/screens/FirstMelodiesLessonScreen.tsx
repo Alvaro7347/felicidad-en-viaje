@@ -5,6 +5,11 @@ import { Card } from "../components/Card";
 import { BackBtn } from "../components/BackBtn";
 import { MissionIntroHeader } from "../components/MissionIntroHeader";
 import { LessonCompletionBox } from "../components/LessonCompletionBox";
+// NOTA: LessonDiscussionSection es reutilizable para cualquier clase futura.
+// Toda clase futura debe tener su lessonId registrado. La validación en DB
+// está temporalmente cerrada al catálogo MVP1; al ampliar el curso hay que
+// actualizar el CHECK permitido o migrar a una tabla `lessons`.
+import { LessonDiscussionSection } from "@/features/discussions/components/LessonDiscussionSection";
 import {
   findLesson,
   FIRST_MELODIES_LESSONS,
@@ -522,6 +527,7 @@ export function FirstMelodiesLessonScreen({
         islandId="first-melodies"
         onCompleted={onBackToIsland}
       />
+      <LessonDiscussionSection lessonId={lessonId} />
 
     </div>
   );
