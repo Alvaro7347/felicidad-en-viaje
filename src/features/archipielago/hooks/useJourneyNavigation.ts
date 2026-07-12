@@ -170,7 +170,6 @@ export function useJourneyNavigation(args: UseJourneyNavigationArgs): JourneyNav
 
   return useMemo(
     () => ({
-      resolveScreenForLesson,
       goHome,
       goToRoute,
       openMission,
@@ -180,7 +179,6 @@ export function useJourneyNavigation(args: UseJourneyNavigationArgs): JourneyNav
       openLockedIsland,
     }),
     [
-      resolveScreenForLesson,
       goHome,
       goToRoute,
       openMission,
@@ -190,4 +188,5 @@ export function useJourneyNavigation(args: UseJourneyNavigationArgs): JourneyNav
       openLockedIsland,
     ],
   );
+
 }
