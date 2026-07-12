@@ -544,12 +544,6 @@ export function ArchipelagoApp() {
                   throw new Error("No pudimos guardar el viaje musical. Intenta nuevamente.");
                 }
               }
-              try {
-                window.localStorage.setItem(
-                  "archipielago_parent_journey_lucia",
-                  JSON.stringify({ answers: ans, savedAt: new Date().toISOString() }),
-                );
-              } catch { /* noop */ }
               setParentJourneyAnswers(ans);
               setRouteStudentName(studentName);
               setJourneyOrigin("parent");
