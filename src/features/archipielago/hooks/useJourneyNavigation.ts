@@ -62,7 +62,6 @@ export interface JourneyNavigation {
   openLockedIsland: (islandId: string) => void;
 }
 
-
 export function useJourneyNavigation(args: UseJourneyNavigationArgs): JourneyNavigation {
   const {
     progress,
@@ -126,7 +125,6 @@ export function useJourneyNavigation(args: UseJourneyNavigationArgs): JourneyNav
     [progress, setScreen, setBlockedModal, lessonSetters, resolveScreenForLesson],
   );
 
-
   const openIsland = useCallback(
     (islandId: IslandId) => {
       setScreen(ISLAND_TO_ISLAND_SCREEN[islandId]);
@@ -178,15 +176,6 @@ export function useJourneyNavigation(args: UseJourneyNavigationArgs): JourneyNav
       openIsland,
       openLockedIsland,
     }),
-    [
-      goHome,
-      goToRoute,
-      openMission,
-      openLesson,
-      continueJourney,
-      openIsland,
-      openLockedIsland,
-    ],
+    [goHome, goToRoute, openMission, openLesson, continueJourney, openIsland, openLockedIsland],
   );
-
 }
