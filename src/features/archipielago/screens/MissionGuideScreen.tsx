@@ -397,6 +397,7 @@ export function MissionGuideScreen({ onBack, userName, learnerName }: { onBack: 
         </div>
       )}
       <LessonCompletionBox lessonId="n1" islandId="start-port" onCompleted={onBack} />
+      <LessonDiscussionSection lessonId="n1" />
     </div>
   );
 }
