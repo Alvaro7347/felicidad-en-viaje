@@ -242,8 +242,12 @@ export function ArchipelagoApp() {
     setScreen(r.initialScreen);
   }, [bootstrap.status, bootstrap.ready, bootstrap.error]);
 
-  const onboardingChecking =
-    !!session && (bootstrap.status === "loading" || bootstrap.status === "idle");
+  // Fuente semántica de carga: sólo bloquea si el bootstrap aún no terminó.
+  // En estado "error" NO bloqueamos; dejamos que la app renderice el banner
+  // de error con su botón Reintentar (línea ~458). En "ambiguous" ya hay una
+  // pantalla dedicada arriba.
+  const bootstrapChecking =
+    !!session && (bootstrap.status === "idle" || bootstrap.status === "loading");
 
 
 
@@ -363,7 +367,7 @@ export function ArchipelagoApp() {
       </main>
     );
   }
-  if (authChecking || experience.loading || (session && (onboardingChecking || hasOnboarding === null))) {
+  if (authChecking || experience.loading || (session && bootstrapChecking)) {
     return (
       <main
         style={{
