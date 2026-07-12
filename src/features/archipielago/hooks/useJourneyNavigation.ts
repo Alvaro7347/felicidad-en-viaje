@@ -115,17 +115,17 @@ export function useJourneyNavigation(args: UseJourneyNavigationArgs): JourneyNav
         progress.logEvent("blocked_lesson_clicked", { lesson_id: lessonId });
         return;
       }
-      if (entry.islandId === "start-port") {
-        setScreen(entry.screen);
-      } else {
-        const setter = lessonSetters[entry.islandId];
-        setter?.(lessonId);
-        setScreen(ISLAND_TO_LESSON_SCREEN[entry.islandId]);
+      const destination = resolveScreenForLesson(lessonId);
+      if (!destination) return;
+      if (entry.islandId !== "start-port") {
+        lessonSetters[entry.islandId]?.(lessonId);
       }
+      setScreen(destination);
       progress.logEvent("lesson_opened", { lesson_id: lessonId });
     },
-    [progress, setScreen, setBlockedModal, lessonSetters],
+    [progress, setScreen, setBlockedModal, lessonSetters, resolveScreenForLesson],
   );
+
 
   const openIsland = useCallback(
     (islandId: IslandId) => {
