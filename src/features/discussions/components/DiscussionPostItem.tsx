@@ -26,8 +26,7 @@ type Props = {
 export function DiscussionPostItem({
   post,
   onToggleApplause,
-  isTogglingApplause,
-  applauseTargetId,
+  isApplausePending,
   onDelete,
   isDeleting,
   deleteError,
@@ -38,7 +37,7 @@ export function DiscussionPostItem({
   const typeBg = post.postType === "question" ? B.pinkLight : B.greenLight;
   const typeColor = post.postType === "question" ? B.pink : B.greenDark;
 
-  const isThisApplauding = isTogglingApplause && applauseTargetId === post.id;
+  const isThisApplauding = isApplausePending;
   const applauseCountLabel =
     post.applauseCount === 0
       ? "Me inspira"
