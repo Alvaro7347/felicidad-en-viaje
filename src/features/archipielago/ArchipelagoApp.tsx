@@ -66,24 +66,9 @@ import { PrivacyScreen } from "./screens/PrivacyScreen";
 
 import { ParentJourneyIntroScreen } from "./screens/ParentJourneyIntroScreen";
 import { ParentJourneyCreatedScreen } from "./screens/ParentJourneyCreatedScreen";
-import { ParentJourneyDashboardScreen } from "@/features/parent-journey/screens/ParentJourneyDashboardScreen";
 import { ParentOnboardingScreen } from "@/features/parent-journey/screens/ParentOnboardingScreen";
 import type { ParentOnboardingAnswers } from "@/features/parent-journey/types";
 import { ParentJourneyDashboardHydrator } from "@/features/parent-journey/screens/ParentJourneyDashboardHydrator";
-
-
-// Nodo de la ruta → pantalla de revisión. Explícito y fácil de extender.
-const REVIEW_MISSION_BY_NODE: Record<string, Screen> = {
-  n1: "mission-guide",
-  n2: "mission-two",
-  n3: "mission-three",
-  n4: "mission-four",
-  n5: "mission",
-  n6: "mission-six",
-  n7: "mission-seven",
-  n8: "mission-eight",
-  n9: "mission-nine",
-};
 
 const SPLASH_FADE_MS = 1050;
 const SPLASH_HIDE_MS = 1350;
