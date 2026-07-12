@@ -5,6 +5,7 @@ import { Card } from "../components/Card";
 import { BackBtn } from "../components/BackBtn";
 import { MissionIntroHeader } from "../components/MissionIntroHeader";
 import { LessonCompletionBox } from "../components/LessonCompletionBox";
+import { LessonDiscussionSection } from "@/features/discussions/components/LessonDiscussionSection";
 
 type Step = { icon: string; title: string; text: string };
 
