@@ -314,19 +314,18 @@ export function ArchipelagoApp() {
 
       // ── Modalidad ACOMPAÑADA (María José) ─────────────────────
       if (mode === "accompanied_learning") {
-        const { data: pj, error } = await supabase
-          .from("parent_journeys")
-          .select("student_name, parent_name, teacher_name, plan_name, status, onboarding_answers")
-          .eq("user_id", uid)
-          .maybeSingle();
-        if (cancelled) return;
-        if (error) {
+        let pj;
+        try {
+          pj = await loadParentJourney(uid);
+        } catch {
+          if (cancelled) return;
           setParentJourneyLoadError("No pudimos cargar el viaje de acompañamiento. Intenta recargar.");
           setOnboardingChecking(false);
           return;
         }
+        if (cancelled) return;
         if (pj) {
-          const answers = (pj.onboarding_answers ?? null) as ParentOnboardingAnswers | null;
+          const answers = pj.onboarding_answers;
           if (answers) setParentJourneyAnswers(answers);
           const studentName = pj.student_name ?? answers?.student.name ?? "Lucía";
           const parentName = pj.parent_name ?? answers?.parent.name ?? "";
