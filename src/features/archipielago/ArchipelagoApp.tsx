@@ -413,8 +413,10 @@ export function ArchipelagoApp() {
     openMission,
     openLesson,
     continueJourney,
+    openIsland,
     openLockedIsland,
   } = useJourneyNavigation({
+
     progress,
     experienceMode: experience.mode,
     setScreen,
