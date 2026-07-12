@@ -690,30 +690,12 @@ export function ArchipelagoApp() {
                 throw new Error("No pudimos guardar el viaje musical. Intenta nuevamente.");
               }
               const studentName = ans.student.name.trim();
-              const parentName = ans.parent.name.trim();
-              const planName = ans.practice.planName?.trim() || "Plan Semanal Presencial";
 
               // Upsert en parent_journeys (una cuenta = un viaje).
               try {
-                const { error } = await supabase.from("parent_journeys").upsert(
-                  {
-                    user_id: uid,
-                    student_name: studentName || "",
-                    parent_name: parentName || "",
-                    teacher_name: "Álvaro",
-                    plan_name: planName,
-                    status: "pilot",
-                    onboarding_answers: ans as unknown as never,
-                  },
-                  { onConflict: "user_id" },
-                );
-                if (error) {
-                  console.warn("[parent_journeys] upsert failed:", error);
-                  throw new Error("No pudimos guardar el viaje musical. Intenta nuevamente.");
-                }
+                await saveParentJourney(uid, ans);
               } catch (e) {
-                if (e instanceof Error && e.message.startsWith("No pudimos")) throw e;
-                console.warn("[parent_journeys] upsert threw:", e);
+                console.warn("[parent_journeys] upsert failed:", e);
                 throw new Error("No pudimos guardar el viaje musical. Intenta nuevamente.");
               }
 
