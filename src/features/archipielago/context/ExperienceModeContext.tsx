@@ -23,6 +23,7 @@ const LEGACY_KEYS = [
   "archipielago_experience_mode",
   "archipielago_selected_profile",
   "archipielago_user_name",
+  "archipielago_parent_journey_lucia",
 ];
 
 // Cache aislado por user_id.
