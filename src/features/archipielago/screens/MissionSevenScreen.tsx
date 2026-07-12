@@ -1,6 +1,5 @@
 import { useState } from "react";
 import { B } from "../data/brand";
-import { Btn } from "../components/Btn";
 import { Card } from "../components/Card";
 import { BackBtn } from "../components/BackBtn";
 import { MissionIntroHeader } from "../components/MissionIntroHeader";

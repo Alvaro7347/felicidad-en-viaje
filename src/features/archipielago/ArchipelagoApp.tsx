@@ -1,3 +1,29 @@
+/**
+ * ArchipelagoApp
+ * ──────────────────────────────────────────────────────────────────────────
+ * Orquestador principal del MVP1 del Archipiélago de la Felicidad.
+ *
+ * Responsabilidades que CONSERVA este archivo:
+ *   - Renderizado de pantallas (switch por `screen`).
+ *   - Coordinación general de sesión, splash y estado local de UI.
+ *   - Guardas de compuerta (loading / error / ambiguo) antes de renderizar.
+ *   - Sincronización única del resultado del bootstrap con el estado local.
+ *
+ * Responsabilidades que YA NO viven aquí (arquitectura MVP1 congelada):
+ *   - Bootstrap y clasificación de modalidad  →  hooks/useJourneyBootstrap.ts
+ *   - Navegación pedagógica (goHome, openLesson, continueJourney, …)
+ *                                              →  hooks/useJourneyNavigation.ts
+ *   - Acceso a Supabase (parent_journeys, user_onboarding, profiles)
+ *                                              →  services/journeyRepository.ts
+ *   - Metadatos de islas / pantallas / orden   →  data/journeyCatalog.ts
+ *   - Modalidad de experiencia (persistencia)  →  context/ExperienceModeContext
+ *   - Progreso MVP1 (fuente única de verdad)   →  context/Mvp1ProgressContext
+ *
+ * Reglas para futuros cambios:
+ *   - No reintroducir lógica de Supabase, bootstrap o navegación aquí.
+ *   - Ampliar los hooks/servicios correspondientes en su lugar.
+ *   - Este archivo debe seguir siendo "vista + coordinación", no negocio.
+ */
 import { useEffect, useRef, useState } from "react";
 import type { Session } from "@supabase/supabase-js";
 
@@ -66,24 +92,9 @@ import { PrivacyScreen } from "./screens/PrivacyScreen";
 
 import { ParentJourneyIntroScreen } from "./screens/ParentJourneyIntroScreen";
 import { ParentJourneyCreatedScreen } from "./screens/ParentJourneyCreatedScreen";
-import { ParentJourneyDashboardScreen } from "@/features/parent-journey/screens/ParentJourneyDashboardScreen";
 import { ParentOnboardingScreen } from "@/features/parent-journey/screens/ParentOnboardingScreen";
 import type { ParentOnboardingAnswers } from "@/features/parent-journey/types";
 import { ParentJourneyDashboardHydrator } from "@/features/parent-journey/screens/ParentJourneyDashboardHydrator";
-
-
-// Nodo de la ruta → pantalla de revisión. Explícito y fácil de extender.
-const REVIEW_MISSION_BY_NODE: Record<string, Screen> = {
-  n1: "mission-guide",
-  n2: "mission-two",
-  n3: "mission-three",
-  n4: "mission-four",
-  n5: "mission",
-  n6: "mission-six",
-  n7: "mission-seven",
-  n8: "mission-eight",
-  n9: "mission-nine",
-};
 
 const SPLASH_FADE_MS = 1050;
 const SPLASH_HIDE_MS = 1350;
