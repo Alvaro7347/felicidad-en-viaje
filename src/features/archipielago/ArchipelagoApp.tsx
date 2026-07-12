@@ -181,6 +181,10 @@ export function ArchipelagoApp() {
   // ── Aislamiento entre sesiones: al cambiar user_id, limpiar estado local
   //    para que la nueva cuenta nunca vea datos de la anterior.
   const lastUidRef = useRef<string | null>(null);
+  // Telemetría: `app_opened` se registra una vez por usuario. Se declara aquí
+  // (antes del effect de cambio de UID) para reiniciarlo en logout/login.
+  const appOpenedLoggedRef = useRef(false);
+
   useEffect(() => {
     const uid = session?.user.id ?? null;
     if (lastUidRef.current !== uid) {
