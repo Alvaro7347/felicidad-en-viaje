@@ -5,6 +5,7 @@ import { Card } from "../components/Card";
 import { BackBtn } from "../components/BackBtn";
 import { MissionIntroHeader } from "../components/MissionIntroHeader";
 import { LessonCompletionBox } from "../components/LessonCompletionBox";
+import { LessonDiscussionSection } from "@/features/discussions/components/LessonDiscussionSection";
 import { MVP1_LAST_UNLOCKED_LESSON_ID } from "../data/mvp1Progress";
 import {
   findPulseLesson,
@@ -420,6 +421,7 @@ export function PulseLessonScreen({
         islandId="pulse"
         onCompleted={onBackToIsland}
       />
+      <LessonDiscussionSection lessonId={lessonId} />
 
       {lessonId === MVP1_LAST_UNLOCKED_LESSON_ID && (
         <Card style={{ background: B.pinkLight, border: `1.5px solid ${B.pink}` }}>
