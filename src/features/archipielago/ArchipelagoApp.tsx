@@ -950,6 +950,21 @@ export function ArchipelagoApp() {
 
 
 
+        {screen === "self-journey" && (() => {
+          // Solo para Alejandra. María José tiene su propio dashboard.
+          if (experience.mode === "accompanied_learning") {
+            setTimeout(() => setScreen("parent-journey-dashboard"), 0);
+            return null;
+          }
+          return (
+            <SelfJourneyDashboardScreen
+              userName={userName}
+              onContinue={(lessonId) => continueSelfJourney(lessonId)}
+              onReview={() => setScreen("route")}
+            />
+          );
+        })()}
+
         {screen === "route" && (
           <RouteScreen
             userName={userName}
