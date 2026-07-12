@@ -2,8 +2,41 @@ import { useEffect, useRef, useState } from "react";
 import { B } from "../data/brand";
 import type { Screen } from "../types";
 import { ONBOARDING_SCREENS } from "../data/screens";
-import { ROUTE_STAGES } from "../data/islands";
+
 import { useExperienceMode } from "../context/ExperienceModeContext";
+import { useMvp1ProgressContext } from "../context/Mvp1ProgressContext";
+import { getIslandProgress } from "../utils/islandProgress";
+import type { IslandId } from "../data/mvp1Progress";
+
+const SCREEN_TO_ISLAND: Partial<Record<Screen, IslandId>> = {
+  'route': 'start-port',
+  'mission': 'start-port',
+  'mission-guide': 'start-port',
+  'mission-two': 'start-port',
+  'mission-three': 'start-port',
+  'mission-four': 'start-port',
+  'mission-six': 'start-port',
+  'mission-seven': 'start-port',
+  'mission-eight': 'start-port',
+  'mission-nine': 'start-port',
+  'celebration': 'start-port',
+  'first-melodies-island': 'first-melodies',
+  'first-melodies-lesson': 'first-melodies',
+  'pulse-island': 'pulse',
+  'pulse-lesson': 'pulse',
+  'rhythm-island': 'rhythm',
+  'rhythm-lesson': 'rhythm',
+  'music-island': 'music',
+  'music-lesson': 'music',
+  'joy-island': 'joy',
+  'joy-lesson': 'joy',
+  'chords-island': 'chords',
+  'chords-lesson': 'chords',
+  'strumming-island': 'strumming',
+  'strumming-lesson': 'strumming',
+  'songs-island': 'songs',
+  'songs-lesson': 'songs',
+};
 
 function UserMenu({
   onHome,
@@ -149,6 +182,7 @@ export function AppHeader({
   studentName?: string;
 }) {
   const { mode } = useExperienceMode();
+  const progress = useMvp1ProgressContext();
   const isAccompanied = mode === "accompanied_learning";
   const trimmedStudent = studentName?.trim();
   const tripLabel = isAccompanied && trimmedStudent ? `Viaje de ${trimmedStudent}` : "Mi viaje";
@@ -161,38 +195,26 @@ export function AppHeader({
 
   const modernHeaderScreens: Screen[] = ['route', 'mission', 'mission-guide', 'mission-two', 'mission-three', 'mission-four', 'mission-six', 'mission-seven', 'mission-eight', 'mission-nine', 'celebration', 'first-melodies-island', 'first-melodies-lesson', 'pulse-island', 'pulse-lesson', 'rhythm-island', 'rhythm-lesson', 'music-island', 'music-lesson', 'joy-island', 'joy-lesson', 'chords-island', 'chords-lesson', 'strumming-island', 'strumming-lesson', 'songs-island', 'songs-lesson', 'my-profile', 'help-center', 'privacy'];
   if (modernHeaderScreens.includes(screen)) {
-    const isFirstMelodies = screen === 'first-melodies-island' || screen === 'first-melodies-lesson';
-    const isPulse = screen === 'pulse-island' || screen === 'pulse-lesson';
-    const isRhythm = screen === 'rhythm-island' || screen === 'rhythm-lesson';
-    const isMusic = screen === 'music-island' || screen === 'music-lesson';
-    const isJoy = screen === 'joy-island' || screen === 'joy-lesson';
-    const isChords = screen === 'chords-island' || screen === 'chords-lesson';
-    const isStrumming = screen === 'strumming-island' || screen === 'strumming-lesson';
-    const isSongs = screen === 'songs-island' || screen === 'songs-lesson';
     const isMenuScreen = screen === 'my-profile' || screen === 'help-center' || screen === 'privacy';
-    const isIslandOverride = isFirstMelodies || isPulse || isRhythm || isMusic || isJoy || isChords || isStrumming || isSongs;
-    const active = ROUTE_STAGES.find(s => s.status === 'active') ?? ROUTE_STAGES[0];
-    const pct = isIslandOverride || isMenuScreen ? 0 : active.progress;
+    const islandId = SCREEN_TO_ISLAND[screen];
+    const islandTitles: Record<IslandId, string> = {
+      'start-port': 'Puerto de Inicio',
+      'first-melodies': 'Isla de Primeras Melodías',
+      'pulse': 'Isla del Pulso',
+      'rhythm': 'Isla del Ritmo',
+      'music': 'Isla Musical',
+      'joy': 'Isla de la Alegría',
+      'chords': 'Isla de los Acordes',
+      'strumming': 'Isla del Rasgueo',
+      'songs': 'Isla de las Canciones',
+    };
+    const pct = !isMenuScreen && islandId ? getIslandProgress(progress, islandId).pct : 0;
     const title = isMenuScreen
       ? (screen === 'my-profile' ? 'Mi perfil' : screen === 'help-center' ? 'Centro de ayuda' : 'Privacidad y seguridad')
-      : isFirstMelodies
-      ? 'Isla de Primeras Melodías'
-      : isPulse
-      ? 'Isla del Pulso'
-      : isRhythm
-      ? 'Isla del Ritmo'
-      : isMusic
-      ? 'Isla Musical'
-      : isJoy
-      ? 'Isla de la Alegría'
-      : isChords
-      ? 'Isla de los Acordes'
-      : isStrumming
-      ? 'Isla del Rasgueo'
-      : isSongs
-      ? 'Isla de las Canciones'
-      : active.title;
-    const completionText = isIslandOverride || isMenuScreen ? '' : active.completionText;
+      : islandId
+      ? islandTitles[islandId]
+      : '';
+    const completionText = islandId === 'start-port' ? 'completado' : 'completada';
     return (
       <header style={{
         background: '#FFFFFF',
@@ -242,7 +264,7 @@ export function AppHeader({
           </div>
           <div style={{ fontSize: 11.5, color: B.grayText, marginTop: 2, lineHeight: 1.3, whiteSpace: 'nowrap', overflow: 'hidden', textOverflow: 'ellipsis' }}>
             {title}
-            {!isMenuScreen && !isIslandOverride && (
+            {!isMenuScreen && islandId && (
               <> · <span style={{ color: B.greenDark, fontWeight: 700 }}>{pct}% {completionText}</span></>
             )}
           </div>
