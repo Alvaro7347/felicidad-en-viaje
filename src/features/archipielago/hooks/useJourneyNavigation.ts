@@ -17,10 +17,7 @@ import { useCallback, useMemo } from "react";
 
 import type { Screen } from "../types";
 import { findMvp1Lesson, type IslandId } from "../data/mvp1Progress";
-import {
-  ISLAND_TO_ISLAND_SCREEN,
-  ISLAND_TO_LESSON_SCREEN,
-} from "../data/journeyCatalog";
+import { ISLAND_TO_ISLAND_SCREEN, ISLAND_TO_LESSON_SCREEN } from "../data/journeyCatalog";
 
 export type ProgressLike = {
   loading: boolean;
@@ -29,10 +26,7 @@ export type ProgressLike = {
   logEvent: (name: string, payload?: Record<string, unknown>) => void;
 };
 
-export type ExperienceModeValue =
-  | "self_learning"
-  | "accompanied_learning"
-  | null;
+export type ExperienceModeValue = "self_learning" | "accompanied_learning" | null;
 
 export type LessonSetters = Partial<Record<IslandId, (lessonId: string) => void>>;
 
@@ -81,15 +75,12 @@ export function useJourneyNavigation(args: UseJourneyNavigationArgs): JourneyNav
     lessonSetters,
   } = args;
 
-  const resolveScreenForLesson = useCallback(
-    (lessonId: string): Screen | null => {
-      const entry = findMvp1Lesson(lessonId);
-      if (!entry) return null;
-      if (entry.islandId === "start-port") return entry.screen;
-      return ISLAND_TO_LESSON_SCREEN[entry.islandId];
-    },
-    [],
-  );
+  const resolveScreenForLesson = useCallback((lessonId: string): Screen | null => {
+    const entry = findMvp1Lesson(lessonId);
+    if (!entry) return null;
+    if (entry.islandId === "start-port") return entry.screen;
+    return ISLAND_TO_LESSON_SCREEN[entry.islandId];
+  }, []);
 
   const openLockedIsland = useCallback(
     (islandId: string) => {
