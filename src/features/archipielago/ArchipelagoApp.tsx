@@ -460,7 +460,7 @@ export function ArchipelagoApp() {
             {parentJourneyLoadError}{" "}
             <button
               type="button"
-              onClick={() => { void experience.refresh(); }}
+              onClick={() => { setParentJourneyLoadError(null); bootstrap.retry(); }}
               style={{ background: "transparent", border: "none", color: B.dark, textDecoration: "underline", cursor: "pointer" }}
             >
               Reintentar
