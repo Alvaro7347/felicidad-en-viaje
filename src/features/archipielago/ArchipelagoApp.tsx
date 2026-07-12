@@ -328,7 +328,7 @@ export function ArchipelagoApp() {
           </div>
           <button
             type="button"
-            onClick={() => { setAmbiguousMode(false); void experience.refresh(); }}
+            onClick={() => { setAmbiguousMode(false); bootstrap.retry(); }}
             style={{
               alignSelf: "center",
               border: "none",
