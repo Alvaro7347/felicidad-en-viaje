@@ -154,6 +154,7 @@ export function MissionFourScreen({ onBack }: { onBack: () => void }) {
         </div>
       )}
       <LessonCompletionBox lessonId="n4" islandId="start-port" onCompleted={onBack} />
+      <LessonDiscussionSection lessonId="n4" />
     </div>
   );
 }
