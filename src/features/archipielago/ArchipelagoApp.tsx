@@ -10,6 +10,8 @@ import { BlockedIslandModal } from "./components/BlockedIslandModal";
 import { useMvp1ProgressContext } from "./context/Mvp1ProgressContext";
 import { useExperienceMode } from "./context/ExperienceModeContext";
 import { findMvp1Lesson } from "./data/mvp1Progress";
+import { ISLAND_TO_ISLAND_SCREEN } from "./data/journeyCatalog";
+import { useJourneyNavigation } from "./hooks/useJourneyNavigation";
 import {
   getJourneyConfiguration,
   loadParentJourney,
@@ -404,76 +406,34 @@ export function ArchipelagoApp() {
     }
   }, [session?.user.id, progress.loading, hasOnboarding, progress]);
 
-  const goToRoute = () => {
-    // Preservar contexto de acompañamiento en modalidad María José.
-    if (experience.mode === "accompanied_learning") {
-      setJourneyOrigin("parent");
-      // routeStudentName se mantiene tal como fue hidratado desde parent_journeys.
-    } else {
-      setJourneyOrigin("student");
-      setRouteStudentName(undefined);
-    }
-    setScreen("route");
-  };
-  const goHome = () => {
-    if (experience.mode === "accompanied_learning") {
-      setScreen("parent-journey-dashboard");
-    } else {
-      // Alejandra (self_learning): "Mi viaje" es el nuevo dashboard personal,
-      // no el Archipiélago pedagógico.
-      setScreen("self-journey");
-    }
-  };
+  // ── Navegación pedagógica (extraída a useJourneyNavigation) ────
+  const {
+    goHome,
+    goToRoute,
+    openMission,
+    openLesson,
+    continueJourney,
+    openLockedIsland,
+  } = useJourneyNavigation({
+    progress,
+    experienceMode: experience.mode,
+    setScreen,
+    setBlockedModal,
+    setJourneyOrigin,
+    setRouteStudentName,
+    lessonSetters: {
+      "first-melodies": setFirstMelodiesLessonId,
+      pulse: setPulseLessonId,
+      rhythm: setRhythmLessonId,
+      music: setMusicLessonId,
+      joy: setJoyLessonId,
+      chords: setChordsLessonId,
+      strumming: setStrummingLessonId,
+      songs: setSongsLessonId,
+    },
+  });
 
-  // Continuar desde SelfJourneyDashboardScreen: usa la lógica existente
-  // (openMissionGuarded / openLessonGuarded) para respetar bloqueos.
-  const continueSelfJourney = (lessonId: string | null) => {
-    if (progress.loading) return;
-    const cur = lessonId ?? progress.getCurrentLessonId();
-    if (!cur) { setScreen("route"); return; }
-    if (cur.startsWith("n")) { openMissionGuarded(cur); return; }
-    if (cur.startsWith("m")) { openLessonGuarded(cur, "first-melodies-lesson", setFirstMelodiesLessonId); return; }
-    if (cur.startsWith("p")) { openLessonGuarded(cur, "pulse-lesson", setPulseLessonId); return; }
-    setScreen("route");
-  };
   const isOnboarding = ONBOARDING_SCREENS.includes(screen);
-
-  // Intento de abrir isla bloqueada (Ritmo en adelante durante MVP1)
-  const openLockedIsland = (islandId: string) => {
-    setBlockedModal("island");
-    progress.logEvent("blocked_island_clicked", { island_id: islandId });
-  };
-
-  // Intento de abrir lección: valida contra el progreso MVP1
-  const openLessonGuarded = (
-    lessonId: string,
-    lessonScreen: Screen,
-    setLessonId: (id: string) => void,
-  ) => {
-    if (progress.loading) return; // Esperar a tener progreso real antes de decidir.
-    if (!progress.isLessonUnlocked(lessonId)) {
-      setBlockedModal("lesson");
-      progress.logEvent("blocked_lesson_clicked", { lesson_id: lessonId });
-      return;
-    }
-    setLessonId(lessonId);
-    setScreen(lessonScreen);
-    progress.logEvent("lesson_opened", { lesson_id: lessonId });
-  };
-
-  // Ir a la pantalla de una misión (Puerto) sólo si está desbloqueada.
-  const openMissionGuarded = (lessonId: string) => {
-    if (progress.loading) return;
-    const entry = findMvp1Lesson(lessonId);
-    if (!entry) return;
-    if (!progress.isLessonUnlocked(lessonId)) {
-      setBlockedModal("lesson");
-      progress.logEvent("blocked_lesson_clicked", { lesson_id: lessonId });
-      return;
-    }
-    setScreen(entry.screen);
-    progress.logEvent("lesson_opened", { lesson_id: lessonId });
-  };
 
 
   // ── Compuerta de sesión ────────────────────────────────────────
@@ -647,8 +607,9 @@ export function ArchipelagoApp() {
             ctaLabel={(() => {
               if (progress.loading) return "Preparando tu viaje…";
               const cur = progress.getCurrentLessonId();
-              if (cur?.startsWith("m")) return "Continuar en Primeras Melodías";
-              if (cur?.startsWith("p")) return "Continuar en Isla del Pulso";
+              const island = cur ? findMvp1Lesson(cur)?.islandId : null;
+              if (island === "first-melodies") return "Continuar en Primeras Melodías";
+              if (island === "pulse") return "Continuar en Isla del Pulso";
               return "Entrar a mi Archipiélago";
             })()}
             onEnter={() => {
@@ -656,10 +617,9 @@ export function ArchipelagoApp() {
               const cur = progress.getCurrentLessonId();
               // cur === null → completó todo MVP1 (hasta p11). Mostrar Isla del Pulso.
               if (!cur) { setScreen("pulse-island"); return; }
-              if (cur.startsWith("m")) { setScreen("first-melodies-island"); return; }
-              if (cur.startsWith("p")) { setScreen("pulse-island"); return; }
-              // n1..n9 o cualquier otro caso → Puerto / RouteScreen.
-              setScreen("route");
+              const island = findMvp1Lesson(cur)?.islandId;
+              if (!island || island === "start-port") { setScreen("route"); return; }
+              setScreen(ISLAND_TO_ISLAND_SCREEN[island]);
             }}
           />
         )}
@@ -941,7 +901,7 @@ export function ArchipelagoApp() {
           return (
             <SelfJourneyDashboardScreen
               userName={userName}
-              onContinue={(lessonId) => continueSelfJourney(lessonId)}
+              onContinue={(lessonId) => continueJourney(lessonId)}
               onReview={() => setScreen("route")}
             />
           );
@@ -950,8 +910,8 @@ export function ArchipelagoApp() {
         {screen === "route" && (
           <RouteScreen
             userName={userName}
-            onStartMission={(id) => openMissionGuarded(id)}
-            onReviewMission={(id) => openMissionGuarded(id)}
+            onStartMission={(id) => openMission(id)}
+            onReviewMission={(id) => openMission(id)}
             onOpenFirstMelodiesIsland={() => setScreen("first-melodies-island")}
             onOpenPulseIsland={() => setScreen("pulse-island")}
             onOpenRhythmIsland={() => openLockedIsland("rhythm")}
@@ -993,7 +953,7 @@ export function ArchipelagoApp() {
           <FirstMelodiesIslandScreen
             onBack={() => setScreen("route")}
             onOpenLesson={(lessonId) =>
-              openLessonGuarded(lessonId, "first-melodies-lesson", setFirstMelodiesLessonId)
+              openLesson(lessonId)
             }
             onOpenPulseIsland={() => setScreen("pulse-island")}
             onOpenRhythmIsland={() => openLockedIsland("rhythm")}
@@ -1015,7 +975,7 @@ export function ArchipelagoApp() {
             onOpenStrummingIsland={() => openLockedIsland("strumming")}
             onOpenSongsIsland={() => openLockedIsland("songs")}
             onOpenLesson={(lessonId) =>
-              openLessonGuarded(lessonId, "pulse-lesson", setPulseLessonId)
+              openLesson(lessonId)
             }
           />
         )}
