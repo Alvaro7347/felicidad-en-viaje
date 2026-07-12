@@ -825,16 +825,14 @@ export function ArchipelagoApp() {
               if (!uid) throw new Error("No hay sesión activa.");
 
               // Doble verificación server-side: cuenta acompañada no debe escribir onboarding/name.
-              const [{ data: prof, error: profReadErr }, { data: pj, error: pjReadErr }] = await Promise.all([
-                supabase.from("profiles").select("experience_mode").eq("id", uid).maybeSingle(),
-                supabase.from("parent_journeys").select("user_id").eq("user_id", uid).maybeSingle(),
+              const [prof, cfg] = await Promise.all([
+                loadProfile(uid),
+                getJourneyConfiguration(uid),
               ]);
-              if (profReadErr) throw new Error(profReadErr.message);
-              if (pjReadErr) throw new Error(pjReadErr.message);
-              if (prof?.experience_mode === "accompanied_learning" || pj) {
+              if (prof?.experience_mode === "accompanied_learning" || cfg.hasParentJourney) {
                 progress.logEvent("diagnosis_blocked_by_mode", {
                   persisted_mode: prof?.experience_mode ?? null,
-                  has_parent_journey: !!pj,
+                  has_parent_journey: cfg.hasParentJourney,
                 });
                 setPendingDiagnosis(null);
                 setScreen("parent-journey-dashboard");
@@ -842,24 +840,15 @@ export function ArchipelagoApp() {
               }
 
               // 1) Guardar user_onboarding.
-              const payload = { name, answers } as unknown as never;
-              const { error: onbError } = await supabase.from("user_onboarding").upsert(
-                { user_id: uid, answers: payload, updated_at: new Date().toISOString() },
-                { onConflict: "user_id" },
-              );
-              if (onbError) throw new Error(`user_onboarding: ${onbError.message}`);
+              await saveSelfOnboarding(uid, name, answers);
 
               // 2) Consolidar modalidad self_learning (crítico).
               await experience.setMode("self_learning");
 
               // 3) profiles.name: no crítico. El nombre ya vive en user_onboarding.answers.
-              const { error: profError } = await supabase
-                .from("profiles")
-                .upsert(
-                  { id: uid, name, updated_at: new Date().toISOString() },
-                  { onConflict: "id" },
-                );
-              if (profError) {
+              try {
+                await updateProfileName(uid, name);
+              } catch (profError) {
                 console.warn("[onboarding] profiles.name warning (no bloqueante):", profError);
               }
 
