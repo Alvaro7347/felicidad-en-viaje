@@ -406,76 +406,34 @@ export function ArchipelagoApp() {
     }
   }, [session?.user.id, progress.loading, hasOnboarding, progress]);
 
-  const goToRoute = () => {
-    // Preservar contexto de acompañamiento en modalidad María José.
-    if (experience.mode === "accompanied_learning") {
-      setJourneyOrigin("parent");
-      // routeStudentName se mantiene tal como fue hidratado desde parent_journeys.
-    } else {
-      setJourneyOrigin("student");
-      setRouteStudentName(undefined);
-    }
-    setScreen("route");
-  };
-  const goHome = () => {
-    if (experience.mode === "accompanied_learning") {
-      setScreen("parent-journey-dashboard");
-    } else {
-      // Alejandra (self_learning): "Mi viaje" es el nuevo dashboard personal,
-      // no el Archipiélago pedagógico.
-      setScreen("self-journey");
-    }
-  };
+  // ── Navegación pedagógica (extraída a useJourneyNavigation) ────
+  const {
+    goHome,
+    goToRoute,
+    openMission,
+    openLesson,
+    continueJourney,
+    openLockedIsland,
+  } = useJourneyNavigation({
+    progress,
+    experienceMode: experience.mode,
+    setScreen,
+    setBlockedModal,
+    setJourneyOrigin,
+    setRouteStudentName,
+    lessonSetters: {
+      "first-melodies": setFirstMelodiesLessonId,
+      pulse: setPulseLessonId,
+      rhythm: setRhythmLessonId,
+      music: setMusicLessonId,
+      joy: setJoyLessonId,
+      chords: setChordsLessonId,
+      strumming: setStrummingLessonId,
+      songs: setSongsLessonId,
+    },
+  });
 
-  // Continuar desde SelfJourneyDashboardScreen: usa la lógica existente
-  // (openMissionGuarded / openLessonGuarded) para respetar bloqueos.
-  const continueSelfJourney = (lessonId: string | null) => {
-    if (progress.loading) return;
-    const cur = lessonId ?? progress.getCurrentLessonId();
-    if (!cur) { setScreen("route"); return; }
-    if (cur.startsWith("n")) { openMissionGuarded(cur); return; }
-    if (cur.startsWith("m")) { openLessonGuarded(cur, "first-melodies-lesson", setFirstMelodiesLessonId); return; }
-    if (cur.startsWith("p")) { openLessonGuarded(cur, "pulse-lesson", setPulseLessonId); return; }
-    setScreen("route");
-  };
   const isOnboarding = ONBOARDING_SCREENS.includes(screen);
-
-  // Intento de abrir isla bloqueada (Ritmo en adelante durante MVP1)
-  const openLockedIsland = (islandId: string) => {
-    setBlockedModal("island");
-    progress.logEvent("blocked_island_clicked", { island_id: islandId });
-  };
-
-  // Intento de abrir lección: valida contra el progreso MVP1
-  const openLessonGuarded = (
-    lessonId: string,
-    lessonScreen: Screen,
-    setLessonId: (id: string) => void,
-  ) => {
-    if (progress.loading) return; // Esperar a tener progreso real antes de decidir.
-    if (!progress.isLessonUnlocked(lessonId)) {
-      setBlockedModal("lesson");
-      progress.logEvent("blocked_lesson_clicked", { lesson_id: lessonId });
-      return;
-    }
-    setLessonId(lessonId);
-    setScreen(lessonScreen);
-    progress.logEvent("lesson_opened", { lesson_id: lessonId });
-  };
-
-  // Ir a la pantalla de una misión (Puerto) sólo si está desbloqueada.
-  const openMissionGuarded = (lessonId: string) => {
-    if (progress.loading) return;
-    const entry = findMvp1Lesson(lessonId);
-    if (!entry) return;
-    if (!progress.isLessonUnlocked(lessonId)) {
-      setBlockedModal("lesson");
-      progress.logEvent("blocked_lesson_clicked", { lesson_id: lessonId });
-      return;
-    }
-    setScreen(entry.screen);
-    progress.logEvent("lesson_opened", { lesson_id: lessonId });
-  };
 
 
   // ── Compuerta de sesión ────────────────────────────────────────
