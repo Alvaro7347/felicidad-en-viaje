@@ -367,7 +367,7 @@ export function ArchipelagoApp() {
       </main>
     );
   }
-  if (authChecking || experience.loading || (session && (onboardingChecking || hasOnboarding === null))) {
+  if (authChecking || experience.loading || (session && bootstrapChecking)) {
     return (
       <main
         style={{
