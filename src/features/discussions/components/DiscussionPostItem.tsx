@@ -17,8 +17,7 @@ import { formatDiscussionDate } from "./formatDate";
 type Props = {
   post: LessonDiscussionPost;
   onToggleApplause: (post: LessonDiscussionPost) => void;
-  isTogglingApplause: boolean;
-  applauseTargetId: string | null;
+  isApplausePending: boolean;
   onDelete: (postId: string) => Promise<void> | void;
   isDeleting: boolean;
   deleteError?: string | null;
