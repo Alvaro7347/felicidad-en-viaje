@@ -580,11 +580,9 @@ export function ArchipelagoApp() {
           return (
             <ParentJourneyIntroScreen
               onCreate={() => setScreen("parent-onboarding")}
-              onOpenDashboard={
-                hasOnboarding ? () => setScreen("parent-journey-dashboard") : undefined
-              }
             />
           );
+
         })()}
 
         {screen === "parent-onboarding" && (
