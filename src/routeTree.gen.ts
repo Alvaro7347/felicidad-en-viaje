@@ -11,6 +11,7 @@
 import { Route as rootRouteImport } from './routes/__root'
 import { Route as RestablecerContrasenaRouteImport } from './routes/restablecer-contrasena'
 import { Route as IndexRouteImport } from './routes/index'
+import { Route as DevDiscussionsRouteImport } from './routes/dev.discussions'
 
 const RestablecerContrasenaRoute = RestablecerContrasenaRouteImport.update({
   id: '/restablecer-contrasena',
@@ -22,31 +23,40 @@ const IndexRoute = IndexRouteImport.update({
   path: '/',
   getParentRoute: () => rootRouteImport,
 } as any)
+const DevDiscussionsRoute = DevDiscussionsRouteImport.update({
+  id: '/dev/discussions',
+  path: '/dev/discussions',
+  getParentRoute: () => rootRouteImport,
+} as any)
 
 export interface FileRoutesByFullPath {
   '/': typeof IndexRoute
   '/restablecer-contrasena': typeof RestablecerContrasenaRoute
+  '/dev/discussions': typeof DevDiscussionsRoute
 }
 export interface FileRoutesByTo {
   '/': typeof IndexRoute
   '/restablecer-contrasena': typeof RestablecerContrasenaRoute
+  '/dev/discussions': typeof DevDiscussionsRoute
 }
 export interface FileRoutesById {
   __root__: typeof rootRouteImport
   '/': typeof IndexRoute
   '/restablecer-contrasena': typeof RestablecerContrasenaRoute
+  '/dev/discussions': typeof DevDiscussionsRoute
 }
 export interface FileRouteTypes {
   fileRoutesByFullPath: FileRoutesByFullPath
-  fullPaths: '/' | '/restablecer-contrasena'
+  fullPaths: '/' | '/restablecer-contrasena' | '/dev/discussions'
   fileRoutesByTo: FileRoutesByTo
-  to: '/' | '/restablecer-contrasena'
-  id: '__root__' | '/' | '/restablecer-contrasena'
+  to: '/' | '/restablecer-contrasena' | '/dev/discussions'
+  id: '__root__' | '/' | '/restablecer-contrasena' | '/dev/discussions'
   fileRoutesById: FileRoutesById
 }
 export interface RootRouteChildren {
   IndexRoute: typeof IndexRoute
   RestablecerContrasenaRoute: typeof RestablecerContrasenaRoute
+  DevDiscussionsRoute: typeof DevDiscussionsRoute
 }
 
 declare module '@tanstack/react-router' {
@@ -65,12 +75,20 @@ declare module '@tanstack/react-router' {
       preLoaderRoute: typeof IndexRouteImport
       parentRoute: typeof rootRouteImport
     }
+    '/dev/discussions': {
+      id: '/dev/discussions'
+      path: '/dev/discussions'
+      fullPath: '/dev/discussions'
+      preLoaderRoute: typeof DevDiscussionsRouteImport
+      parentRoute: typeof rootRouteImport
+    }
   }
 }
 
 const rootRouteChildren: RootRouteChildren = {
   IndexRoute: IndexRoute,
   RestablecerContrasenaRoute: RestablecerContrasenaRoute,
+  DevDiscussionsRoute: DevDiscussionsRoute,
 }
 export const routeTree = rootRouteImport
   ._addFileChildren(rootRouteChildren)
