@@ -14,6 +14,24 @@ export type Database = {
   }
   public: {
     Tables: {
+      _rls_test_log: {
+        Row: {
+          id: number
+          msg: string | null
+          ts: string | null
+        }
+        Insert: {
+          id?: number
+          msg?: string | null
+          ts?: string | null
+        }
+        Update: {
+          id?: number
+          msg?: string | null
+          ts?: string | null
+        }
+        Relationships: []
+      }
       app_events: {
         Row: {
           created_at: string
