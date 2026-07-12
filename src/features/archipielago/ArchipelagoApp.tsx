@@ -10,6 +10,15 @@ import { BlockedIslandModal } from "./components/BlockedIslandModal";
 import { useMvp1ProgressContext } from "./context/Mvp1ProgressContext";
 import { useExperienceMode } from "./context/ExperienceModeContext";
 import { findMvp1Lesson } from "./data/mvp1Progress";
+import {
+  getJourneyConfiguration,
+  loadParentJourney,
+  loadProfile,
+  loadSelfOnboarding,
+  saveParentJourney,
+  saveSelfOnboarding,
+  updateProfileName,
+} from "./services/journeyRepository";
 
 import { AppHeader } from "./components/AppHeader";
 import { DevNav, SHOW_DEV_NAV } from "./components/DevNav";
