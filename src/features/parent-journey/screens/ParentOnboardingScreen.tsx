@@ -1,42 +1,9 @@
 import { useState } from "react";
 import { B } from "@/features/archipielago/data/brand";
 import { OnboardingProgressHeader } from "@/features/archipielago/components/OnboardingProgressHeader";
+import type { ParentOnboardingAnswers } from "@/features/parent-journey/types";
 
-export type ParentOnboardingAnswers = {
-  parent: {
-    name: string;
-    relationship: string;
-    email?: string;
-    motivation: string;
-  };
-  student: {
-    name: string;
-    age: string;
-    experience: string;
-    hasUkulele: string;
-    likes: string;
-  };
-  learning: {
-    reactions: string[];
-    noteForTeacher: string;
-  };
-  expectations: {
-    goal: string;
-    weeklyObserve: string;
-    worry: string;
-    goodExperience: string[];
-  };
-  practice: {
-    planName: string;
-    homePractice: string;
-    companion: string;
-    taskType: string[];
-  };
-  accompaniment: {
-    reportPrefs: string[];
-    messageForTeacher: string;
-  };
-};
+export type { ParentOnboardingAnswers };
 
 const empty: ParentOnboardingAnswers = {
   parent: { name: "", relationship: "", email: "", motivation: "" },
