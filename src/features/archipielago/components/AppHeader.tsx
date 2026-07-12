@@ -169,17 +169,6 @@ export function AppHeader({
   if (modernHeaderScreens.includes(screen)) {
     const isMenuScreen = screen === 'my-profile' || screen === 'help-center' || screen === 'privacy' || screen === 'self-journey';
     const islandId = SCREEN_TO_ISLAND[screen];
-    const islandTitles: Record<IslandId, string> = {
-      'start-port': 'Puerto de Inicio',
-      'first-melodies': 'Isla de Primeras Melodías',
-      'pulse': 'Isla del Pulso',
-      'rhythm': 'Isla del Ritmo',
-      'music': 'Isla Musical',
-      'joy': 'Isla de la Alegría',
-      'chords': 'Isla de los Acordes',
-      'strumming': 'Isla del Rasgueo',
-      'songs': 'Isla de las Canciones',
-    };
     const pct = !isMenuScreen && islandId ? getIslandProgress(progress, islandId).pct : 0;
     const title = isMenuScreen
       ? (screen === 'my-profile' ? 'Mi perfil'
@@ -187,7 +176,7 @@ export function AppHeader({
         : screen === 'privacy' ? 'Privacidad y seguridad'
         : 'Mi viaje')
       : islandId
-      ? islandTitles[islandId]
+      ? ISLAND_TITLES[islandId]
       : '';
     const completionText = islandId === 'start-port' ? 'completado' : 'completada';
     return (
