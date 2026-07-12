@@ -10,7 +10,7 @@ import { BlockedIslandModal } from "./components/BlockedIslandModal";
 import { useMvp1ProgressContext } from "./context/Mvp1ProgressContext";
 import { useExperienceMode } from "./context/ExperienceModeContext";
 import { findMvp1Lesson } from "./data/mvp1Progress";
-import { ISLAND_TO_ISLAND_SCREEN } from "./data/journeyCatalog";
+
 import { useJourneyNavigation } from "./hooks/useJourneyNavigation";
 import {
   getJourneyConfiguration,
