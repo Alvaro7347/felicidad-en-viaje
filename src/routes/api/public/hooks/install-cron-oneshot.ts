@@ -5,7 +5,7 @@
  */
 import { createFileRoute } from "@tanstack/react-router";
 
-export const Route = createFileRoute("/api/public/hooks/_install-cron")({
+export const Route = createFileRoute("/api/public/hooks/install-cron-oneshot")({
   server: {
     handlers: {
       POST: async ({ request }) => {
