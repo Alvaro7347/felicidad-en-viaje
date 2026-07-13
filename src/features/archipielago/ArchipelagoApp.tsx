@@ -292,12 +292,17 @@ export function ArchipelagoApp() {
       current_island_id,
       has_onboarding: !!hasOnboarding,
     });
+    // Marca actividad para el sistema de reactivación (settings.last_active_at).
+    // Fire-and-forget: no bloquea render y no rompe si el usuario aún no tiene
+    // user_settings (el server fn hace upsert).
+    settingsRepository.recordActivity("app_opened").catch(() => {});
     if (hasOnboarding && cur && cur !== "n1") {
       progress.logEvent("return_visit", {
         current_lesson_id: cur,
         current_island_id,
       });
     }
+
   }, [session?.user.id, progress.loading, hasOnboarding, progress]);
 
   // ── Navegación pedagógica (extraída a useJourneyNavigation) ────
