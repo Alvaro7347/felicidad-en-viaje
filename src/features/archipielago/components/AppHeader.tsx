@@ -12,6 +12,7 @@ function UserMenu({
   onHome,
   onOpenGuide,
   onOpenProfile,
+  onOpenSettings,
   onOpenHelp,
   onOpenPrivacy,
   tripLabel,
@@ -19,10 +20,12 @@ function UserMenu({
   onHome?: () => void;
   onOpenGuide?: () => void;
   onOpenProfile: () => void;
+  onOpenSettings: () => void;
   onOpenHelp: () => void;
   onOpenPrivacy: () => void;
   tripLabel: string;
 }) {
+
   const { signOutAndClear } = useExperienceMode();
   const [open, setOpen] = useState(false);
   const wrapRef = useRef<HTMLDivElement>(null);
