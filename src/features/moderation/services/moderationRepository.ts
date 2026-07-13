@@ -200,10 +200,7 @@ export async function hidePost(postId: string): Promise<void> {
   const mapped = mapPgError(error);
   if (mapped) throw mapped;
   if (!data || data.length === 0) {
-    throw new ModerationError(
-      "not_found",
-      "No se pudo ocultar la publicación (puede que ya esté oculta o haya sido eliminada).",
-    );
+    throw new ModerationError("not_found", NOT_FOUND_MESSAGE);
   }
 }
 
@@ -221,10 +218,7 @@ export async function hideReply(replyId: string): Promise<void> {
   const mapped = mapPgError(error);
   if (mapped) throw mapped;
   if (!data || data.length === 0) {
-    throw new ModerationError(
-      "not_found",
-      "No se pudo ocultar la respuesta (puede que ya esté oculta).",
-    );
+    throw new ModerationError("not_found", NOT_FOUND_MESSAGE);
   }
 }
 
