@@ -1,5 +1,6 @@
 // Formulario para responder oficialmente a un post.
 import { useEffect, useRef, useState } from "react";
+import { OFFICIAL_TEAM_NAME } from "@/features/discussions/brand";
 
 interface Props {
   postId: string;
