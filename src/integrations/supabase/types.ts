@@ -201,6 +201,42 @@ export type Database = {
         }
         Relationships: []
       }
+      notification_deliveries: {
+        Row: {
+          created_at: string
+          error: string | null
+          id: string
+          notification_type: string
+          payload: Json
+          period_key: string
+          sent_at: string | null
+          status: string
+          user_id: string
+        }
+        Insert: {
+          created_at?: string
+          error?: string | null
+          id?: string
+          notification_type: string
+          payload?: Json
+          period_key: string
+          sent_at?: string | null
+          status?: string
+          user_id: string
+        }
+        Update: {
+          created_at?: string
+          error?: string | null
+          id?: string
+          notification_type?: string
+          payload?: Json
+          period_key?: string
+          sent_at?: string | null
+          status?: string
+          user_id?: string
+        }
+        Relationships: []
+      }
       parent_journeys: {
         Row: {
           created_at: string
@@ -264,6 +300,42 @@ export type Database = {
           id?: string
           name?: string | null
           updated_at?: string
+        }
+        Relationships: []
+      }
+      push_subscriptions: {
+        Row: {
+          auth: string
+          created_at: string
+          endpoint: string
+          id: string
+          p256dh: string
+          revoked_at: string | null
+          updated_at: string
+          user_agent: string | null
+          user_id: string
+        }
+        Insert: {
+          auth: string
+          created_at?: string
+          endpoint: string
+          id?: string
+          p256dh: string
+          revoked_at?: string | null
+          updated_at?: string
+          user_agent?: string | null
+          user_id: string
+        }
+        Update: {
+          auth?: string
+          created_at?: string
+          endpoint?: string
+          id?: string
+          p256dh?: string
+          revoked_at?: string | null
+          updated_at?: string
+          user_agent?: string | null
+          user_id?: string
         }
         Relationships: []
       }
@@ -360,6 +432,48 @@ export type Database = {
           id?: string
           role?: Database["public"]["Enums"]["app_role"]
           user_id?: string
+        }
+        Relationships: []
+      }
+      user_settings: {
+        Row: {
+          avatar_path: string | null
+          created_at: string
+          important_notices_enabled: boolean
+          inactivity_reminders_enabled: boolean
+          last_active_at: string | null
+          notifications_enabled: boolean
+          theme: string
+          timezone: string
+          updated_at: string
+          user_id: string
+          weekly_report_enabled: boolean
+        }
+        Insert: {
+          avatar_path?: string | null
+          created_at?: string
+          important_notices_enabled?: boolean
+          inactivity_reminders_enabled?: boolean
+          last_active_at?: string | null
+          notifications_enabled?: boolean
+          theme?: string
+          timezone?: string
+          updated_at?: string
+          user_id: string
+          weekly_report_enabled?: boolean
+        }
+        Update: {
+          avatar_path?: string | null
+          created_at?: string
+          important_notices_enabled?: boolean
+          inactivity_reminders_enabled?: boolean
+          last_active_at?: string | null
+          notifications_enabled?: boolean
+          theme?: string
+          timezone?: string
+          updated_at?: string
+          user_id?: string
+          weekly_report_enabled?: boolean
         }
         Relationships: []
       }
