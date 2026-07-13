@@ -13,6 +13,7 @@ import { Route as RestablecerContrasenaRouteImport } from './routes/restablecer-
 import { Route as IndexRouteImport } from './routes/index'
 import { Route as ModeracionComunidadRouteImport } from './routes/moderacion.comunidad'
 import { Route as ApiPublicHooksNotificationsSchedulerRouteImport } from './routes/api/public/hooks/notifications-scheduler'
+import { Route as ApiPublicHooksInstallCronRouteImport } from './routes/api/public/hooks/_install-cron'
 
 const RestablecerContrasenaRoute = RestablecerContrasenaRouteImport.update({
   id: '/restablecer-contrasena',
@@ -35,17 +36,25 @@ const ApiPublicHooksNotificationsSchedulerRoute =
     path: '/api/public/hooks/notifications-scheduler',
     getParentRoute: () => rootRouteImport,
   } as any)
+const ApiPublicHooksInstallCronRoute =
+  ApiPublicHooksInstallCronRouteImport.update({
+    id: '/api/public/hooks/_install-cron',
+    path: '/api/public/hooks',
+    getParentRoute: () => rootRouteImport,
+  } as any)
 
 export interface FileRoutesByFullPath {
   '/': typeof IndexRoute
   '/restablecer-contrasena': typeof RestablecerContrasenaRoute
   '/moderacion/comunidad': typeof ModeracionComunidadRoute
+  '/api/public/hooks': typeof ApiPublicHooksInstallCronRoute
   '/api/public/hooks/notifications-scheduler': typeof ApiPublicHooksNotificationsSchedulerRoute
 }
 export interface FileRoutesByTo {
   '/': typeof IndexRoute
   '/restablecer-contrasena': typeof RestablecerContrasenaRoute
   '/moderacion/comunidad': typeof ModeracionComunidadRoute
+  '/api/public/hooks': typeof ApiPublicHooksInstallCronRoute
   '/api/public/hooks/notifications-scheduler': typeof ApiPublicHooksNotificationsSchedulerRoute
 }
 export interface FileRoutesById {
@@ -53,6 +62,7 @@ export interface FileRoutesById {
   '/': typeof IndexRoute
   '/restablecer-contrasena': typeof RestablecerContrasenaRoute
   '/moderacion/comunidad': typeof ModeracionComunidadRoute
+  '/api/public/hooks/_install-cron': typeof ApiPublicHooksInstallCronRoute
   '/api/public/hooks/notifications-scheduler': typeof ApiPublicHooksNotificationsSchedulerRoute
 }
 export interface FileRouteTypes {
@@ -61,18 +71,21 @@ export interface FileRouteTypes {
     | '/'
     | '/restablecer-contrasena'
     | '/moderacion/comunidad'
+    | '/api/public/hooks'
     | '/api/public/hooks/notifications-scheduler'
   fileRoutesByTo: FileRoutesByTo
   to:
     | '/'
     | '/restablecer-contrasena'
     | '/moderacion/comunidad'
+    | '/api/public/hooks'
     | '/api/public/hooks/notifications-scheduler'
   id:
     | '__root__'
     | '/'
     | '/restablecer-contrasena'
     | '/moderacion/comunidad'
+    | '/api/public/hooks/_install-cron'
     | '/api/public/hooks/notifications-scheduler'
   fileRoutesById: FileRoutesById
 }
@@ -80,6 +93,7 @@ export interface RootRouteChildren {
   IndexRoute: typeof IndexRoute
   RestablecerContrasenaRoute: typeof RestablecerContrasenaRoute
   ModeracionComunidadRoute: typeof ModeracionComunidadRoute
+  ApiPublicHooksInstallCronRoute: typeof ApiPublicHooksInstallCronRoute
   ApiPublicHooksNotificationsSchedulerRoute: typeof ApiPublicHooksNotificationsSchedulerRoute
 }
 
@@ -113,6 +127,13 @@ declare module '@tanstack/react-router' {
       preLoaderRoute: typeof ApiPublicHooksNotificationsSchedulerRouteImport
       parentRoute: typeof rootRouteImport
     }
+    '/api/public/hooks/_install-cron': {
+      id: '/api/public/hooks/_install-cron'
+      path: '/api/public/hooks'
+      fullPath: '/api/public/hooks'
+      preLoaderRoute: typeof ApiPublicHooksInstallCronRouteImport
+      parentRoute: typeof rootRouteImport
+    }
   }
 }
 
@@ -120,9 +141,20 @@ const rootRouteChildren: RootRouteChildren = {
   IndexRoute: IndexRoute,
   RestablecerContrasenaRoute: RestablecerContrasenaRoute,
   ModeracionComunidadRoute: ModeracionComunidadRoute,
+  ApiPublicHooksInstallCronRoute: ApiPublicHooksInstallCronRoute,
   ApiPublicHooksNotificationsSchedulerRoute:
     ApiPublicHooksNotificationsSchedulerRoute,
 }
 export const routeTree = rootRouteImport
   ._addFileChildren(rootRouteChildren)
   ._addFileTypes<FileRouteTypes>()
+
+import type { getRouter } from './router.tsx'
+import type { startInstance } from './start.ts'
+declare module '@tanstack/react-start' {
+  interface Register {
+    ssr: true
+    router: Awaited<ReturnType<typeof getRouter>>
+    config: Awaited<ReturnType<typeof startInstance.getOptions>>
+  }
+}
