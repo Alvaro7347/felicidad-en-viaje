@@ -1,6 +1,7 @@
 import { useCallback, useEffect, useSyncExternalStore } from "react";
 import { supabase } from "@/integrations/supabase/client";
 import { recordActivity } from "@/lib/settings/settings.functions";
+import { recordAppEvent } from "@/lib/events/events.functions";
 import {
   MVP1_LESSON_IDS,
   MVP1_LESSON_SEQUENCE,
@@ -44,53 +45,100 @@ function getSnapshot() {
   return state;
 }
 
-let authSubscribed = false;
-let loadingPromise: Promise<void> | null = null;
+// Control por generación: sólo la carga más reciente puede aplicar resultados.
+// Cualquier respuesta con `gen !== loadGen` se descarta silenciosamente.
+let loadGen = 0;
+let currentUid: string | null = null;
+let authSubscription: { unsubscribe: () => void } | null = null;
+
+function resetForUid(uid: string | null) {
+  currentUid = uid;
+  setState({
+    userId: uid,
+    completedLessonIds: new Set(),
+    loading: true,
+    loadError: null,
+  });
+}
 
 async function loadProgress(): Promise<void> {
-  if (loadingPromise) return loadingPromise;
-  loadingPromise = (async () => {
-    setState({ loading: true, loadError: null });
-    const { data: sess } = await supabase.auth.getSession();
-    const uid = sess.session?.user.id ?? null;
-    if (!uid) {
-      setState({ userId: null, completedLessonIds: new Set(), loading: false });
-      return;
-    }
-    const { data, error } = await supabase
-      .from("lesson_progress")
-      .select("lesson_id, status")
-      .eq("user_id", uid)
-      .eq("status", "completed");
-    if (error) {
-      setState({
-        userId: uid,
-        loading: false,
-        loadError: "No pudimos cargar tu avance. Intenta recargar la app.",
-      });
-      return;
-    }
+  const gen = ++loadGen;
+  setState({ loading: true, loadError: null });
+
+  const { data: sess } = await supabase.auth.getSession();
+  if (gen !== loadGen) return;
+
+  const uid = sess.session?.user.id ?? null;
+
+  // Cambio de identidad detectado en medio de la carga → reset agresivo antes
+  // de continuar, así el usuario nuevo nunca ve datos del anterior.
+  if (uid !== currentUid) {
+    currentUid = uid;
+    setState({ userId: uid, completedLessonIds: new Set() });
+  }
+
+  if (!uid) {
+    setState({ userId: null, completedLessonIds: new Set(), loading: false });
+    return;
+  }
+
+  const { data, error } = await supabase
+    .from("lesson_progress")
+    .select("lesson_id, status")
+    .eq("user_id", uid)
+    .eq("status", "completed");
+
+  if (gen !== loadGen) return;
+
+  if (error) {
     setState({
       userId: uid,
-      completedLessonIds: new Set((data ?? []).map((r) => r.lesson_id)),
       loading: false,
+      loadError: "No pudimos cargar tu avance. Intenta recargar la app.",
     });
-  })();
-  try {
-    await loadingPromise;
-  } finally {
-    loadingPromise = null;
+    return;
   }
+  setState({
+    userId: uid,
+    completedLessonIds: new Set((data ?? []).map((r) => r.lesson_id)),
+    loading: false,
+  });
+}
+
+function ensureAuthListener() {
+  if (authSubscription) return;
+  const { data } = supabase.auth.onAuthStateChange((event, session) => {
+    const nextUid = session?.user.id ?? null;
+    if (event === "SIGNED_OUT") {
+      resetForUid(null);
+    } else if (nextUid !== currentUid) {
+      resetForUid(nextUid);
+    }
+    void loadProgress();
+  });
+  authSubscription = data.subscription;
+}
+
+// Evita listeners duplicados en HMR / hot reload / test re-mounts.
+if (
+  typeof import.meta !== "undefined" &&
+  (import.meta as { hot?: { dispose: (cb: () => void) => void } }).hot
+) {
+  (import.meta as { hot: { dispose: (cb: () => void) => void } }).hot.dispose(() => {
+    authSubscription?.unsubscribe();
+    authSubscription = null;
+    listeners.clear();
+    loadGen++;
+  });
 }
 
 async function logEvent(name: string, data?: Record<string, unknown>) {
   try {
+    // La server function fija user_id desde la sesión; no la llamamos si no hay
+    // sesión activa (evita 401 innecesarios).
     const { data: sess } = await supabase.auth.getSession();
-    await supabase.from("app_events").insert({
-      user_id: sess.session?.user.id ?? null,
-      event_name: name,
-      event_data: (data ?? null) as never,
-    });
+    if (!sess.session?.user.id) return;
+    await recordAppEvent({ data: { event_name: name, event_data: data } });
   } catch {
     /* silencioso */
   }
@@ -100,12 +148,7 @@ export function useMvp1Progress() {
   const snap = useSyncExternalStore(subscribe, getSnapshot, getSnapshot);
 
   useEffect(() => {
-    if (!authSubscribed) {
-      authSubscribed = true;
-      supabase.auth.onAuthStateChange(() => {
-        loadProgress();
-      });
-    }
+    ensureAuthListener();
     loadProgress();
   }, []);
 
@@ -167,18 +210,16 @@ export function useMvp1Progress() {
       if (!uid) {
         return { ok: false, error: "Debes iniciar sesión para guardar tu avance." };
       }
-      const { error } = await supabase
-        .from("lesson_progress")
-        .upsert(
-          {
-            user_id: uid,
-            lesson_id: lessonId,
-            island_id: islandId,
-            status: "completed",
-            completed_at: new Date().toISOString(),
-          },
-          { onConflict: "user_id,lesson_id" },
-        );
+      const { error } = await supabase.from("lesson_progress").upsert(
+        {
+          user_id: uid,
+          lesson_id: lessonId,
+          island_id: islandId,
+          status: "completed",
+          completed_at: new Date().toISOString(),
+        },
+        { onConflict: "user_id,lesson_id" },
+      );
       if (error) {
         logEvent("lesson_progress_save_error", {
           lesson_id: lessonId,
