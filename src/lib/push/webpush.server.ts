@@ -209,7 +209,7 @@ export async function sendWebPush(
       Urgency: opts.urgency ?? "normal",
       Authorization: `vapid t=${jwt}, k=${vapidPub}`,
     },
-    body,
+    body: ab(body),
   });
 
   const gone = resp.status === 404 || resp.status === 410;
