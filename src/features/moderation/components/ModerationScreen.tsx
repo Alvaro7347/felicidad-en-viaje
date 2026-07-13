@@ -1,10 +1,11 @@
 // Pantalla principal del workspace de moderación.
 // - Filtro por lección MVP1.
 // - Filtro "Solo sin respuesta".
-// - Lista virtualizada simple (limit 200 desde el repo).
+// - Lista virtualizada simple (limit 50 desde el repo).
 
 import { useMemo, useState } from "react";
 import { MVP1_LESSON_SEQUENCE } from "@/features/archipielago/data/mvp1Progress";
+import { OFFICIAL_TEAM_NAME } from "@/features/discussions/brand";
 import { useModerationQueue } from "../hooks/useModerationQueue";
 import { ModerationPostCard } from "./ModerationPostCard";
 
