@@ -156,7 +156,8 @@ function normalizePost(row: RawPost): ModerationPost {
 
 /**
  * Lista TODOS los posts (visibles, ocultos y soft-deleted) para el equipo.
- * Filtro opcional por lección. Máximo 200 por carga.
+ * Filtro opcional por lección. Límite fijo `MODERATION_POST_LIMIT` por carga;
+ * MVP1 no expone paginación.
  */
 export async function listModerationPosts(lessonId?: string): Promise<ModerationPost[]> {
   await requireTeamUserId();
@@ -173,7 +174,7 @@ export async function listModerationPosts(lessonId?: string): Promise<Moderation
       `,
     )
     .order("created_at", { ascending: false })
-    .limit(200);
+    .limit(MODERATION_POST_LIMIT);
 
   if (lessonId) query = query.eq("lesson_id", lessonId);
 
