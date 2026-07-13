@@ -89,6 +89,9 @@ import { getJourneyLearnerName } from "./utils/learnerName";
 import { MyProfileScreen } from "./screens/MyProfileScreen";
 import { HelpCenterScreen } from "./screens/HelpCenterScreen";
 import { PrivacyScreen } from "./screens/PrivacyScreen";
+import { SettingsScreen } from "@/features/settings/screens/SettingsScreen";
+import { settingsRepository } from "@/features/settings/services/settingsRepository";
+
 
 import { ParentJourneyIntroScreen } from "./screens/ParentJourneyIntroScreen";
 import { ParentJourneyCreatedScreen } from "./screens/ParentJourneyCreatedScreen";
@@ -536,11 +539,13 @@ export function ArchipelagoApp() {
             onHome={isOnboarding ? undefined : goHome}
             onOpenGuide={() => setScreen("mission-guide")}
             onOpenProfile={() => setScreen("my-profile")}
+            onOpenSettings={() => setScreen("settings")}
             onOpenHelp={() => setScreen("help-center")}
             onOpenPrivacy={() => setScreen("privacy")}
             userName={userName}
             studentName={routeStudentName}
           />
+
         )}
         {parentJourneyLoadError && (
           <div style={{ margin: "8px 0", padding: 12, borderRadius: 12, background: "#FDE7EA", color: B.dark, fontSize: 13 }}>
@@ -1095,6 +1100,11 @@ export function ArchipelagoApp() {
         )}
 
         {screen === "privacy" && <PrivacyScreen onBack={goHome} />}
+
+        {screen === "settings" && (
+          <SettingsScreen userEmail={session?.user.email ?? null} onBack={goHome} />
+        )}
+
       </div>
       <BlockedIslandModal
         open={blockedModal !== null}

@@ -423,10 +423,12 @@ export function AppHeader({
           onHome={onHome}
           onOpenGuide={onOpenGuide}
           onOpenProfile={onOpenProfile}
+          onOpenSettings={onOpenSettings}
           onOpenHelp={onOpenHelp}
           onOpenPrivacy={onOpenPrivacy}
           tripLabel={tripLabel}
         />
+
       </header>
     );
   }
