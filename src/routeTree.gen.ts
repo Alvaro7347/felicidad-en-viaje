@@ -13,6 +13,7 @@ import { Route as RestablecerContrasenaRouteImport } from './routes/restablecer-
 import { Route as IndexRouteImport } from './routes/index'
 import { Route as ModeracionComunidadRouteImport } from './routes/moderacion.comunidad'
 import { Route as ApiPublicHooksNotificationsSchedulerRouteImport } from './routes/api/public/hooks/notifications-scheduler'
+import { Route as ApiPublicHooksInstallNotificationsCronRouteImport } from './routes/api/public/hooks/install-notifications-cron'
 
 const RestablecerContrasenaRoute = RestablecerContrasenaRouteImport.update({
   id: '/restablecer-contrasena',
@@ -35,17 +36,25 @@ const ApiPublicHooksNotificationsSchedulerRoute =
     path: '/api/public/hooks/notifications-scheduler',
     getParentRoute: () => rootRouteImport,
   } as any)
+const ApiPublicHooksInstallNotificationsCronRoute =
+  ApiPublicHooksInstallNotificationsCronRouteImport.update({
+    id: '/api/public/hooks/install-notifications-cron',
+    path: '/api/public/hooks/install-notifications-cron',
+    getParentRoute: () => rootRouteImport,
+  } as any)
 
 export interface FileRoutesByFullPath {
   '/': typeof IndexRoute
   '/restablecer-contrasena': typeof RestablecerContrasenaRoute
   '/moderacion/comunidad': typeof ModeracionComunidadRoute
+  '/api/public/hooks/install-notifications-cron': typeof ApiPublicHooksInstallNotificationsCronRoute
   '/api/public/hooks/notifications-scheduler': typeof ApiPublicHooksNotificationsSchedulerRoute
 }
 export interface FileRoutesByTo {
   '/': typeof IndexRoute
   '/restablecer-contrasena': typeof RestablecerContrasenaRoute
   '/moderacion/comunidad': typeof ModeracionComunidadRoute
+  '/api/public/hooks/install-notifications-cron': typeof ApiPublicHooksInstallNotificationsCronRoute
   '/api/public/hooks/notifications-scheduler': typeof ApiPublicHooksNotificationsSchedulerRoute
 }
 export interface FileRoutesById {
@@ -53,6 +62,7 @@ export interface FileRoutesById {
   '/': typeof IndexRoute
   '/restablecer-contrasena': typeof RestablecerContrasenaRoute
   '/moderacion/comunidad': typeof ModeracionComunidadRoute
+  '/api/public/hooks/install-notifications-cron': typeof ApiPublicHooksInstallNotificationsCronRoute
   '/api/public/hooks/notifications-scheduler': typeof ApiPublicHooksNotificationsSchedulerRoute
 }
 export interface FileRouteTypes {
@@ -61,18 +71,21 @@ export interface FileRouteTypes {
     | '/'
     | '/restablecer-contrasena'
     | '/moderacion/comunidad'
+    | '/api/public/hooks/install-notifications-cron'
     | '/api/public/hooks/notifications-scheduler'
   fileRoutesByTo: FileRoutesByTo
   to:
     | '/'
     | '/restablecer-contrasena'
     | '/moderacion/comunidad'
+    | '/api/public/hooks/install-notifications-cron'
     | '/api/public/hooks/notifications-scheduler'
   id:
     | '__root__'
     | '/'
     | '/restablecer-contrasena'
     | '/moderacion/comunidad'
+    | '/api/public/hooks/install-notifications-cron'
     | '/api/public/hooks/notifications-scheduler'
   fileRoutesById: FileRoutesById
 }
@@ -80,6 +93,7 @@ export interface RootRouteChildren {
   IndexRoute: typeof IndexRoute
   RestablecerContrasenaRoute: typeof RestablecerContrasenaRoute
   ModeracionComunidadRoute: typeof ModeracionComunidadRoute
+  ApiPublicHooksInstallNotificationsCronRoute: typeof ApiPublicHooksInstallNotificationsCronRoute
   ApiPublicHooksNotificationsSchedulerRoute: typeof ApiPublicHooksNotificationsSchedulerRoute
 }
 
@@ -113,6 +127,13 @@ declare module '@tanstack/react-router' {
       preLoaderRoute: typeof ApiPublicHooksNotificationsSchedulerRouteImport
       parentRoute: typeof rootRouteImport
     }
+    '/api/public/hooks/install-notifications-cron': {
+      id: '/api/public/hooks/install-notifications-cron'
+      path: '/api/public/hooks/install-notifications-cron'
+      fullPath: '/api/public/hooks/install-notifications-cron'
+      preLoaderRoute: typeof ApiPublicHooksInstallNotificationsCronRouteImport
+      parentRoute: typeof rootRouteImport
+    }
   }
 }
 
@@ -120,6 +141,8 @@ const rootRouteChildren: RootRouteChildren = {
   IndexRoute: IndexRoute,
   RestablecerContrasenaRoute: RestablecerContrasenaRoute,
   ModeracionComunidadRoute: ModeracionComunidadRoute,
+  ApiPublicHooksInstallNotificationsCronRoute:
+    ApiPublicHooksInstallNotificationsCronRoute,
   ApiPublicHooksNotificationsSchedulerRoute:
     ApiPublicHooksNotificationsSchedulerRoute,
 }
