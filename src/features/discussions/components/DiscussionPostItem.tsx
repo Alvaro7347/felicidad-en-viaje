@@ -33,10 +33,6 @@ export function DiscussionPostItem({
 }: Props) {
   const [confirmOpen, setConfirmOpen] = useState(false);
 
-  const typeLabel = post.postType === "question" ? "Pregunta" : "Comentario";
-  const typeBg = post.postType === "question" ? B.pinkLight : B.greenLight;
-  const typeColor = post.postType === "question" ? B.pink : B.greenDark;
-
   const isThisApplauding = isApplausePending;
   const applauseCountLabel =
     post.applauseCount === 0
@@ -48,7 +44,7 @@ export function DiscussionPostItem({
       await onDelete(post.id);
       setConfirmOpen(false);
     } catch {
-      // El error se muestra vía deleteError; el diálogo permanece abierto.
+      // deleteError se muestra y el diálogo permanece abierto.
     }
   };
 
@@ -57,38 +53,23 @@ export function DiscussionPostItem({
       style={{
         background: B.white,
         borderRadius: 20,
-        border: `1px solid ${B.grayBorder}`,
-        padding: 16,
-        boxShadow: "0 1px 8px rgba(0,0,0,0.04)",
+        padding: 20,
+        boxShadow: "0 1px 3px rgba(0,0,0,0.04)",
       }}
     >
       <header
         style={{
           display: "flex",
-          gap: 8,
-          alignItems: "center",
+          gap: 10,
+          alignItems: "baseline",
           flexWrap: "wrap",
-          marginBottom: 8,
+          marginBottom: 10,
         }}
       >
-        <span
-          style={{
-            fontSize: 11,
-            fontWeight: 800,
-            color: typeColor,
-            background: typeBg,
-            padding: "3px 10px",
-            borderRadius: 999,
-            textTransform: "uppercase",
-            letterSpacing: 0.3,
-          }}
-        >
-          {typeLabel}
-        </span>
-        <span style={{ fontWeight: 700, color: B.dark, fontSize: 14 }}>
+        <span style={{ fontWeight: 700, color: B.dark, fontSize: 15, letterSpacing: -0.1 }}>
           {post.authorDisplayName}
         </span>
-        <span style={{ fontSize: 12, color: B.grayText, marginLeft: "auto" }}>
+        <span style={{ fontSize: 12, color: B.grayText }}>
           {formatDiscussionDate(post.createdAt)}
         </span>
       </header>
@@ -98,7 +79,7 @@ export function DiscussionPostItem({
           margin: 0,
           color: B.dark,
           fontSize: 15,
-          lineHeight: 1.5,
+          lineHeight: 1.6,
           whiteSpace: "pre-wrap",
           wordBreak: "break-word",
         }}
@@ -112,7 +93,7 @@ export function DiscussionPostItem({
           gap: 8,
           alignItems: "center",
           flexWrap: "wrap",
-          marginTop: 12,
+          marginTop: 16,
         }}
       >
         <button
@@ -131,13 +112,14 @@ export function DiscussionPostItem({
             gap: 6,
             padding: "8px 14px",
             borderRadius: 999,
-            border: `2px solid ${post.hasCurrentUserReacted ? B.pink : B.grayBorder}`,
+            border: `1px solid ${post.hasCurrentUserReacted ? B.pink : B.grayBorder}`,
             background: post.hasCurrentUserReacted ? B.pinkLight : B.white,
             color: post.hasCurrentUserReacted ? B.pink : B.dark,
-            fontWeight: 700,
+            fontWeight: 600,
             fontSize: 13,
             cursor: isThisApplauding ? "wait" : "pointer",
-            minHeight: 40,
+            minHeight: 38,
+            transition: "background 120ms ease",
           }}
         >
           <span aria-hidden>👏</span>
@@ -153,20 +135,20 @@ export function DiscussionPostItem({
               background: "transparent",
               border: "none",
               color: B.grayText,
-              fontWeight: 700,
+              fontWeight: 600,
               fontSize: 13,
               cursor: "pointer",
               padding: "8px 6px",
-              minHeight: 40,
+              minHeight: 38,
             }}
           >
-            Eliminar mi publicación
+            Eliminar
           </button>
         )}
       </div>
 
       {post.officialReplies.length > 0 && (
-        <div style={{ marginTop: 12 }}>
+        <div style={{ marginTop: 14 }}>
           {post.officialReplies.map((r) => (
             <DiscussionReplyItem key={r.id} reply={r} />
           ))}

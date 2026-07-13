@@ -50,7 +50,7 @@ export function LessonDiscussionSection({ lessonId }: LessonDiscussionSectionPro
     }, 4000);
   }, []);
 
-  const handleSubmit = async (input: { postType: "question" | "comment"; content: string }) => {
+  const handleSubmit = async (input: { postType: "comment"; content: string }) => {
     setSuccessMsg(null);
     await d.createPost(input);
     if (!isMountedRef.current) return;
@@ -97,12 +97,13 @@ export function LessonDiscussionSection({ lessonId }: LessonDiscussionSectionPro
       <header style={{ display: "grid", gap: 4 }}>
         <h2
           id={`lesson-discussion-${lessonId}`}
-          style={{ margin: 0, color: B.dark, fontSize: 20, fontWeight: 800 }}
+          style={{ margin: 0, color: B.dark, fontSize: 22, fontWeight: 800, letterSpacing: -0.3 }}
         >
-          Preguntas y comentarios de la clase
+          Comunidad de esta clase
         </h2>
-        <p style={{ margin: 0, color: B.dark, fontSize: 14, lineHeight: 1.5 }}>
-          Comparte una duda o una experiencia relacionada con esta clase.
+        <p style={{ margin: 0, color: B.grayText, fontSize: 14, lineHeight: 1.55 }}>
+          Comparte tus dudas, descubrimientos o experiencias con otras personas que están
+          aprendiendo esta misma clase.
         </p>
       </header>
 
