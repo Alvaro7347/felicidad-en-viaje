@@ -1,5 +1,6 @@
 import { useCallback, useEffect, useSyncExternalStore } from "react";
 import { supabase } from "@/integrations/supabase/client";
+import { recordActivity } from "@/lib/settings/settings.functions";
 import {
   MVP1_LESSON_IDS,
   MVP1_LESSON_SEQUENCE,
@@ -194,6 +195,8 @@ export function useMvp1Progress() {
       nextSet.add(lessonId);
       setState({ completedLessonIds: nextSet });
       logEvent("lesson_completed", { lesson_id: lessonId, island_id: islandId });
+      // Marca actividad significativa para el ciclo de reactivación (best-effort).
+      recordActivity({ data: { kind: "lesson_completed" } }).catch(() => {});
       return { ok: true };
     },
     [],
@@ -229,6 +232,7 @@ export function useMvp1Progress() {
         island_id: params.islandId,
         answer: params.answer,
       });
+      recordActivity({ data: { kind: "lesson_checkin" } }).catch(() => {});
       return { ok: true };
     },
     [],

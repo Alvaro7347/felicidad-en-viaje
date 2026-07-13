@@ -27,6 +27,7 @@
 import { supabase } from "@/integrations/supabase/client";
 import type { PostgrestError } from "@supabase/supabase-js";
 import { MVP1_LESSON_IDS } from "@/features/archipielago/data/mvp1Progress";
+import { recordActivity } from "@/lib/settings/settings.functions";
 import type {
   CreateLessonPostInput,
   DiscussionPostType,
@@ -352,6 +353,8 @@ export async function createLessonPost(
   }
 
   const row = data as unknown as Omit<RawPostRow, "replies" | "reactions">;
+  const kind = input.postType === "question" ? "post_question" : "post_comment";
+  recordActivity({ data: { kind } }).catch(() => {});
   return normalizePost({ ...row, replies: [], reactions: [] } as RawPostRow, userId);
 }
 
@@ -398,7 +401,10 @@ export async function addReaction(postId: string): Promise<void> {
   const { error } = await supabase
     .from("lesson_discussion_reactions")
     .insert({ post_id: postId, user_id: userId });
-  if (!error) return;
+  if (!error) {
+    recordActivity({ data: { kind: "reaction_added" } }).catch(() => {});
+    return;
+  }
   // Idempotencia: PK compuesta (post_id, user_id) → violación única = OK.
   if (error.code === "23505") return;
   const mapped = mapPgError(error);
