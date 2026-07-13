@@ -5,7 +5,7 @@
 
 export type DiscussionPostType = "question" | "comment";
 
-/** Respuesta oficial del equipo SoundKeleles a una publicación. */
+/** Respuesta oficial del Equipo Soundkeleles a una publicación. */
 export type LessonDiscussionReply = {
   id: string;
   postId: string;
@@ -26,7 +26,7 @@ export type LessonDiscussionPost = {
   authorDisplayName: string;
   createdAt: string;
   updatedAt: string;
-  /** Respuestas oficiales (siempre del equipo SoundKeleles). */
+  /** Respuestas oficiales (siempre del Equipo Soundkeleles). */
   officialReplies: LessonDiscussionReply[];
   /** Conteo real de aplausos visibles. */
   applauseCount: number;

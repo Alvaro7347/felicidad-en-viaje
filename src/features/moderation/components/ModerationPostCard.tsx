@@ -6,6 +6,7 @@
 // error inline con mensaje neutral proveniente del repositorio.
 
 import { useState } from "react";
+import { OFFICIAL_TEAM_NAME } from "@/features/discussions/brand";
 import { formatDiscussionDate } from "@/features/discussions/components/formatDate";
 import {
   AlertDialog,
@@ -174,7 +175,7 @@ export function ModerationPostCard({
             >
               <div className="flex items-center justify-between gap-2 text-xs text-slate-500">
                 <span className="font-semibold text-teal-800">
-                  Familia SoundKeleles · {formatDiscussionDate(reply.createdAt)}
+                  {OFFICIAL_TEAM_NAME} · {formatDiscussionDate(reply.createdAt)}
                 </span>
                 {reply.isHidden ? (
                   <span className="text-[11px] italic">Oculta</span>
