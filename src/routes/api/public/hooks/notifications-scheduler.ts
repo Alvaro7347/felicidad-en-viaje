@@ -208,27 +208,47 @@ async function resolveFirstName(
 }
 
 async function computeWeeklyStats(supabase: DB, userId: string) {
-  const oneWeekAgo = new Date(Date.now() - 7 * 24 * 3600 * 1000).toISOString();
-  const { data: rows } = await supabase
+  const oneWeekAgo = new Date(Date.now() - 7 * 24 * 3600 * 1000);
+  const oneWeekAgoIso = oneWeekAgo.toISOString();
+
+  // Traemos todas las filas del sequence del usuario. Filtro temporal en JS
+  // porque la ventana relevante puede caer sobre `completed_at` (progreso
+  // completado) o `created_at` (progreso iniciado esta semana pero no
+  // completado), y `.or(...)` sobre dos columnas no es más legible. Cualquier
+  // error se propaga: JAMÁS devolvemos métricas silenciosamente en cero.
+  const { data: rows, error } = await supabase
     .from("lesson_progress")
     .select("lesson_id, status, completed_at, created_at")
     .eq("user_id", userId)
     .in("lesson_id", MVP1_LESSON_IDS);
+  if (error) throw new Error(`weekly stats: ${error.message}`);
 
   const all = rows ?? [];
+  type Row = (typeof all)[number];
+
+  const activityDate = (r: Row): Date | null => {
+    const raw = r.completed_at ?? r.created_at;
+    if (!raw) return null;
+    const d = new Date(raw);
+    return Number.isNaN(d.getTime()) ? null : d;
+  };
+  const inWeek = (r: Row): boolean => {
+    const d = activityDate(r);
+    return d !== null && d >= oneWeekAgo;
+  };
+
   const completed = all.filter((r) => r.status === "completed");
-  const weekCompleted = completed.filter((r) => (r.completed_at ?? r.created_at) >= oneWeekAgo);
+  const weekCompleted = completed.filter(inWeek);
 
   const activeDaysSet = new Set(
     all
-      .filter((r) => (r.completed_at ?? r.created_at) >= oneWeekAgo)
-      .map((r) => (r.completed_at ?? r.created_at).slice(0, 10)),
+      .filter(inWeek)
+      .map((r) => activityDate(r)!.toISOString().slice(0, 10)),
   );
 
   const completedIds = new Set(completed.map((r) => r.lesson_id));
   // Próxima lección: primera del sequence NO completada.
   const next = MVP1_LESSON_SEQUENCE.find((l) => !completedIds.has(l.lessonId));
-  const currentIslandId = next?.islandId ?? completed[completed.length - 1]?.lesson_id ? next?.islandId ?? null : null;
 
   const island = next?.islandId ?? null;
   const islandTitle = island ? ISLAND_TITLES[island] ?? null : null;
@@ -236,6 +256,8 @@ async function computeWeeklyStats(supabase: DB, userId: string) {
   const islandCompleted = islandLessons.filter((l) => completedIds.has(l.lessonId)).length;
   const islandPct =
     islandLessons.length > 0 ? Math.round((islandCompleted / islandLessons.length) * 100) : 0;
+
+  void oneWeekAgoIso; // retenido por si más adelante se migra a filtro `.gte()`.
 
   return {
     lessonsCompleted: weekCompleted.length,
