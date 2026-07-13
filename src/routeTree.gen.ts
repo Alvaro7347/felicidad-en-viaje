@@ -12,6 +12,7 @@ import { Route as rootRouteImport } from './routes/__root'
 import { Route as RestablecerContrasenaRouteImport } from './routes/restablecer-contrasena'
 import { Route as IndexRouteImport } from './routes/index'
 import { Route as ModeracionComunidadRouteImport } from './routes/moderacion.comunidad'
+import { Route as ApiPublicHooksNotificationsSchedulerRouteImport } from './routes/api/public/hooks/notifications-scheduler'
 
 const RestablecerContrasenaRoute = RestablecerContrasenaRouteImport.update({
   id: '/restablecer-contrasena',
@@ -28,35 +29,58 @@ const ModeracionComunidadRoute = ModeracionComunidadRouteImport.update({
   path: '/moderacion/comunidad',
   getParentRoute: () => rootRouteImport,
 } as any)
+const ApiPublicHooksNotificationsSchedulerRoute =
+  ApiPublicHooksNotificationsSchedulerRouteImport.update({
+    id: '/api/public/hooks/notifications-scheduler',
+    path: '/api/public/hooks/notifications-scheduler',
+    getParentRoute: () => rootRouteImport,
+  } as any)
 
 export interface FileRoutesByFullPath {
   '/': typeof IndexRoute
   '/restablecer-contrasena': typeof RestablecerContrasenaRoute
   '/moderacion/comunidad': typeof ModeracionComunidadRoute
+  '/api/public/hooks/notifications-scheduler': typeof ApiPublicHooksNotificationsSchedulerRoute
 }
 export interface FileRoutesByTo {
   '/': typeof IndexRoute
   '/restablecer-contrasena': typeof RestablecerContrasenaRoute
   '/moderacion/comunidad': typeof ModeracionComunidadRoute
+  '/api/public/hooks/notifications-scheduler': typeof ApiPublicHooksNotificationsSchedulerRoute
 }
 export interface FileRoutesById {
   __root__: typeof rootRouteImport
   '/': typeof IndexRoute
   '/restablecer-contrasena': typeof RestablecerContrasenaRoute
   '/moderacion/comunidad': typeof ModeracionComunidadRoute
+  '/api/public/hooks/notifications-scheduler': typeof ApiPublicHooksNotificationsSchedulerRoute
 }
 export interface FileRouteTypes {
   fileRoutesByFullPath: FileRoutesByFullPath
-  fullPaths: '/' | '/restablecer-contrasena' | '/moderacion/comunidad'
+  fullPaths:
+    | '/'
+    | '/restablecer-contrasena'
+    | '/moderacion/comunidad'
+    | '/api/public/hooks/notifications-scheduler'
   fileRoutesByTo: FileRoutesByTo
-  to: '/' | '/restablecer-contrasena' | '/moderacion/comunidad'
-  id: '__root__' | '/' | '/restablecer-contrasena' | '/moderacion/comunidad'
+  to:
+    | '/'
+    | '/restablecer-contrasena'
+    | '/moderacion/comunidad'
+    | '/api/public/hooks/notifications-scheduler'
+  id:
+    | '__root__'
+    | '/'
+    | '/restablecer-contrasena'
+    | '/moderacion/comunidad'
+    | '/api/public/hooks/notifications-scheduler'
   fileRoutesById: FileRoutesById
 }
 export interface RootRouteChildren {
   IndexRoute: typeof IndexRoute
   RestablecerContrasenaRoute: typeof RestablecerContrasenaRoute
   ModeracionComunidadRoute: typeof ModeracionComunidadRoute
+  ApiPublicHooksNotificationsSchedulerRoute: typeof ApiPublicHooksNotificationsSchedulerRoute
 }
 
 declare module '@tanstack/react-router' {
@@ -82,6 +106,13 @@ declare module '@tanstack/react-router' {
       preLoaderRoute: typeof ModeracionComunidadRouteImport
       parentRoute: typeof rootRouteImport
     }
+    '/api/public/hooks/notifications-scheduler': {
+      id: '/api/public/hooks/notifications-scheduler'
+      path: '/api/public/hooks/notifications-scheduler'
+      fullPath: '/api/public/hooks/notifications-scheduler'
+      preLoaderRoute: typeof ApiPublicHooksNotificationsSchedulerRouteImport
+      parentRoute: typeof rootRouteImport
+    }
   }
 }
 
@@ -89,6 +120,8 @@ const rootRouteChildren: RootRouteChildren = {
   IndexRoute: IndexRoute,
   RestablecerContrasenaRoute: RestablecerContrasenaRoute,
   ModeracionComunidadRoute: ModeracionComunidadRoute,
+  ApiPublicHooksNotificationsSchedulerRoute:
+    ApiPublicHooksNotificationsSchedulerRoute,
 }
 export const routeTree = rootRouteImport
   ._addFileChildren(rootRouteChildren)

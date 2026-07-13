@@ -89,6 +89,9 @@ import { getJourneyLearnerName } from "./utils/learnerName";
 import { MyProfileScreen } from "./screens/MyProfileScreen";
 import { HelpCenterScreen } from "./screens/HelpCenterScreen";
 import { PrivacyScreen } from "./screens/PrivacyScreen";
+import { SettingsScreen } from "@/features/settings/screens/SettingsScreen";
+import { settingsRepository } from "@/features/settings/services/settingsRepository";
+
 
 import { ParentJourneyIntroScreen } from "./screens/ParentJourneyIntroScreen";
 import { ParentJourneyCreatedScreen } from "./screens/ParentJourneyCreatedScreen";
@@ -289,12 +292,17 @@ export function ArchipelagoApp() {
       current_island_id,
       has_onboarding: !!hasOnboarding,
     });
+    // Marca actividad para el sistema de reactivación (settings.last_active_at).
+    // Fire-and-forget: no bloquea render y no rompe si el usuario aún no tiene
+    // user_settings (el server fn hace upsert).
+    settingsRepository.recordActivity("app_opened").catch(() => {});
     if (hasOnboarding && cur && cur !== "n1") {
       progress.logEvent("return_visit", {
         current_lesson_id: cur,
         current_island_id,
       });
     }
+
   }, [session?.user.id, progress.loading, hasOnboarding, progress]);
 
   // ── Navegación pedagógica (extraída a useJourneyNavigation) ────
@@ -536,11 +544,13 @@ export function ArchipelagoApp() {
             onHome={isOnboarding ? undefined : goHome}
             onOpenGuide={() => setScreen("mission-guide")}
             onOpenProfile={() => setScreen("my-profile")}
+            onOpenSettings={() => setScreen("settings")}
             onOpenHelp={() => setScreen("help-center")}
             onOpenPrivacy={() => setScreen("privacy")}
             userName={userName}
             studentName={routeStudentName}
           />
+
         )}
         {parentJourneyLoadError && (
           <div style={{ margin: "8px 0", padding: 12, borderRadius: 12, background: "#FDE7EA", color: B.dark, fontSize: 13 }}>
@@ -1095,6 +1105,11 @@ export function ArchipelagoApp() {
         )}
 
         {screen === "privacy" && <PrivacyScreen onBack={goHome} />}
+
+        {screen === "settings" && (
+          <SettingsScreen userEmail={session?.user.email ?? null} onBack={goHome} />
+        )}
+
       </div>
       <BlockedIslandModal
         open={blockedModal !== null}

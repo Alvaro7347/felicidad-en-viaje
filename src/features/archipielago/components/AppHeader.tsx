@@ -12,6 +12,7 @@ function UserMenu({
   onHome,
   onOpenGuide,
   onOpenProfile,
+  onOpenSettings,
   onOpenHelp,
   onOpenPrivacy,
   tripLabel,
@@ -19,10 +20,12 @@ function UserMenu({
   onHome?: () => void;
   onOpenGuide?: () => void;
   onOpenProfile: () => void;
+  onOpenSettings: () => void;
   onOpenHelp: () => void;
   onOpenPrivacy: () => void;
   tripLabel: string;
 }) {
+
   const { signOutAndClear } = useExperienceMode();
   const [open, setOpen] = useState(false);
   const wrapRef = useRef<HTMLDivElement>(null);
@@ -70,6 +73,15 @@ function UserMenu({
       },
     },
     {
+      key: "settings",
+      label: "Ajustes",
+      icon: "⚙️",
+      onClick: () => {
+        setOpen(false);
+        onOpenSettings();
+      },
+    },
+    {
       key: "guide",
       label: "Tu guía",
       icon: "📖",
@@ -79,6 +91,7 @@ function UserMenu({
       },
       disabled: !onOpenGuide,
     },
+
     {
       key: "help",
       label: "Centro de ayuda",
@@ -210,6 +223,7 @@ export function AppHeader({
   onHome,
   onOpenGuide,
   onOpenProfile,
+  onOpenSettings,
   onOpenHelp,
   onOpenPrivacy,
   studentName,
@@ -218,11 +232,13 @@ export function AppHeader({
   onHome?: () => void;
   onOpenGuide?: () => void;
   onOpenProfile: () => void;
+  onOpenSettings: () => void;
   onOpenHelp: () => void;
   onOpenPrivacy: () => void;
   userName?: string;
   studentName?: string;
 }) {
+
   const { mode } = useExperienceMode();
   const progress = useMvp1ProgressContext();
   const isAccompanied = mode === "accompanied_learning";
@@ -272,12 +288,14 @@ export function AppHeader({
     "my-profile",
     "help-center",
     "privacy",
+    "settings",
   ];
   if (modernHeaderScreens.includes(screen)) {
     const isMenuScreen =
       screen === "my-profile" ||
       screen === "help-center" ||
       screen === "privacy" ||
+      screen === "settings" ||
       screen === "self-journey";
     const islandId = SCREEN_TO_ISLAND[screen];
     const pct = !isMenuScreen && islandId ? getIslandProgress(progress, islandId).pct : 0;
@@ -288,8 +306,11 @@ export function AppHeader({
           ? "Centro de ayuda"
           : screen === "privacy"
             ? "Privacidad y seguridad"
-            : "Mi viaje"
+            : screen === "settings"
+              ? "Ajustes"
+              : "Mi viaje"
       : islandId
+
         ? ISLAND_TITLES[islandId]
         : "";
     const completionText = islandId === "start-port" ? "completado" : "completada";
@@ -402,10 +423,12 @@ export function AppHeader({
           onHome={onHome}
           onOpenGuide={onOpenGuide}
           onOpenProfile={onOpenProfile}
+          onOpenSettings={onOpenSettings}
           onOpenHelp={onOpenHelp}
           onOpenPrivacy={onOpenPrivacy}
           tripLabel={tripLabel}
         />
+
       </header>
     );
   }
