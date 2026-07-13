@@ -206,6 +206,7 @@ export type Database = {
           created_at: string
           error: string | null
           id: string
+          locked_at: string | null
           notification_type: string
           payload: Json
           period_key: string
@@ -217,6 +218,7 @@ export type Database = {
           created_at?: string
           error?: string | null
           id?: string
+          locked_at?: string | null
           notification_type: string
           payload?: Json
           period_key: string
@@ -228,6 +230,7 @@ export type Database = {
           created_at?: string
           error?: string | null
           id?: string
+          locked_at?: string | null
           notification_type?: string
           payload?: Json
           period_key?: string

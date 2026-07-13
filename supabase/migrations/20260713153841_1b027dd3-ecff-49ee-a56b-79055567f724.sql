@@ -1,0 +1,2 @@
+ALTER TABLE public.notification_deliveries ADD COLUMN IF NOT EXISTS locked_at timestamptz;
+CREATE INDEX IF NOT EXISTS notification_deliveries_status_locked_idx ON public.notification_deliveries (status, locked_at);
