@@ -43,7 +43,8 @@ const LOCK_STALE_MS = 15 * 60 * 1000;
 
 export async function deliverNotification(params: DeliverParams): Promise<DeliverResult> {
   const { supabase, userId, notificationType, periodKey, message, payload } = params;
-  const payloadJson = (payload ?? {}) as Database["public"]["Tables"]["notification_deliveries"]["Insert"]["payload"];
+  const payloadJson = (payload ??
+    {}) as Database["public"]["Tables"]["notification_deliveries"]["Insert"]["payload"];
   const nowIso = new Date().toISOString();
   const staleCutoffIso = new Date(Date.now() - LOCK_STALE_MS).toISOString();
 
@@ -83,7 +84,9 @@ export async function deliverNotification(params: DeliverParams): Promise<Delive
       .eq("notification_type", notificationType)
       .eq("period_key", periodKey)
       .neq("status", "sent")
-      .or(`status.eq.failed,and(status.eq.pending,or(locked_at.is.null,locked_at.lt.${staleCutoffIso}))`)
+      .or(
+        `status.eq.failed,and(status.eq.pending,or(locked_at.is.null,locked_at.lt.${staleCutoffIso}))`,
+      )
       .select("id")
       .maybeSingle();
 
@@ -116,7 +119,10 @@ export async function deliverNotification(params: DeliverParams): Promise<Delive
   const results = await Promise.all(
     subs.map(async (sub) => {
       try {
-        const res = await sendWebPush(sub, message, { ttlSeconds: 60 * 60 * 24, urgency: "normal" });
+        const res = await sendWebPush(sub, message, {
+          ttlSeconds: 60 * 60 * 24,
+          urgency: "normal",
+        });
         if (res.gone) {
           await supabase
             .from("push_subscriptions")
