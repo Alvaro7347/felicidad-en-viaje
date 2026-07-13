@@ -42,7 +42,7 @@ export function ModerationScreen() {
   return (
     <div className="mx-auto max-w-3xl px-4 py-6">
       <header className="mb-6">
-        <p className="text-xs font-semibold uppercase tracking-wide text-teal-700">SoundKeleles</p>
+        <p className="text-xs font-semibold uppercase tracking-wide text-teal-700">{OFFICIAL_TEAM_NAME}</p>
         <h1 className="text-2xl font-bold text-slate-900">Moderación de comunidad</h1>
         <p className="mt-1 text-sm text-slate-600">
           Revisa publicaciones, responde oficialmente y modera cuando sea necesario.
