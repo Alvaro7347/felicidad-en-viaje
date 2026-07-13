@@ -63,6 +63,11 @@ export class ModerationError extends Error {
 
 const REPLY_MIN = 3;
 const REPLY_MAX = 2000;
+/** Límite duro de carga por página del workspace de moderación (sin paginación en MVP1). */
+const MODERATION_POST_LIMIT = 50;
+
+const NOT_FOUND_MESSAGE =
+  "No pudimos completar la acción. Es posible que el contenido haya cambiado o que tu acceso ya no esté disponible.";
 
 function mapPgError(error: PostgrestError | null): ModerationError | null {
   if (!error) return null;
@@ -151,7 +156,8 @@ function normalizePost(row: RawPost): ModerationPost {
 
 /**
  * Lista TODOS los posts (visibles, ocultos y soft-deleted) para el equipo.
- * Filtro opcional por lección. Máximo 200 por carga.
+ * Filtro opcional por lección. Límite fijo `MODERATION_POST_LIMIT` por carga;
+ * MVP1 no expone paginación.
  */
 export async function listModerationPosts(lessonId?: string): Promise<ModerationPost[]> {
   await requireTeamUserId();
@@ -168,7 +174,7 @@ export async function listModerationPosts(lessonId?: string): Promise<Moderation
       `,
     )
     .order("created_at", { ascending: false })
-    .limit(200);
+    .limit(MODERATION_POST_LIMIT);
 
   if (lessonId) query = query.eq("lesson_id", lessonId);
 
@@ -194,10 +200,7 @@ export async function hidePost(postId: string): Promise<void> {
   const mapped = mapPgError(error);
   if (mapped) throw mapped;
   if (!data || data.length === 0) {
-    throw new ModerationError(
-      "not_found",
-      "No se pudo ocultar la publicación (puede que ya esté oculta o haya sido eliminada).",
-    );
+    throw new ModerationError("not_found", NOT_FOUND_MESSAGE);
   }
 }
 
@@ -215,10 +218,7 @@ export async function hideReply(replyId: string): Promise<void> {
   const mapped = mapPgError(error);
   if (mapped) throw mapped;
   if (!data || data.length === 0) {
-    throw new ModerationError(
-      "not_found",
-      "No se pudo ocultar la respuesta (puede que ya esté oculta).",
-    );
+    throw new ModerationError("not_found", NOT_FOUND_MESSAGE);
   }
 }
 
