@@ -178,8 +178,7 @@ export function DiscussionPostItem({
           <AlertDialogHeader>
             <AlertDialogTitle>Eliminar tu publicación</AlertDialogTitle>
             <AlertDialogDescription>
-              Esta acción eliminará tu publicación de esta clase. Después podrás
-              publicar una nueva.
+              Esta acción eliminará tu publicación de esta clase. Después podrás publicar una nueva.
             </AlertDialogDescription>
           </AlertDialogHeader>
           {deleteError && (

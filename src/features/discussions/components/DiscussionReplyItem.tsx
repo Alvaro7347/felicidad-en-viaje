@@ -27,9 +27,7 @@ export function DiscussionReplyItem({ reply }: Props) {
           marginBottom: 6,
         }}
       >
-        <span style={{ fontWeight: 800, color: B.dark, fontSize: 14 }}>
-          {OFFICIAL_TEAM_NAME}
-        </span>
+        <span style={{ fontWeight: 800, color: B.dark, fontSize: 14 }}>{OFFICIAL_TEAM_NAME}</span>
         <span
           style={{
             fontSize: 11,

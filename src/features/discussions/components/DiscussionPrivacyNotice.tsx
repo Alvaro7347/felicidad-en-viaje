@@ -42,8 +42,8 @@ export function DiscussionPrivacyNotice() {
       </button>
       {open && (
         <p style={{ margin: "8px 0 0", color: B.dark }}>
-          Evita publicar teléfonos, direcciones, correos electrónicos, apellidos o
-          nombres completos de niños.
+          Evita publicar teléfonos, direcciones, correos electrónicos, apellidos o nombres completos
+          de niños.
         </p>
       )}
     </div>

@@ -16,8 +16,7 @@ const ERROR_MESSAGES: Record<LessonDiscussionErrorCode, string> = {
   invalid_content: "Revisa el contenido. Debe tener entre 3 y 1000 caracteres.",
   invalid_lesson: "No pudimos identificar esta clase.",
   not_authenticated: "Tu sesión terminó. Inicia sesión nuevamente.",
-  network_error:
-    "No pudimos publicar. Revisa tu conexión e inténtalo otra vez.",
+  network_error: "No pudimos publicar. Revisa tu conexión e inténtalo otra vez.",
   post_not_visible: "Esta publicación ya no está disponible.",
   not_authorized: "No tienes permisos para publicar.",
   unknown: "Ocurrió un problema. Inténtalo nuevamente.",
@@ -55,7 +54,7 @@ export function DiscussionPostForm({ onSubmit, isSubmitting, errorCode }: Props)
       setLastFailedValidation(
         overLimit
           ? `El contenido supera el máximo de ${MAX_LEN} caracteres.`
-          : "Escribe al menos 3 caracteres."
+          : "Escribe al menos 3 caracteres.",
       );
       return;
     }
@@ -122,10 +121,7 @@ export function DiscussionPostForm({ onSubmit, isSubmitting, errorCode }: Props)
         {typeButton("comment", "Quiero compartir un comentario")}
       </div>
 
-      <label
-        htmlFor={textareaId}
-        style={{ fontSize: 13, color: B.dark, fontWeight: 700 }}
-      >
+      <label htmlFor={textareaId} style={{ fontSize: 13, color: B.dark, fontWeight: 700 }}>
         {postType === "question" ? "Tu pregunta" : "Tu comentario"}
       </label>
       <textarea
