@@ -4,7 +4,10 @@
 // QueryClientProvider de __root.tsx.
 
 import { createFileRoute, Link } from "@tanstack/react-router";
-import { useIsCurrentUserTeam, type TeamAccessStatus } from "@/features/moderation/hooks/useIsCurrentUserTeam";
+import {
+  useIsCurrentUserTeam,
+  type TeamAccessStatus,
+} from "@/features/moderation/hooks/useIsCurrentUserTeam";
 import { ModerationScreen } from "@/features/moderation/components/ModerationScreen";
 
 export const Route = createFileRoute("/moderacion/comunidad")({

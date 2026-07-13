@@ -76,7 +76,11 @@ function mapPgError(error: PostgrestError | null): ModerationError | null {
   if (code === "PGRST116") {
     return new ModerationError("not_found", "Registro no encontrado.", error);
   }
-  return new ModerationError("unknown", "Ocurrió un problema al comunicarse con el servidor.", error);
+  return new ModerationError(
+    "unknown",
+    "Ocurrió un problema al comunicarse con el servidor.",
+    error,
+  );
 }
 
 async function requireTeamUserId(): Promise<string> {

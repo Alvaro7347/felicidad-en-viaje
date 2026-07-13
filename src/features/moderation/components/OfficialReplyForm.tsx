@@ -67,8 +67,12 @@ export function OfficialReplyForm({ postId, lessonId, isPending, errorMessage, o
         placeholder="Responde con calidez y precisión…"
       />
       <div id={helperId} className="flex justify-between text-xs text-slate-500">
-        <span>Mínimo {MIN} · Máximo {MAX}</span>
-        <span>{trimmedLen}/{MAX}</span>
+        <span>
+          Mínimo {MIN} · Máximo {MAX}
+        </span>
+        <span>
+          {trimmedLen}/{MAX}
+        </span>
       </div>
       {errorMessage && (
         <p id={errorId} role="alert" className="text-xs text-rose-600">

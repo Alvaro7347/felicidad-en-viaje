@@ -6,12 +6,7 @@
 import { useEffect, useState, useCallback } from "react";
 import { supabase } from "@/integrations/supabase/client";
 
-export type TeamAccessStatus =
-  | "loading"
-  | "unauthenticated"
-  | "not_team"
-  | "team"
-  | "error";
+export type TeamAccessStatus = "loading" | "unauthenticated" | "not_team" | "team" | "error";
 
 export interface UseIsCurrentUserTeamResult {
   status: TeamAccessStatus;

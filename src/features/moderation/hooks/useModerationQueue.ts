@@ -46,14 +46,12 @@ export function useModerationQueue(lessonId: string | null) {
     }
   };
 
-  const hidePostMutation = useMutation<
-    void,
-    ModerationError,
-    { postId: string; lessonId: string }
-  >({
-    mutationFn: ({ postId }) => hidePost(postId),
-    onSuccess: (_data, vars) => invalidateAll(vars.lessonId),
-  });
+  const hidePostMutation = useMutation<void, ModerationError, { postId: string; lessonId: string }>(
+    {
+      mutationFn: ({ postId }) => hidePost(postId),
+      onSuccess: (_data, vars) => invalidateAll(vars.lessonId),
+    },
+  );
 
   const hideReplyMutation = useMutation<
     void,
