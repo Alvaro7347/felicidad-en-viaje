@@ -11,6 +11,7 @@
 import { Route as rootRouteImport } from './routes/__root'
 import { Route as RestablecerContrasenaRouteImport } from './routes/restablecer-contrasena'
 import { Route as IndexRouteImport } from './routes/index'
+import { Route as ModeracionComunidadRouteImport } from './routes/moderacion.comunidad'
 
 const RestablecerContrasenaRoute = RestablecerContrasenaRouteImport.update({
   id: '/restablecer-contrasena',
@@ -22,31 +23,40 @@ const IndexRoute = IndexRouteImport.update({
   path: '/',
   getParentRoute: () => rootRouteImport,
 } as any)
+const ModeracionComunidadRoute = ModeracionComunidadRouteImport.update({
+  id: '/moderacion/comunidad',
+  path: '/moderacion/comunidad',
+  getParentRoute: () => rootRouteImport,
+} as any)
 
 export interface FileRoutesByFullPath {
   '/': typeof IndexRoute
   '/restablecer-contrasena': typeof RestablecerContrasenaRoute
+  '/moderacion/comunidad': typeof ModeracionComunidadRoute
 }
 export interface FileRoutesByTo {
   '/': typeof IndexRoute
   '/restablecer-contrasena': typeof RestablecerContrasenaRoute
+  '/moderacion/comunidad': typeof ModeracionComunidadRoute
 }
 export interface FileRoutesById {
   __root__: typeof rootRouteImport
   '/': typeof IndexRoute
   '/restablecer-contrasena': typeof RestablecerContrasenaRoute
+  '/moderacion/comunidad': typeof ModeracionComunidadRoute
 }
 export interface FileRouteTypes {
   fileRoutesByFullPath: FileRoutesByFullPath
-  fullPaths: '/' | '/restablecer-contrasena'
+  fullPaths: '/' | '/restablecer-contrasena' | '/moderacion/comunidad'
   fileRoutesByTo: FileRoutesByTo
-  to: '/' | '/restablecer-contrasena'
-  id: '__root__' | '/' | '/restablecer-contrasena'
+  to: '/' | '/restablecer-contrasena' | '/moderacion/comunidad'
+  id: '__root__' | '/' | '/restablecer-contrasena' | '/moderacion/comunidad'
   fileRoutesById: FileRoutesById
 }
 export interface RootRouteChildren {
   IndexRoute: typeof IndexRoute
   RestablecerContrasenaRoute: typeof RestablecerContrasenaRoute
+  ModeracionComunidadRoute: typeof ModeracionComunidadRoute
 }
 
 declare module '@tanstack/react-router' {
@@ -65,23 +75,21 @@ declare module '@tanstack/react-router' {
       preLoaderRoute: typeof IndexRouteImport
       parentRoute: typeof rootRouteImport
     }
+    '/moderacion/comunidad': {
+      id: '/moderacion/comunidad'
+      path: '/moderacion/comunidad'
+      fullPath: '/moderacion/comunidad'
+      preLoaderRoute: typeof ModeracionComunidadRouteImport
+      parentRoute: typeof rootRouteImport
+    }
   }
 }
 
 const rootRouteChildren: RootRouteChildren = {
   IndexRoute: IndexRoute,
   RestablecerContrasenaRoute: RestablecerContrasenaRoute,
+  ModeracionComunidadRoute: ModeracionComunidadRoute,
 }
 export const routeTree = rootRouteImport
   ._addFileChildren(rootRouteChildren)
   ._addFileTypes<FileRouteTypes>()
-
-import type { getRouter } from './router.tsx'
-import type { startInstance } from './start.ts'
-declare module '@tanstack/react-start' {
-  interface Register {
-    ssr: true
-    router: Awaited<ReturnType<typeof getRouter>>
-    config: Awaited<ReturnType<typeof startInstance.getOptions>>
-  }
-}
