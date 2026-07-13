@@ -1,11 +1,25 @@
 // Tarjeta administrativa de un post: muestra estado, respuestas oficiales
-// (incluidas las ocultas), acciones (ocultar post, ocultar respuestas,
-// responder).
+// (incluidas las ocultas) y acciones (ocultar post, ocultar respuestas,
+// responder). Las confirmaciones destructivas usan el AlertDialog accesible
+// de shadcn/Radix (foco atrapado, restauración de foco, Escape, bloqueo del
+// fondo). El diálogo permanece abierto si la mutación falla y muestra el
+// error inline con mensaje neutral proveniente del repositorio.
 
 import { useState } from "react";
 import { formatDiscussionDate } from "@/features/discussions/components/formatDate";
+import {
+  AlertDialog,
+  AlertDialogAction,
+  AlertDialogCancel,
+  AlertDialogContent,
+  AlertDialogDescription,
+  AlertDialogFooter,
+  AlertDialogHeader,
+  AlertDialogTitle,
+  AlertDialogTrigger,
+} from "@/components/ui/alert-dialog";
 import type { ModerationPost } from "../services/moderationRepository";
-import { ConfirmActionDialog } from "./ConfirmActionDialog";
+import { ModerationError } from "../services/moderationRepository";
 import { OfficialReplyForm } from "./OfficialReplyForm";
 
 interface Props {
@@ -20,6 +34,76 @@ interface Props {
   replyError: string | null;
 }
 
+function extractErrorMessage(err: unknown): string {
+  if (err instanceof ModerationError) return err.message;
+  if (err instanceof Error) return err.message;
+  return "No pudimos completar la acción.";
+}
+
+interface ConfirmHideDialogProps {
+  trigger: React.ReactNode;
+  title: string;
+  description: string;
+  isPending: boolean;
+  onConfirm: () => Promise<void>;
+}
+
+function ConfirmHideDialog({
+  trigger,
+  title,
+  description,
+  isPending,
+  onConfirm,
+}: ConfirmHideDialogProps) {
+  const [open, setOpen] = useState(false);
+  const [errorMsg, setErrorMsg] = useState<string | null>(null);
+
+  return (
+    <AlertDialog
+      open={open}
+      onOpenChange={(next) => {
+        if (isPending) return; // no cerrar mientras hay mutación en curso
+        setOpen(next);
+        if (!next) setErrorMsg(null);
+      }}
+    >
+      <AlertDialogTrigger asChild>{trigger}</AlertDialogTrigger>
+      <AlertDialogContent>
+        <AlertDialogHeader>
+          <AlertDialogTitle>{title}</AlertDialogTitle>
+          <AlertDialogDescription>{description}</AlertDialogDescription>
+        </AlertDialogHeader>
+        {errorMsg && (
+          <p role="alert" className="text-sm text-rose-600">
+            {errorMsg}
+          </p>
+        )}
+        <AlertDialogFooter>
+          <AlertDialogCancel disabled={isPending}>Cancelar</AlertDialogCancel>
+          <AlertDialogAction
+            disabled={isPending}
+            onClick={async (event) => {
+              // Evitamos el cierre automático del AlertDialogAction para poder
+              // mantener el diálogo abierto ante fallos y mostrar el error inline.
+              event.preventDefault();
+              setErrorMsg(null);
+              try {
+                await onConfirm();
+                setOpen(false);
+              } catch (err) {
+                setErrorMsg(extractErrorMessage(err));
+              }
+            }}
+            className="bg-rose-600 hover:bg-rose-700 focus:ring-rose-500"
+          >
+            {isPending ? "Procesando…" : "Ocultar"}
+          </AlertDialogAction>
+        </AlertDialogFooter>
+      </AlertDialogContent>
+    </AlertDialog>
+  );
+}
+
 export function ModerationPostCard({
   post,
   lessonLabel,
@@ -31,8 +115,6 @@ export function ModerationPostCard({
   isCreatingReply,
   replyError,
 }: Props) {
-  const [confirmHidePost, setConfirmHidePost] = useState(false);
-  const [confirmHideReplyId, setConfirmHideReplyId] = useState<string | null>(null);
   const [showReplyForm, setShowReplyForm] = useState(false);
 
   const statusBadges: string[] = [];
@@ -97,14 +179,23 @@ export function ModerationPostCard({
                 {reply.isHidden ? (
                   <span className="text-[11px] italic">Oculta</span>
                 ) : (
-                  <button
-                    type="button"
-                    onClick={() => setConfirmHideReplyId(reply.id)}
-                    disabled={isHidingReply}
-                    className="text-[11px] font-medium text-rose-600 hover:underline disabled:opacity-50"
-                  >
-                    Ocultar respuesta
-                  </button>
+                  <ConfirmHideDialog
+                    trigger={
+                      <button
+                        type="button"
+                        disabled={isHidingReply}
+                        className="text-[11px] font-medium text-rose-600 hover:underline disabled:opacity-50"
+                      >
+                        Ocultar respuesta
+                      </button>
+                    }
+                    title="Ocultar respuesta oficial"
+                    description="La respuesta dejará de ser visible para los estudiantes. Esta acción no se puede revertir desde esta pantalla."
+                    isPending={isHidingReply}
+                    onConfirm={() =>
+                      onHideReply({ replyId: reply.id, lessonId: post.lessonId }).then(() => {})
+                    }
+                  />
                 )}
               </div>
               <p className="mt-1 whitespace-pre-wrap">{reply.content}</p>
@@ -124,14 +215,23 @@ export function ModerationPostCard({
           </button>
         )}
         {!post.isHidden && (
-          <button
-            type="button"
-            onClick={() => setConfirmHidePost(true)}
-            disabled={isHidingPost}
-            className="rounded-lg border border-rose-300 bg-white px-3 py-1.5 text-xs font-semibold text-rose-700 hover:bg-rose-50 disabled:opacity-50"
-          >
-            Ocultar publicación
-          </button>
+          <ConfirmHideDialog
+            trigger={
+              <button
+                type="button"
+                disabled={isHidingPost}
+                className="rounded-lg border border-rose-300 bg-white px-3 py-1.5 text-xs font-semibold text-rose-700 hover:bg-rose-50 disabled:opacity-50"
+              >
+                Ocultar publicación
+              </button>
+            }
+            title="Ocultar publicación"
+            description="La publicación dejará de ser visible para los estudiantes. Esta acción no se puede revertir desde esta pantalla."
+            isPending={isHidingPost}
+            onConfirm={() =>
+              onHidePost({ postId: post.id, lessonId: post.lessonId }).then(() => {})
+            }
+          />
         )}
       </footer>
 
@@ -147,42 +247,6 @@ export function ModerationPostCard({
           }}
         />
       )}
-
-      <ConfirmActionDialog
-        open={confirmHidePost}
-        title="Ocultar publicación"
-        description="La publicación dejará de ser visible para los estudiantes. Esta acción no se puede revertir desde esta pantalla."
-        confirmLabel="Ocultar"
-        destructive
-        isPending={isHidingPost}
-        onCancel={() => setConfirmHidePost(false)}
-        onConfirm={async () => {
-          try {
-            await onHidePost({ postId: post.id, lessonId: post.lessonId });
-          } finally {
-            setConfirmHidePost(false);
-          }
-        }}
-      />
-
-      <ConfirmActionDialog
-        open={confirmHideReplyId !== null}
-        title="Ocultar respuesta oficial"
-        description="La respuesta dejará de ser visible para los estudiantes. Esta acción no se puede revertir desde esta pantalla."
-        confirmLabel="Ocultar"
-        destructive
-        isPending={isHidingReply}
-        onCancel={() => setConfirmHideReplyId(null)}
-        onConfirm={async () => {
-          const id = confirmHideReplyId;
-          if (!id) return;
-          try {
-            await onHideReply({ replyId: id, lessonId: post.lessonId });
-          } finally {
-            setConfirmHideReplyId(null);
-          }
-        }}
-      />
     </article>
   );
 }
