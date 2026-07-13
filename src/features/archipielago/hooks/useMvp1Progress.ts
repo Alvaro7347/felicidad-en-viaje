@@ -120,7 +120,10 @@ function ensureAuthListener() {
 }
 
 // Evita listeners duplicados en HMR / hot reload / test re-mounts.
-if (typeof import.meta !== "undefined" && (import.meta as { hot?: { dispose: (cb: () => void) => void } }).hot) {
+if (
+  typeof import.meta !== "undefined" &&
+  (import.meta as { hot?: { dispose: (cb: () => void) => void } }).hot
+) {
   (import.meta as { hot: { dispose: (cb: () => void) => void } }).hot.dispose(() => {
     authSubscription?.unsubscribe();
     authSubscription = null;
@@ -207,18 +210,16 @@ export function useMvp1Progress() {
       if (!uid) {
         return { ok: false, error: "Debes iniciar sesión para guardar tu avance." };
       }
-      const { error } = await supabase
-        .from("lesson_progress")
-        .upsert(
-          {
-            user_id: uid,
-            lesson_id: lessonId,
-            island_id: islandId,
-            status: "completed",
-            completed_at: new Date().toISOString(),
-          },
-          { onConflict: "user_id,lesson_id" },
-        );
+      const { error } = await supabase.from("lesson_progress").upsert(
+        {
+          user_id: uid,
+          lesson_id: lessonId,
+          island_id: islandId,
+          status: "completed",
+          completed_at: new Date().toISOString(),
+        },
+        { onConflict: "user_id,lesson_id" },
+      );
       if (error) {
         logEvent("lesson_progress_save_error", {
           lesson_id: lessonId,

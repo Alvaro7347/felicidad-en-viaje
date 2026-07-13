@@ -27,10 +27,7 @@ import {
   type ReactivationStage,
 } from "@/lib/notifications/copy";
 import { deliverNotification } from "@/lib/notifications/delivery.server";
-import {
-  MVP1_LESSON_SEQUENCE,
-  MVP1_LESSON_IDS,
-} from "@/features/archipielago/data/mvp1Progress";
+import { MVP1_LESSON_SEQUENCE, MVP1_LESSON_IDS } from "@/features/archipielago/data/mvp1Progress";
 import { ISLAND_TITLES } from "@/features/archipielago/data/journeyCatalog";
 
 type DB = SupabaseClient<Database>;
@@ -86,10 +83,7 @@ async function runScheduler(request: Request): Promise<Response> {
     await runReactivation(supabaseAdmin as unknown as DB, now, summary);
   } catch (err) {
     console.error("[scheduler] fatal", err);
-    return Response.json(
-      { ok: false, error: (err as Error).message, summary },
-      { status: 500 },
-    );
+    return Response.json({ ok: false, error: (err as Error).message, summary }, { status: 500 });
   }
 
   return Response.json({ ok: true, summary });
@@ -129,11 +123,7 @@ function isoWeekKey(d: Date): string {
   return `${date.getUTCFullYear()}-W${String(week).padStart(2, "0")}`;
 }
 
-async function runWeeklyReports(
-  supabase: DB,
-  now: Date,
-  summary: SchedulerSummary,
-): Promise<void> {
+async function runWeeklyReports(supabase: DB, now: Date, summary: SchedulerSummary): Promise<void> {
   // Candidatos: reporte semanal activo + tiene experience_mode consolidado + no revocaron notificaciones.
   const { data: candidates, error } = await supabase
     .from("user_settings")
@@ -241,9 +231,7 @@ async function computeWeeklyStats(supabase: DB, userId: string) {
   const weekCompleted = completed.filter(inWeek);
 
   const activeDaysSet = new Set(
-    all
-      .filter(inWeek)
-      .map((r) => activityDate(r)!.toISOString().slice(0, 10)),
+    all.filter(inWeek).map((r) => activityDate(r)!.toISOString().slice(0, 10)),
   );
 
   const completedIds = new Set(completed.map((r) => r.lesson_id));
@@ -251,7 +239,7 @@ async function computeWeeklyStats(supabase: DB, userId: string) {
   const next = MVP1_LESSON_SEQUENCE.find((l) => !completedIds.has(l.lessonId));
 
   const island = next?.islandId ?? null;
-  const islandTitle = island ? ISLAND_TITLES[island] ?? null : null;
+  const islandTitle = island ? (ISLAND_TITLES[island] ?? null) : null;
   const islandLessons = MVP1_LESSON_SEQUENCE.filter((l) => l.islandId === island);
   const islandCompleted = islandLessons.filter((l) => completedIds.has(l.lessonId)).length;
   const islandPct =
@@ -277,11 +265,7 @@ function daysBetween(from: Date, to: Date): number {
   return Math.floor(ms / (24 * 3600 * 1000));
 }
 
-async function runReactivation(
-  supabase: DB,
-  now: Date,
-  summary: SchedulerSummary,
-): Promise<void> {
+async function runReactivation(supabase: DB, now: Date, summary: SchedulerSummary): Promise<void> {
   const { data: candidates, error } = await supabase
     .from("user_settings")
     .select("user_id, last_active_at, notifications_enabled, inactivity_reminders_enabled")

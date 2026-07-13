@@ -25,13 +25,16 @@ async function logEvent(name: string, data?: Record<string, unknown>) {
 function translateError(msg: string): string {
   const m = msg.toLowerCase();
   if (m.includes("invalid login")) return "Correo o contraseña incorrectos.";
-  if (m.includes("email not confirmed")) return "Debes confirmar tu correo antes de iniciar sesión.";
+  if (m.includes("email not confirmed"))
+    return "Debes confirmar tu correo antes de iniciar sesión.";
   if (m.includes("user already registered") || m.includes("already been registered"))
     return "Ese correo ya está registrado. Inicia sesión.";
-  if (m.includes("password") && m.includes("6")) return "La contraseña debe tener al menos 6 caracteres.";
+  if (m.includes("password") && m.includes("6"))
+    return "La contraseña debe tener al menos 6 caracteres.";
   if (m.includes("pwned") || m.includes("compromised") || m.includes("leaked"))
     return "Esa contraseña aparece en filtraciones conocidas. Usa una diferente.";
-  if (m.includes("rate") || m.includes("seconds")) return "Muchos intentos. Espera un momento e intenta de nuevo.";
+  if (m.includes("rate") || m.includes("seconds"))
+    return "Muchos intentos. Espera un momento e intenta de nuevo.";
   if (m.includes("network") || m.includes("fetch")) return "Sin conexión. Revisa tu internet.";
   return "No pudimos completar la acción. Intenta nuevamente.";
 }
@@ -464,9 +467,7 @@ export function AuthScreen() {
                   </div>
                 )}
 
-                {error && (
-                  <div style={{ color: B.pink, fontSize: 13, marginTop: 10 }}>{error}</div>
-                )}
+                {error && <div style={{ color: B.pink, fontSize: 13, marginTop: 10 }}>{error}</div>}
                 {info && (
                   <div style={{ color: B.greenDark, fontSize: 13, marginTop: 10 }}>{info}</div>
                 )}
