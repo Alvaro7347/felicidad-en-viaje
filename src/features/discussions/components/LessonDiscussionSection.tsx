@@ -50,7 +50,7 @@ export function LessonDiscussionSection({ lessonId }: LessonDiscussionSectionPro
     }, 4000);
   }, []);
 
-  const handleSubmit = async (input: { postType: "comment"; content: string }) => {
+  const handleSubmit = async (input: { postType: "question" | "comment"; content: string }) => {
     setSuccessMsg(null);
     await d.createPost(input);
     if (!isMountedRef.current) return;
