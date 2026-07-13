@@ -1,5 +1,6 @@
 // Formulario para responder oficialmente a un post.
 import { useEffect, useRef, useState } from "react";
+import { OFFICIAL_TEAM_NAME } from "@/features/discussions/brand";
 
 interface Props {
   postId: string;
@@ -53,7 +54,7 @@ export function OfficialReplyForm({ postId, lessonId, isPending, errorMessage, o
   return (
     <form onSubmit={handleSubmit} className="mt-3 space-y-2">
       <label htmlFor={`reply-${postId}`} className="text-xs font-semibold text-slate-700">
-        Respuesta oficial de SoundKeleles
+        Respuesta oficial de {OFFICIAL_TEAM_NAME}
       </label>
       <textarea
         id={`reply-${postId}`}

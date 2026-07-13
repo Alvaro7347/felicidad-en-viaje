@@ -1,5 +1,6 @@
-// Respuesta oficial del Equipo SoundKeleles. Sin identidad personal.
+// Respuesta oficial del Equipo Soundkeleles. Sin identidad personal.
 import { B } from "@/features/archipielago/data/brand";
+import { OFFICIAL_TEAM_NAME } from "../brand";
 import type { LessonDiscussionReply } from "../types";
 import { formatDiscussionDate } from "./formatDate";
 
@@ -26,9 +27,7 @@ export function DiscussionReplyItem({ reply }: Props) {
           marginBottom: 6,
         }}
       >
-        <span style={{ fontWeight: 800, color: B.dark, fontSize: 14 }}>
-          Equipo SoundKeleles
-        </span>
+        <span style={{ fontWeight: 800, color: B.dark, fontSize: 14 }}>{OFFICIAL_TEAM_NAME}</span>
         <span
           style={{
             fontSize: 11,

@@ -1,10 +1,11 @@
 // Pantalla principal del workspace de moderación.
 // - Filtro por lección MVP1.
 // - Filtro "Solo sin respuesta".
-// - Lista virtualizada simple (limit 200 desde el repo).
+// - Lista virtualizada simple (limit 50 desde el repo).
 
 import { useMemo, useState } from "react";
 import { MVP1_LESSON_SEQUENCE } from "@/features/archipielago/data/mvp1Progress";
+import { OFFICIAL_TEAM_NAME } from "@/features/discussions/brand";
 import { useModerationQueue } from "../hooks/useModerationQueue";
 import { ModerationPostCard } from "./ModerationPostCard";
 
@@ -42,7 +43,9 @@ export function ModerationScreen() {
   return (
     <div className="mx-auto max-w-3xl px-4 py-6">
       <header className="mb-6">
-        <p className="text-xs font-semibold uppercase tracking-wide text-teal-700">SoundKeleles</p>
+        <p className="text-xs font-semibold uppercase tracking-wide text-teal-700">
+          {OFFICIAL_TEAM_NAME}
+        </p>
         <h1 className="text-2xl font-bold text-slate-900">Moderación de comunidad</h1>
         <p className="mt-1 text-sm text-slate-600">
           Revisa publicaciones, responde oficialmente y modera cuando sea necesario.

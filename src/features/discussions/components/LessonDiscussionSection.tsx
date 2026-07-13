@@ -24,9 +24,7 @@ function extractCode(err: unknown): LessonDiscussionErrorCode | null {
 
 export function LessonDiscussionSection({ lessonId }: LessonDiscussionSectionProps) {
   const d = useLessonDiscussion(lessonId);
-  const [pendingApplauseIds, setPendingApplauseIds] = useState<Set<string>>(
-    () => new Set(),
-  );
+  const [pendingApplauseIds, setPendingApplauseIds] = useState<Set<string>>(() => new Set());
   const [successMsg, setSuccessMsg] = useState<string | null>(null);
   const isMountedRef = useRef(true);
   const successTimeoutRef = useRef<number | null>(null);
@@ -136,10 +134,7 @@ export function LessonDiscussionSection({ lessonId }: LessonDiscussionSectionPro
       {d.isLoading && <DiscussionSkeleton />}
 
       {d.isError && !d.isLoading && (
-        <DiscussionErrorState
-          onRetry={() => void d.refetch()}
-          isRetrying={d.isFetching}
-        />
+        <DiscussionErrorState onRetry={() => void d.refetch()} isRetrying={d.isFetching} />
       )}
 
       {!d.isLoading && !d.isError && d.posts.length === 0 && <DiscussionEmptyState />}
