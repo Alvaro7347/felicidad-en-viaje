@@ -75,6 +75,11 @@ async function signVapidJwt(audience: string): Promise<string> {
   return `${signingInput}.${bytesToB64url(sig)}`;
 }
 
+/** Fuerza un ArrayBuffer real (no SharedArrayBuffer) para satisfacer los tipos estrictos de Web Crypto. */
+function ab(u: Uint8Array): ArrayBuffer {
+  return u.buffer.slice(u.byteOffset, u.byteOffset + u.byteLength) as ArrayBuffer;
+}
+
 /** HKDF-SHA256 → derivar N bytes. */
 async function hkdf(
   ikm: Uint8Array,
@@ -82,9 +87,9 @@ async function hkdf(
   info: Uint8Array,
   length: number,
 ): Promise<Uint8Array> {
-  const key = await crypto.subtle.importKey("raw", ikm, "HKDF", false, ["deriveBits"]);
+  const key = await crypto.subtle.importKey("raw", ab(ikm), "HKDF", false, ["deriveBits"]);
   const bits = await crypto.subtle.deriveBits(
-    { name: "HKDF", hash: "SHA-256", salt, info },
+    { name: "HKDF", hash: "SHA-256", salt: ab(salt), info: ab(info) },
     key,
     length * 8,
   );
@@ -110,7 +115,7 @@ async function encryptPayload(
   const uaPublicBytes = b64urlToBytes(subscription.p256dh);
   const uaPublicKey = await crypto.subtle.importKey(
     "raw",
-    uaPublicBytes,
+    ab(uaPublicBytes),
     { name: "ECDH", namedCurve: "P-256" },
     false,
     [],
@@ -145,11 +150,11 @@ async function encryptPayload(
   const padded = concat(payloadBytes, new Uint8Array([0x02]));
 
   // 10. AES-128-GCM.
-  const cekKey = await crypto.subtle.importKey("raw", cek, { name: "AES-GCM" }, false, [
+  const cekKey = await crypto.subtle.importKey("raw", ab(cek), { name: "AES-GCM" }, false, [
     "encrypt",
   ]);
   const ct = new Uint8Array(
-    await crypto.subtle.encrypt({ name: "AES-GCM", iv: nonce }, cekKey, padded),
+    await crypto.subtle.encrypt({ name: "AES-GCM", iv: ab(nonce) }, cekKey, ab(padded)),
   );
 
   // 11. Header binario RFC 8188: salt(16) || rs=4096(u32be) || idlen=65(u8) || keyid(as_pub 65) || ct.
@@ -157,6 +162,7 @@ async function encryptPayload(
   const idlen = new Uint8Array([asPublicSpki.length]);
   return concat(salt, rs, idlen, asPublicSpki, ct);
 }
+
 
 export interface PushSubscriptionRecord {
   endpoint: string;
