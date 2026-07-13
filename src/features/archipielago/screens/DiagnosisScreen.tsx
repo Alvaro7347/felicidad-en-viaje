@@ -5,6 +5,7 @@ import type { DiagAnswers } from "../types";
 import { Btn } from "../components/Btn";
 import { Card } from "../components/Card";
 import { DiagnosisProgress } from "../components/DiagnosisProgress";
+import { recordActivity } from "@/lib/settings/settings.functions";
 
 export function DiagnosisScreen({ onComplete }: { onComplete: (answers: DiagAnswers, name: string) => void }) {
   // step -1 = name input; steps 0..N-1 = questions
@@ -30,6 +31,8 @@ export function DiagnosisScreen({ onComplete }: { onComplete: (answers: DiagAnsw
       if (step < totalSteps - 1) {
         setStep(step + 1);
       } else {
+        // Diagnóstico terminado: registrar actividad (no bloquea la consolidación).
+        recordActivity({ data: { kind: "diagnosis_completed" } }).catch(() => {});
         onComplete(newAnswers, nameInput.trim() || 'Navegante');
       }
       setAnimating(false);

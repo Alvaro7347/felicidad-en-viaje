@@ -489,6 +489,10 @@ export type Database = {
         }
         Returns: boolean
       }
+      install_notifications_cron: {
+        Args: { _bearer: string; _url: string }
+        Returns: undefined
+      }
       is_soundkeleles_team: { Args: never; Returns: boolean }
       reaction_post_visible: { Args: { _post_id: string }; Returns: boolean }
       soft_delete_own_post: { Args: { _post_id: string }; Returns: undefined }

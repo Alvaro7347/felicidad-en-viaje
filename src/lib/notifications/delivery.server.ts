@@ -39,10 +39,14 @@ export interface DeliverResult {
   gone: number;
 }
 
+/** Tiempo tras el cual una fila `pending` se considera huérfana (timeout/crash previo) y puede recuperarse. */
+const PENDING_STALE_MS = 15 * 60 * 1000;
+
 export async function deliverNotification(params: DeliverParams): Promise<DeliverResult> {
   const { supabase, userId, notificationType, periodKey, message, payload } = params;
+  const payloadJson = (payload ?? {}) as Database["public"]["Tables"]["notification_deliveries"]["Insert"]["payload"];
 
-  // 1. RESERVAR fila de entrega. Si ya existe (UNIQUE conflict), abortar.
+  // 1. RESERVAR fila de entrega. Si ya existe, decidir según status.
   const { data: reserved, error: reserveErr } = await supabase
     .from("notification_deliveries")
     .insert({
@@ -50,22 +54,56 @@ export async function deliverNotification(params: DeliverParams): Promise<Delive
       notification_type: notificationType,
       period_key: periodKey,
       status: "pending",
-      payload: (payload ?? {}) as Database["public"]["Tables"]["notification_deliveries"]["Insert"]["payload"],
+      payload: payloadJson,
     })
     .select("id")
     .maybeSingle();
 
-  if (reserveErr) {
-    // 23505 = unique violation → ya fue reservada/enviada por otra pasada.
-    if (reserveErr.code === "23505") {
-      return { status: "skipped_duplicate", attempted: 0, succeeded: 0, gone: 0 };
-    }
+  let deliveryId: string;
+
+  if (reserveErr && reserveErr.code !== "23505") {
     throw new Error(`deliverNotification reserve: ${reserveErr.message}`);
   }
-  if (!reserved) {
-    return { status: "skipped_duplicate", attempted: 0, succeeded: 0, gone: 0 };
+
+  if (reserved) {
+    deliveryId = reserved.id;
+  } else {
+    // Ya existe una fila (UNIQUE conflict). Distinguir estados sin duplicar filas.
+    const { data: existing, error: exErr } = await supabase
+      .from("notification_deliveries")
+      .select("id, status, sent_at, created_at")
+      .eq("user_id", userId)
+      .eq("notification_type", notificationType)
+      .eq("period_key", periodKey)
+      .maybeSingle();
+    if (exErr) throw new Error(`deliverNotification lookup: ${exErr.message}`);
+    if (!existing) {
+      // Carrera extraña: sin fila y sin conflicto reproducible → tratar como duplicada.
+      return { status: "skipped_duplicate", attempted: 0, succeeded: 0, gone: 0 };
+    }
+
+    // sent → NUNCA reenviar.
+    if (existing.status === "sent" || existing.sent_at) {
+      return { status: "skipped_duplicate", attempted: 0, succeeded: 0, gone: 0 };
+    }
+
+    // pending "vivo" → otra ejecución concurrente lo está manejando. Salir sin duplicar.
+    if (existing.status === "pending") {
+      const ageMs = Date.now() - new Date(existing.created_at ?? Date.now()).getTime();
+      if (ageMs < PENDING_STALE_MS) {
+        return { status: "skipped_duplicate", attempted: 0, succeeded: 0, gone: 0 };
+      }
+      // pending huérfano (proceso previo cayó) → reutilizar la MISMA fila.
+    }
+
+    // failed o pending huérfano → reutilizar la fila, resetear a pending y reintentar.
+    deliveryId = existing.id;
+    const { error: resetErr } = await supabase
+      .from("notification_deliveries")
+      .update({ status: "pending", error: null, sent_at: null, payload: payloadJson })
+      .eq("id", deliveryId);
+    if (resetErr) throw new Error(`deliverNotification reset: ${resetErr.message}`);
   }
-  const deliveryId = reserved.id;
 
   // 2. Suscripciones activas.
   const { data: subs, error: subsErr } = await supabase
