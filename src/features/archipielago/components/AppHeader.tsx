@@ -73,6 +73,15 @@ function UserMenu({
       },
     },
     {
+      key: "settings",
+      label: "Ajustes",
+      icon: "⚙️",
+      onClick: () => {
+        setOpen(false);
+        onOpenSettings();
+      },
+    },
+    {
       key: "guide",
       label: "Tu guía",
       icon: "📖",
@@ -82,6 +91,7 @@ function UserMenu({
       },
       disabled: !onOpenGuide,
     },
+
     {
       key: "help",
       label: "Centro de ayuda",
