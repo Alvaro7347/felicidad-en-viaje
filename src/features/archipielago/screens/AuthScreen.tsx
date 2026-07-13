@@ -55,10 +55,7 @@ export function AuthScreen() {
       return;
     }
     setLoading(true);
-    const redirectTo =
-      typeof window !== "undefined"
-        ? `${window.location.origin}${RESET_REDIRECT_PATH}`
-        : RESET_REDIRECT_PATH;
+    const redirectTo = getPasswordResetRedirectUrl();
     const { error: err } = await supabase.auth.resetPasswordForEmail(clean, {
       redirectTo,
     });
