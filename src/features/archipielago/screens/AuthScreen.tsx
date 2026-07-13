@@ -2,22 +2,21 @@ import { useState } from "react";
 import { supabase } from "@/integrations/supabase/client";
 import { B } from "../data/brand";
 import { Btn } from "../components/Btn";
+import { recordAppEvent } from "@/lib/events/events.functions";
+import { getPasswordResetRedirectUrl } from "@/lib/config/urls";
 
 type Mode = "signin" | "signup" | "forgot";
-
-const RESET_REDIRECT_PATH = "/restablecer-contrasena";
 
 const EMAIL_RE = /^[^\s@]+@[^\s@]+\.[^\s@]+$/;
 const LOGO_SRC = "/isologo-soundkeleles.jpg";
 
 async function logEvent(name: string, data?: Record<string, unknown>) {
+  // Sólo registramos eventos si hay sesión activa; la server function exige
+  // usuario autenticado y fija user_id desde context. Errores nunca bloquean.
   try {
     const { data: sess } = await supabase.auth.getSession();
-    await supabase.from("app_events").insert({
-      user_id: sess.session?.user.id ?? null,
-      event_name: name,
-      event_data: (data ?? null) as never,
-    });
+    if (!sess.session?.user.id) return;
+    await recordAppEvent({ data: { event_name: name, event_data: data } });
   } catch {
     /* silencioso */
   }
