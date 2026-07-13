@@ -111,7 +111,7 @@ function SettingsHome({
 }) {
   const items = [
     { key: "profile", icon: "👤", title: "Perfil", subtitle: "Foto y nombre", onClick: onOpenProfile },
-    { key: "appearance", icon: "🎨", title: "Apariencia", subtitle: "Tema del sistema, claro u oscuro", onClick: onOpenAppearance },
+    { key: "appearance", icon: "🎨", title: "Apariencia", subtitle: "Tema claro (más opciones próximamente)", onClick: onOpenAppearance },
     { key: "notifications", icon: "🔔", title: "Notificaciones", subtitle: "Recordatorios y reporte semanal", onClick: onOpenNotifications },
     { key: "about", icon: "ℹ️", title: "Acerca de", subtitle: "Versión y créditos", onClick: onOpenAbout },
   ];
@@ -313,10 +313,9 @@ function ProfileTab({
 // ─────────────────────────── APPEARANCE ───────────────────────────
 
 function AppearanceTab({ value, onChange }: { value: ThemePreference; onChange: (t: ThemePreference) => Promise<void> }) {
+  // Sólo "Claro" está implementado; "Oscuro" y "Sistema" se ocultan hasta que existan.
   const options: Array<{ v: ThemePreference; label: string; hint: string }> = [
-    { v: "system", label: "Sistema", hint: "Sigue la preferencia de tu dispositivo." },
     { v: "light", label: "Claro", hint: "Fondo claro, colores vivos." },
-    { v: "dark", label: "Oscuro", hint: "Modo suave para la vista." },
   ];
   return (
     <>

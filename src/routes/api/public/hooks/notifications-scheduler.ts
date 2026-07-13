@@ -54,10 +54,13 @@ export const Route = createFileRoute("/api/public/hooks/notifications-scheduler"
 });
 
 async function runScheduler(request: Request): Promise<Response> {
-  // Auth: apikey debe coincidir con la publishable key (misma que usa pg_cron).
-  const apiKey = request.headers.get("apikey");
-  const expected = process.env.SUPABASE_PUBLISHABLE_KEY;
-  if (!expected || !apiKey || apiKey !== expected) {
+  // Auth: Authorization: Bearer <NOTIFICATIONS_CRON_SECRET>.
+  // El valor vive únicamente como secreto del backend + comando de pg_cron.
+  // Nunca en el repositorio, logs, respuestas ni frontend.
+  const expected = process.env.NOTIFICATIONS_CRON_SECRET;
+  const auth = request.headers.get("authorization") ?? "";
+  const provided = auth.toLowerCase().startsWith("bearer ") ? auth.slice(7).trim() : "";
+  if (!expected || !provided || provided !== expected) {
     return new Response("Unauthorized", { status: 401 });
   }
 
