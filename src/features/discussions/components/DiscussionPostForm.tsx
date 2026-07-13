@@ -6,14 +6,12 @@ import type { DiscussionPostType, LessonDiscussionErrorCode } from "../types";
 const MAX_LEN = 1000;
 const MIN_LEN = 3;
 
-const PLACEHOLDERS: Record<DiscussionPostType, string> = {
-  question: "Escribe tu pregunta sobre esta clase…",
-  comment: "Cuéntanos qué aprendiste, sentiste o descubriste…",
-};
+const PLACEHOLDER =
+  "¿Qué aprendiste, qué descubriste o qué se te hizo difícil? Comparte tu experiencia…";
 
 const ERROR_MESSAGES: Record<LessonDiscussionErrorCode, string> = {
   duplicate_active_post: "Ya tienes una publicación activa en esta clase.",
-  invalid_content: "Revisa el contenido. Debe tener entre 3 y 1000 caracteres.",
+  invalid_content: "Escribe entre 3 y 1000 caracteres.",
   invalid_lesson: "No pudimos identificar esta clase.",
   not_authenticated: "Tu sesión terminó. Inicia sesión nuevamente.",
   network_error: "No pudimos publicar. Revisa tu conexión e inténtalo otra vez.",
@@ -36,7 +34,6 @@ type Props = {
 };
 
 export function DiscussionPostForm({ onSubmit, isSubmitting, errorCode }: Props) {
-  const [postType, setPostType] = useState<DiscussionPostType>("question");
   const [content, setContent] = useState("");
   const [lastFailedValidation, setLastFailedValidation] = useState<string | null>(null);
   const textareaId = useId();
@@ -53,82 +50,49 @@ export function DiscussionPostForm({ onSubmit, isSubmitting, errorCode }: Props)
     if (!canSubmit) {
       setLastFailedValidation(
         overLimit
-          ? `El contenido supera el máximo de ${MAX_LEN} caracteres.`
+          ? `Tu texto supera el máximo de ${MAX_LEN} caracteres.`
           : "Escribe al menos 3 caracteres.",
       );
       return;
     }
     setLastFailedValidation(null);
     try {
-      await onSubmit({ postType, content: content.trim() });
-      // Éxito: limpiar borrador. El error se conserva en state del padre.
+      // Internamente todas las publicaciones se envían como "comment".
+      // El backend conserva post_type por compatibilidad; la UI ya no lo diferencia.
+      await onSubmit({ postType: "comment", content: content.trim() });
       setContent("");
     } catch {
-      // El borrador permanece intacto para no perder el trabajo del usuario.
+      // El borrador permanece intacto.
     }
   };
 
   const serverError = resolveDiscussionErrorMessage(errorCode);
   const visibleError = lastFailedValidation ?? serverError;
 
-  const typeButton = (value: DiscussionPostType, label: string) => {
-    const active = postType === value;
-    return (
-      <button
-        key={value}
-        type="button"
-        role="radio"
-        aria-checked={active}
-        onClick={() => setPostType(value)}
-        disabled={isSubmitting}
-        style={{
-          flex: 1,
-          minHeight: 44,
-          padding: "10px 14px",
-          borderRadius: 12,
-          border: `2px solid ${active ? B.green : B.grayBorder}`,
-          background: active ? B.greenLight : B.white,
-          color: B.dark,
-          fontWeight: 700,
-          fontSize: 14,
-          cursor: isSubmitting ? "not-allowed" : "pointer",
-        }}
-      >
-        {label}
-      </button>
-    );
-  };
-
   return (
     <form
       onSubmit={handleSubmit}
       style={{
         background: B.white,
-        border: `1px solid ${B.grayBorder}`,
         borderRadius: 20,
-        padding: 16,
+        padding: 20,
         display: "grid",
-        gap: 12,
+        gap: 14,
+        boxShadow: "0 1px 3px rgba(0,0,0,0.04)",
       }}
       aria-describedby={visibleError ? errorId : undefined}
     >
-      <div
-        role="radiogroup"
-        aria-label="Tipo de publicación"
-        style={{ display: "flex", gap: 8, flexWrap: "wrap" }}
+      <label
+        htmlFor={textareaId}
+        style={{ fontSize: 15, color: B.dark, fontWeight: 700, letterSpacing: -0.1 }}
       >
-        {typeButton("question", "Tengo una pregunta")}
-        {typeButton("comment", "Quiero compartir un comentario")}
-      </div>
-
-      <label htmlFor={textareaId} style={{ fontSize: 13, color: B.dark, fontWeight: 700 }}>
-        {postType === "question" ? "Tu pregunta" : "Tu comentario"}
+        Escribe algo para la comunidad
       </label>
       <textarea
         id={textareaId}
         value={content}
         onChange={(e) => setContent(e.target.value)}
-        placeholder={PLACEHOLDERS[postType]}
+        placeholder={PLACEHOLDER}
         rows={4}
         maxLength={MAX_LEN}
         disabled={isSubmitting}
@@ -136,33 +100,21 @@ export function DiscussionPostForm({ onSubmit, isSubmitting, errorCode }: Props)
         aria-invalid={overLimit || tooShort ? true : undefined}
         style={{
           width: "100%",
-          minHeight: 110,
-          padding: 12,
-          borderRadius: 12,
+          minHeight: 120,
+          padding: "14px 14px",
+          borderRadius: 14,
           border: `1px solid ${overLimit ? B.pink : B.grayBorder}`,
           fontFamily: "inherit",
           fontSize: 15,
-          lineHeight: 1.5,
+          lineHeight: 1.55,
           color: B.dark,
           background: B.white,
           resize: "vertical",
           boxSizing: "border-box",
+          outline: "none",
+          transition: "border-color 120ms ease",
         }}
       />
-      <div
-        id={counterId}
-        style={{
-          display: "flex",
-          justifyContent: "space-between",
-          fontSize: 12,
-          color: overLimit ? B.pink : B.grayText,
-        }}
-      >
-        <span>Mínimo 3, máximo {MAX_LEN} caracteres.</span>
-        <span>
-          {content.length}/{MAX_LEN}
-        </span>
-      </div>
 
       {visibleError && (
         <p
@@ -172,7 +124,7 @@ export function DiscussionPostForm({ onSubmit, isSubmitting, errorCode }: Props)
           style={{
             margin: 0,
             color: B.pink,
-            fontSize: 14,
+            fontSize: 13,
             fontWeight: 600,
           }}
         >
@@ -180,7 +132,23 @@ export function DiscussionPostForm({ onSubmit, isSubmitting, errorCode }: Props)
         </p>
       )}
 
-      <div style={{ display: "flex", justifyContent: "flex-end" }}>
+      <div
+        style={{
+          display: "flex",
+          alignItems: "center",
+          justifyContent: "space-between",
+          gap: 12,
+        }}
+      >
+        <span
+          id={counterId}
+          style={{
+            fontSize: 12,
+            color: overLimit ? B.pink : B.grayText,
+          }}
+        >
+          {content.length}/{MAX_LEN}
+        </span>
         <Btn variant="primary" type="submit" disabled={!canSubmit}>
           {isSubmitting ? "Publicando…" : "Publicar"}
         </Btn>
