@@ -63,6 +63,11 @@ export class ModerationError extends Error {
 
 const REPLY_MIN = 3;
 const REPLY_MAX = 2000;
+/** Límite duro de carga por página del workspace de moderación (sin paginación en MVP1). */
+const MODERATION_POST_LIMIT = 50;
+
+const NOT_FOUND_MESSAGE =
+  "No pudimos completar la acción. Es posible que el contenido haya cambiado o que tu acceso ya no esté disponible.";
 
 function mapPgError(error: PostgrestError | null): ModerationError | null {
   if (!error) return null;
