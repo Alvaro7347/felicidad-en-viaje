@@ -109,11 +109,17 @@ export function usePushRegistration() {
       // 4. Suscribir (o reutilizar existente).
       let subscription = await reg.pushManager.getSubscription();
       if (!subscription) {
+        const keyBytes = b64urlToUint8Array(publicKey);
+        const appKey = keyBytes.buffer.slice(
+          keyBytes.byteOffset,
+          keyBytes.byteOffset + keyBytes.byteLength,
+        ) as ArrayBuffer;
         subscription = await reg.pushManager.subscribe({
           userVisibleOnly: true,
-          applicationServerKey: b64urlToUint8Array(publicKey),
+          applicationServerKey: appKey,
         });
       }
+
 
       // 5. Persistir en backend.
       const raw = subscription.toJSON();
