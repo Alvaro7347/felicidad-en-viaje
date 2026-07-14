@@ -24,7 +24,7 @@
  *   - Ampliar los hooks/servicios correspondientes en su lugar.
  *   - Este archivo debe seguir siendo "vista + coordinación", no negocio.
  */
-import { useEffect, useRef, useState } from "react";
+import { lazy, Suspense, useEffect, useRef, useState } from "react";
 import type { Session } from "@supabase/supabase-js";
 
 import { supabase } from "@/integrations/supabase/client";
@@ -51,53 +51,158 @@ import { AppHeader } from "./components/AppHeader";
 import { DevNav, SHOW_DEV_NAV } from "./components/DevNav";
 import { SplashScreen } from "./components/SplashScreen";
 
-import { CelebrationScreen } from "./screens/CelebrationScreen";
-import { DiagnosisResultScreen } from "./screens/DiagnosisResultScreen";
-import { DiagnosisScreen } from "./screens/DiagnosisScreen";
-
-import { MissionEightScreen } from "./screens/MissionEightScreen";
-import { FirstMelodiesIslandScreen } from "./screens/FirstMelodiesIslandScreen";
-import { FirstMelodiesLessonScreen } from "./screens/FirstMelodiesLessonScreen";
-import { PulseIslandScreen } from "./screens/PulseIslandScreen";
-import { RhythmIslandScreen } from "./screens/RhythmIslandScreen";
-import { MusicIslandScreen } from "./screens/MusicIslandScreen";
-import { JoyIslandScreen } from "./screens/JoyIslandScreen";
-import { JoyLessonScreen } from "./screens/JoyLessonScreen";
-import { PulseLessonScreen } from "./screens/PulseLessonScreen";
-import { RhythmLessonScreen } from "./screens/RhythmLessonScreen";
-import { MusicLessonScreen } from "./screens/MusicLessonScreen";
-import { ChordsIslandScreen } from "./screens/ChordsIslandScreen";
-import { ChordsLessonScreen } from "./screens/ChordsLessonScreen";
-import { StrummingIslandScreen } from "./screens/StrummingIslandScreen";
-import { StrummingLessonScreen } from "./screens/StrummingLessonScreen";
-import { SongsIslandScreen } from "./screens/SongsIslandScreen";
-import { SongsLessonScreen } from "./screens/SongsLessonScreen";
-import { MissionNineScreen } from "./screens/MissionNineScreen";
-import { MissionFourScreen } from "./screens/MissionFourScreen";
-import { MissionGuideScreen } from "./screens/MissionGuideScreen";
-import { MissionScreen } from "./screens/MissionScreen";
-import { MissionSevenScreen } from "./screens/MissionSevenScreen";
-import { MissionSixScreen } from "./screens/MissionSixScreen";
-import { MissionThreeScreen } from "./screens/MissionThreeScreen";
-import { MissionTwoScreen } from "./screens/MissionTwoScreen";
+// ── Pantallas eager: participan en el bootstrap o en la primera pintura ────
+// (Auth, Splash, Welcome/ReturnWelcome, Onboarding, Route y los dashboards
+// iniciales de cada modalidad). Todo lo demás se carga bajo demanda con
+// React.lazy() para reducir el JS del bundle inicial.
 import { OnboardingScreen } from "./screens/OnboardingScreen";
 import { RouteScreen } from "./screens/RouteScreen";
 import { WelcomeScreen } from "./screens/WelcomeScreen";
 import { ReturnWelcomeScreen } from "./screens/ReturnWelcomeScreen";
 import { SelfJourneyDashboardScreen } from "./screens/SelfJourneyDashboardScreen";
 import { getJourneyLearnerName } from "./utils/learnerName";
-import { MyProfileScreen } from "./screens/MyProfileScreen";
-import { HelpCenterScreen } from "./screens/HelpCenterScreen";
-import { PrivacyScreen } from "./screens/PrivacyScreen";
-import { SettingsScreen } from "@/features/settings/screens/SettingsScreen";
-import { settingsRepository } from "@/features/settings/services/settingsRepository";
-
-
-import { ParentJourneyIntroScreen } from "./screens/ParentJourneyIntroScreen";
-import { ParentJourneyCreatedScreen } from "./screens/ParentJourneyCreatedScreen";
-import { ParentOnboardingScreen } from "@/features/parent-journey/screens/ParentOnboardingScreen";
-import type { ParentOnboardingAnswers } from "@/features/parent-journey/types";
 import { ParentJourneyDashboardHydrator } from "@/features/parent-journey/screens/ParentJourneyDashboardHydrator";
+import { settingsRepository } from "@/features/settings/services/settingsRepository";
+import type { ParentOnboardingAnswers } from "@/features/parent-journey/types";
+
+// ── Pantallas lazy: se cargan al navegar hacia ellas. Cada import() genera
+// un chunk propio; las utilidades/datos que sólo estas pantallas usan
+// (lecciones, formularios largos, screens de menú) viajan con su chunk.
+const CelebrationScreen = lazy(() =>
+  import("./screens/CelebrationScreen").then((m) => ({ default: m.CelebrationScreen })),
+);
+const DiagnosisResultScreen = lazy(() =>
+  import("./screens/DiagnosisResultScreen").then((m) => ({ default: m.DiagnosisResultScreen })),
+);
+const DiagnosisScreen = lazy(() =>
+  import("./screens/DiagnosisScreen").then((m) => ({ default: m.DiagnosisScreen })),
+);
+const MissionEightScreen = lazy(() =>
+  import("./screens/MissionEightScreen").then((m) => ({ default: m.MissionEightScreen })),
+);
+const FirstMelodiesIslandScreen = lazy(() =>
+  import("./screens/FirstMelodiesIslandScreen").then((m) => ({
+    default: m.FirstMelodiesIslandScreen,
+  })),
+);
+const FirstMelodiesLessonScreen = lazy(() =>
+  import("./screens/FirstMelodiesLessonScreen").then((m) => ({
+    default: m.FirstMelodiesLessonScreen,
+  })),
+);
+const PulseIslandScreen = lazy(() =>
+  import("./screens/PulseIslandScreen").then((m) => ({ default: m.PulseIslandScreen })),
+);
+const RhythmIslandScreen = lazy(() =>
+  import("./screens/RhythmIslandScreen").then((m) => ({ default: m.RhythmIslandScreen })),
+);
+const MusicIslandScreen = lazy(() =>
+  import("./screens/MusicIslandScreen").then((m) => ({ default: m.MusicIslandScreen })),
+);
+const JoyIslandScreen = lazy(() =>
+  import("./screens/JoyIslandScreen").then((m) => ({ default: m.JoyIslandScreen })),
+);
+const JoyLessonScreen = lazy(() =>
+  import("./screens/JoyLessonScreen").then((m) => ({ default: m.JoyLessonScreen })),
+);
+const PulseLessonScreen = lazy(() =>
+  import("./screens/PulseLessonScreen").then((m) => ({ default: m.PulseLessonScreen })),
+);
+const RhythmLessonScreen = lazy(() =>
+  import("./screens/RhythmLessonScreen").then((m) => ({ default: m.RhythmLessonScreen })),
+);
+const MusicLessonScreen = lazy(() =>
+  import("./screens/MusicLessonScreen").then((m) => ({ default: m.MusicLessonScreen })),
+);
+const ChordsIslandScreen = lazy(() =>
+  import("./screens/ChordsIslandScreen").then((m) => ({ default: m.ChordsIslandScreen })),
+);
+const ChordsLessonScreen = lazy(() =>
+  import("./screens/ChordsLessonScreen").then((m) => ({ default: m.ChordsLessonScreen })),
+);
+const StrummingIslandScreen = lazy(() =>
+  import("./screens/StrummingIslandScreen").then((m) => ({ default: m.StrummingIslandScreen })),
+);
+const StrummingLessonScreen = lazy(() =>
+  import("./screens/StrummingLessonScreen").then((m) => ({ default: m.StrummingLessonScreen })),
+);
+const SongsIslandScreen = lazy(() =>
+  import("./screens/SongsIslandScreen").then((m) => ({ default: m.SongsIslandScreen })),
+);
+const SongsLessonScreen = lazy(() =>
+  import("./screens/SongsLessonScreen").then((m) => ({ default: m.SongsLessonScreen })),
+);
+const MissionNineScreen = lazy(() =>
+  import("./screens/MissionNineScreen").then((m) => ({ default: m.MissionNineScreen })),
+);
+const MissionFourScreen = lazy(() =>
+  import("./screens/MissionFourScreen").then((m) => ({ default: m.MissionFourScreen })),
+);
+const MissionGuideScreen = lazy(() =>
+  import("./screens/MissionGuideScreen").then((m) => ({ default: m.MissionGuideScreen })),
+);
+const MissionScreen = lazy(() =>
+  import("./screens/MissionScreen").then((m) => ({ default: m.MissionScreen })),
+);
+const MissionSevenScreen = lazy(() =>
+  import("./screens/MissionSevenScreen").then((m) => ({ default: m.MissionSevenScreen })),
+);
+const MissionSixScreen = lazy(() =>
+  import("./screens/MissionSixScreen").then((m) => ({ default: m.MissionSixScreen })),
+);
+const MissionThreeScreen = lazy(() =>
+  import("./screens/MissionThreeScreen").then((m) => ({ default: m.MissionThreeScreen })),
+);
+const MissionTwoScreen = lazy(() =>
+  import("./screens/MissionTwoScreen").then((m) => ({ default: m.MissionTwoScreen })),
+);
+const MyProfileScreen = lazy(() =>
+  import("./screens/MyProfileScreen").then((m) => ({ default: m.MyProfileScreen })),
+);
+const HelpCenterScreen = lazy(() =>
+  import("./screens/HelpCenterScreen").then((m) => ({ default: m.HelpCenterScreen })),
+);
+const PrivacyScreen = lazy(() =>
+  import("./screens/PrivacyScreen").then((m) => ({ default: m.PrivacyScreen })),
+);
+const SettingsScreen = lazy(() =>
+  import("@/features/settings/screens/SettingsScreen").then((m) => ({ default: m.SettingsScreen })),
+);
+const ParentJourneyIntroScreen = lazy(() =>
+  import("./screens/ParentJourneyIntroScreen").then((m) => ({
+    default: m.ParentJourneyIntroScreen,
+  })),
+);
+const ParentJourneyCreatedScreen = lazy(() =>
+  import("./screens/ParentJourneyCreatedScreen").then((m) => ({
+    default: m.ParentJourneyCreatedScreen,
+  })),
+);
+const ParentOnboardingScreen = lazy(() =>
+  import("@/features/parent-journey/screens/ParentOnboardingScreen").then((m) => ({
+    default: m.ParentOnboardingScreen,
+  })),
+);
+
+// Fallback compartido durante la carga de un chunk de pantalla lazy.
+// Reutiliza los tokens de marca — sin crear un nuevo loader visual.
+function LazyScreenFallback() {
+  return (
+    <div
+      style={{
+        minHeight: 240,
+        display: "flex",
+        alignItems: "center",
+        justifyContent: "center",
+        fontFamily: "Quicksand, Arial, sans-serif",
+        fontSize: 14,
+        color: B.grayText,
+      }}
+    >
+      Cargando…
+    </div>
+  );
+}
 
 const SPLASH_FADE_MS = 1050;
 const SPLASH_HIDE_MS = 1350;
@@ -151,7 +256,6 @@ export function ArchipelagoApp() {
     };
   }, []);
 
-
   // ── Estado del viaje ───────────────────────────────────────────
   const [screen, setScreen] = useState<Screen>("welcome");
   const [diagAnswers, setDiagAnswers] = useState<DiagAnswers>({});
@@ -165,7 +269,9 @@ export function ArchipelagoApp() {
   const [chordsLessonId, setChordsLessonId] = useState<string>("chords1");
   const [strummingLessonId, setStrummingLessonId] = useState<string>("strumming1");
   const [songsLessonId, setSongsLessonId] = useState<string>("songs1");
-  const [parentJourneyAnswers, setParentJourneyAnswers] = useState<ParentOnboardingAnswers | null>(null);
+  const [parentJourneyAnswers, setParentJourneyAnswers] = useState<ParentOnboardingAnswers | null>(
+    null,
+  );
   const [journeyOrigin, setJourneyOrigin] = useState<"student" | "parent">("student");
   const [routeStudentName, setRouteStudentName] = useState<string | undefined>(undefined);
 
@@ -188,9 +294,10 @@ export function ArchipelagoApp() {
   // Guardado transaccional del diagnóstico de Alejandra.
   const [savingDiagnosis, setSavingDiagnosis] = useState(false);
   const [diagnosisSaveError, setDiagnosisSaveError] = useState<string | null>(null);
-  const [pendingDiagnosis, setPendingDiagnosis] = useState<
-    { answers: DiagAnswers; name: string } | null
-  >(null);
+  const [pendingDiagnosis, setPendingDiagnosis] = useState<{
+    answers: DiagAnswers;
+    name: string;
+  } | null>(null);
 
   // ── Aislamiento entre sesiones: al cambiar user_id, limpiar estado local
   //    para que la nueva cuenta nunca vea datos de la anterior.
@@ -221,8 +328,6 @@ export function ArchipelagoApp() {
       appOpenedLoggedRef.current = false;
     }
   }, [session?.user.id]);
-
-
 
   // ── Bootstrap del viaje (extraído a useJourneyBootstrap) ──────
   // Determina modalidad, repara experience_mode y elige la pantalla inicial.
@@ -271,9 +376,6 @@ export function ArchipelagoApp() {
   const bootstrapChecking =
     !!session && (bootstrap.status === "idle" || bootstrap.status === "loading");
 
-
-
-
   // ── Medición: app_opened + return_visit (una vez por carga con sesión) ──
   // `appOpenedLoggedRef` se declara arriba (junto a `lastUidRef`) para
   // reiniciarse cuando cambia el usuario.
@@ -302,7 +404,6 @@ export function ArchipelagoApp() {
         current_island_id,
       });
     }
-
   }, [session?.user.id, progress.loading, hasOnboarding, progress]);
 
   // ── Navegación pedagógica (extraída a useJourneyNavigation) ────
@@ -315,7 +416,6 @@ export function ArchipelagoApp() {
     openIsland,
     openLockedIsland,
   } = useJourneyNavigation({
-
     progress,
     experienceMode: experience.mode,
     setScreen,
@@ -336,7 +436,6 @@ export function ArchipelagoApp() {
 
   const isOnboarding = ONBOARDING_SCREENS.includes(screen);
 
-
   // ── Compuerta de sesión ────────────────────────────────────────
   if (session && ambiguousMode) {
     return (
@@ -352,16 +451,35 @@ export function ArchipelagoApp() {
           padding: 24,
         }}
       >
-        <div style={{ maxWidth: 420, textAlign: "center", display: "flex", flexDirection: "column", gap: 14 }}>
-          <div style={{ fontFamily: "Space Grotesk, sans-serif", fontWeight: 800, fontSize: 20, color: B.dark }}>
+        <div
+          style={{
+            maxWidth: 420,
+            textAlign: "center",
+            display: "flex",
+            flexDirection: "column",
+            gap: 14,
+          }}
+        >
+          <div
+            style={{
+              fontFamily: "Space Grotesk, sans-serif",
+              fontWeight: 800,
+              fontSize: 20,
+              color: B.dark,
+            }}
+          >
             Estamos revisando tu acceso
           </div>
           <div style={{ fontSize: 14, color: B.grayText, lineHeight: 1.55 }}>
-            Encontramos más de una configuración asociada a esta cuenta. Estamos revisando tu acceso para no mezclar información. Reintenta en unos segundos o vuelve a iniciar sesión.
+            Encontramos más de una configuración asociada a esta cuenta. Estamos revisando tu acceso
+            para no mezclar información. Reintenta en unos segundos o vuelve a iniciar sesión.
           </div>
           <button
             type="button"
-            onClick={() => { setAmbiguousMode(false); bootstrap.retry(); }}
+            onClick={() => {
+              setAmbiguousMode(false);
+              bootstrap.retry();
+            }}
             style={{
               alignSelf: "center",
               border: "none",
@@ -379,7 +497,9 @@ export function ArchipelagoApp() {
           </button>
           <button
             type="button"
-            onClick={() => { void experience.signOutAndClear(); }}
+            onClick={() => {
+              void experience.signOutAndClear();
+            }}
             style={{
               alignSelf: "center",
               border: "none",
@@ -413,8 +533,23 @@ export function ArchipelagoApp() {
           padding: 24,
         }}
       >
-        <div style={{ maxWidth: 420, textAlign: "center", display: "flex", flexDirection: "column", gap: 14 }}>
-          <div style={{ fontFamily: "Space Grotesk, sans-serif", fontWeight: 800, fontSize: 20, color: B.dark }}>
+        <div
+          style={{
+            maxWidth: 420,
+            textAlign: "center",
+            display: "flex",
+            flexDirection: "column",
+            gap: 14,
+          }}
+        >
+          <div
+            style={{
+              fontFamily: "Space Grotesk, sans-serif",
+              fontWeight: 800,
+              fontSize: 20,
+              color: B.dark,
+            }}
+          >
             No pudimos preparar tu viaje
           </div>
           <div style={{ fontSize: 14, color: B.grayText, lineHeight: 1.55 }}>
@@ -440,7 +575,9 @@ export function ArchipelagoApp() {
           </button>
           <button
             type="button"
-            onClick={() => { void experience.signOutAndClear(); }}
+            onClick={() => {
+              void experience.signOutAndClear();
+            }}
             style={{
               alignSelf: "center",
               border: "none",
@@ -479,7 +616,6 @@ export function ArchipelagoApp() {
     );
   }
 
-
   if (!session) {
     return (
       <main
@@ -515,21 +651,21 @@ export function ArchipelagoApp() {
         <DevNav
           current={screen}
           onGo={(entry) => {
-            if (entry.lessonGroup === 'first-melodies' && entry.lessonId) {
+            if (entry.lessonGroup === "first-melodies" && entry.lessonId) {
               setFirstMelodiesLessonId(entry.lessonId);
-            } else if (entry.lessonGroup === 'pulse' && entry.lessonId) {
+            } else if (entry.lessonGroup === "pulse" && entry.lessonId) {
               setPulseLessonId(entry.lessonId);
-            } else if (entry.lessonGroup === 'rhythm' && entry.lessonId) {
+            } else if (entry.lessonGroup === "rhythm" && entry.lessonId) {
               setRhythmLessonId(entry.lessonId);
-            } else if (entry.lessonGroup === 'music' && entry.lessonId) {
+            } else if (entry.lessonGroup === "music" && entry.lessonId) {
               setMusicLessonId(entry.lessonId);
-            } else if (entry.lessonGroup === 'joy' && entry.lessonId) {
+            } else if (entry.lessonGroup === "joy" && entry.lessonId) {
               setJoyLessonId(entry.lessonId);
-            } else if (entry.lessonGroup === 'chords' && entry.lessonId) {
+            } else if (entry.lessonGroup === "chords" && entry.lessonId) {
               setChordsLessonId(entry.lessonId);
-            } else if (entry.lessonGroup === 'strumming' && entry.lessonId) {
+            } else if (entry.lessonGroup === "strumming" && entry.lessonId) {
               setStrummingLessonId(entry.lessonId);
-            } else if (entry.lessonGroup === 'songs' && entry.lessonId) {
+            } else if (entry.lessonGroup === "songs" && entry.lessonId) {
               setSongsLessonId(entry.lessonId);
             }
             setScreen(entry.screen);
@@ -550,567 +686,616 @@ export function ArchipelagoApp() {
             userName={userName}
             studentName={routeStudentName}
           />
-
         )}
         {parentJourneyLoadError && (
-          <div style={{ margin: "8px 0", padding: 12, borderRadius: 12, background: "#FDE7EA", color: B.dark, fontSize: 13 }}>
+          <div
+            style={{
+              margin: "8px 0",
+              padding: 12,
+              borderRadius: 12,
+              background: "#FDE7EA",
+              color: B.dark,
+              fontSize: 13,
+            }}
+          >
             {parentJourneyLoadError}{" "}
             <button
               type="button"
-              onClick={() => { setParentJourneyLoadError(null); bootstrap.retry(); }}
-              style={{ background: "transparent", border: "none", color: B.dark, textDecoration: "underline", cursor: "pointer" }}
+              onClick={() => {
+                setParentJourneyLoadError(null);
+                bootstrap.retry();
+              }}
+              style={{
+                background: "transparent",
+                border: "none",
+                color: B.dark,
+                textDecoration: "underline",
+                cursor: "pointer",
+              }}
             >
               Reintentar
             </button>
           </div>
         )}
 
-        {screen === "return-welcome" && (
-          <ReturnWelcomeScreen
-            userName={userName}
-            loading={progress.loading}
-            ctaLabel={(() => {
-              if (progress.loading) return "Preparando tu viaje…";
-              const cur = progress.getCurrentLessonId();
-              const island = cur ? findMvp1Lesson(cur)?.islandId : null;
-              if (island === "first-melodies") return "Continuar en Primeras Melodías";
-              if (island === "pulse") return "Continuar en Isla del Pulso";
-              return "Entrar a mi Archipiélago";
-            })()}
-            onEnter={() => {
-              if (progress.loading) return;
-              const cur = progress.getCurrentLessonId();
-              // cur === null → completó todo MVP1 (hasta p11). Mostrar Isla del Pulso.
-              if (!cur) { openIsland("pulse"); return; }
-              const island = findMvp1Lesson(cur)?.islandId;
-              if (!island) { openIsland("start-port"); return; }
-              openIsland(island);
-            }}
-
-          />
-        )}
-
-
-        {screen === "parent-journey-intro" && (() => {
-          // Protección: si la cuenta ya declaró modalidad personal, no debería
-          // ver esta pantalla. Redirigir al retorno de Alejandra.
-          if (experience.mode === "self_learning") {
-            setTimeout(() => setScreen("return-welcome"), 0);
-            return null;
-          }
-          return (
-            <ParentJourneyIntroScreen
-              onCreate={() => setScreen("parent-onboarding")}
+        <Suspense fallback={<LazyScreenFallback />}>
+          {screen === "return-welcome" && (
+            <ReturnWelcomeScreen
+              userName={userName}
+              loading={progress.loading}
+              ctaLabel={(() => {
+                if (progress.loading) return "Preparando tu viaje…";
+                const cur = progress.getCurrentLessonId();
+                const island = cur ? findMvp1Lesson(cur)?.islandId : null;
+                if (island === "first-melodies") return "Continuar en Primeras Melodías";
+                if (island === "pulse") return "Continuar en Isla del Pulso";
+                return "Entrar a mi Archipiélago";
+              })()}
+              onEnter={() => {
+                if (progress.loading) return;
+                const cur = progress.getCurrentLessonId();
+                // cur === null → completó todo MVP1 (hasta p11). Mostrar Isla del Pulso.
+                if (!cur) {
+                  openIsland("pulse");
+                  return;
+                }
+                const island = findMvp1Lesson(cur)?.islandId;
+                if (!island) {
+                  openIsland("start-port");
+                  return;
+                }
+                openIsland(island);
+              }}
             />
-          );
+          )}
 
-        })()}
-
-        {screen === "parent-onboarding" && (
-          <ParentOnboardingScreen
-            onCancel={() => setScreen("parent-journey-intro")}
-            onComplete={async (ans: ParentOnboardingAnswers) => {
-              const uid = session?.user.id;
-              if (!uid) {
-                throw new Error("No pudimos guardar el viaje musical. Intenta nuevamente.");
+          {screen === "parent-journey-intro" &&
+            (() => {
+              // Protección: si la cuenta ya declaró modalidad personal, no debería
+              // ver esta pantalla. Redirigir al retorno de Alejandra.
+              if (experience.mode === "self_learning") {
+                setTimeout(() => setScreen("return-welcome"), 0);
+                return null;
               }
-              const studentName = ans.student.name.trim();
+              return <ParentJourneyIntroScreen onCreate={() => setScreen("parent-onboarding")} />;
+            })()}
 
-              // Upsert en parent_journeys (una cuenta = un viaje).
-              try {
-                await saveParentJourney(uid, ans);
-              } catch (e) {
-                console.warn("[parent_journeys] upsert failed:", e);
-                throw new Error("No pudimos guardar el viaje musical. Intenta nuevamente.");
-              }
-
-              // Éxito parent_journeys → consolidar modalidad accompanied_learning.
-              // Si esta consolidación falla, NO mostramos éxito; el usuario puede
-              // reintentar y el upsert es idempotente (mismo user_id, mismo payload).
-              if (experience.mode !== "accompanied_learning") {
-                try {
-                  await experience.setMode("accompanied_learning");
-                } catch (e) {
-                  console.error("[experience_mode] setMode post-upsert falló:", e);
+          {screen === "parent-onboarding" && (
+            <ParentOnboardingScreen
+              onCancel={() => setScreen("parent-journey-intro")}
+              onComplete={async (ans: ParentOnboardingAnswers) => {
+                const uid = session?.user.id;
+                if (!uid) {
                   throw new Error("No pudimos guardar el viaje musical. Intenta nuevamente.");
                 }
-              }
-              setParentJourneyAnswers(ans);
-              setRouteStudentName(studentName);
-              setJourneyOrigin("parent");
-              setHasOnboarding(true);
-              setPendingExperienceMode(null);
-              setScreen("parent-journey-created");
-            }}
+                const studentName = ans.student.name.trim();
 
+                // Upsert en parent_journeys (una cuenta = un viaje).
+                try {
+                  await saveParentJourney(uid, ans);
+                } catch (e) {
+                  console.warn("[parent_journeys] upsert failed:", e);
+                  throw new Error("No pudimos guardar el viaje musical. Intenta nuevamente.");
+                }
 
-          />
-        )}
-
-        {screen === "parent-journey-created" && (
-          <ParentJourneyCreatedScreen
-            onContinue={() => setScreen("parent-journey-dashboard")}
-            studentName={parentJourneyAnswers?.student.name}
-            parentName={parentJourneyAnswers?.parent.name}
-            relationship={parentJourneyAnswers?.parent.relationship}
-            planName={parentJourneyAnswers?.practice.planName}
-            experience={parentJourneyAnswers?.student.experience}
-          />
-        )}
-
-        {screen === "parent-journey-dashboard" && (() => {
-          const uid = session?.user.id;
-          if (!uid) return null;
-          const initStudent = parentJourneyAnswers?.student.name;
-          const initParent = parentJourneyAnswers?.parent.name;
-          return (
-            <ParentJourneyDashboardHydrator
-              userId={uid}
-              initialStudentName={initStudent}
-              initialParentName={initParent}
-              onHydrated={({ studentName, parentName, answers }) => {
-                if (answers) setParentJourneyAnswers(answers);
+                // Éxito parent_journeys → consolidar modalidad accompanied_learning.
+                // Si esta consolidación falla, NO mostramos éxito; el usuario puede
+                // reintentar y el upsert es idempotente (mismo user_id, mismo payload).
+                if (experience.mode !== "accompanied_learning") {
+                  try {
+                    await experience.setMode("accompanied_learning");
+                  } catch (e) {
+                    console.error("[experience_mode] setMode post-upsert falló:", e);
+                    throw new Error("No pudimos guardar el viaje musical. Intenta nuevamente.");
+                  }
+                }
+                setParentJourneyAnswers(ans);
                 setRouteStudentName(studentName);
-                if (parentName) setUserName(parentName);
                 setJourneyOrigin("parent");
                 setHasOnboarding(true);
-              }}
-              onMissing={() => {
-                // Solo Supabase confirmó que NO existe fila → recién ahora al onboarding.
-                setHasOnboarding(false);
-                setScreen("parent-journey-intro");
-              }}
-              onOpenJourney={(studentName) => {
-                setJourneyOrigin("parent");
-                setRouteStudentName(studentName);
-                setScreen("route");
+                setPendingExperienceMode(null);
+                setScreen("parent-journey-created");
               }}
             />
-          );
-        })()}
+          )}
 
-        {screen === "welcome" && <WelcomeScreen onStart={() => setScreen("onboarding")} />}
-
-        {screen === "onboarding" && (() => {
-          // Protección: si la cuenta ya tiene modalidad consolidada, no permitir
-          // que se muestre el selector de experiencia. Redirigir al destino real.
-          if (experience.mode === "accompanied_learning") {
-            setTimeout(() => setScreen("parent-journey-dashboard"), 0);
-            return null;
-          }
-          if (experience.mode === "self_learning") {
-            setTimeout(() => setScreen("return-welcome"), 0);
-            return null;
-          }
-          return (
-            <OnboardingScreen
-              onStart={() => setScreen("diagnosis")}
-              onSelectProfile={(id) => {
-                if (id === "empezar") {
-                  // Selección temporal — NO consolida modalidad hasta guardar user_onboarding.
-                  setPendingExperienceMode("self_learning");
-                  setJourneyOrigin("student");
-                  setScreen("diagnosis");
-                } else if (id === "acompanar") {
-                  // Selección temporal — NO consolida modalidad hasta guardar parent_journeys.
-                  setPendingExperienceMode("accompanied_learning");
-                  setJourneyOrigin("parent");
-                  setScreen("parent-journey-intro");
-                }
-              }}
+          {screen === "parent-journey-created" && (
+            <ParentJourneyCreatedScreen
+              onContinue={() => setScreen("parent-journey-dashboard")}
+              studentName={parentJourneyAnswers?.student.name}
+              parentName={parentJourneyAnswers?.parent.name}
+              relationship={parentJourneyAnswers?.parent.relationship}
+              planName={parentJourneyAnswers?.practice.planName}
+              experience={parentJourneyAnswers?.student.experience}
             />
+          )}
 
-          );
-        })()}
-
-        {screen === "diagnosis" && (() => {
-          // Protección: el diagnóstico de Alejandra no debe ejecutarse ni
-          // sobrescribir profiles.name cuando la cuenta ya está en modalidad
-          // acompañada. Redirigir al panel de acompañamiento.
-          if (experience.mode === "accompanied_learning") {
-            progress.logEvent("diagnosis_blocked_by_mode", {
-              persisted_mode: "accompanied_learning",
-            });
-            setTimeout(() => setScreen("parent-journey-dashboard"), 0);
-            return null;
-          }
-          const submitDiagnosis = async (answers: DiagAnswers, name: string) => {
-            if (savingDiagnosis) return;
-            setSavingDiagnosis(true);
-            setDiagnosisSaveError(null);
-            try {
-              const { data: sess } = await supabase.auth.getSession();
-              const uid = sess.session?.user.id;
-              if (!uid) throw new Error("No hay sesión activa.");
-
-              // Doble verificación server-side: cuenta acompañada no debe escribir onboarding/name.
-              const [prof, cfg] = await Promise.all([
-                loadProfile(uid),
-                getJourneyConfiguration(uid),
-              ]);
-              if (prof?.experience_mode === "accompanied_learning" || cfg.hasParentJourney) {
-                progress.logEvent("diagnosis_blocked_by_mode", {
-                  persisted_mode: prof?.experience_mode ?? null,
-                  has_parent_journey: cfg.hasParentJourney,
-                });
-                setPendingDiagnosis(null);
-                setScreen("parent-journey-dashboard");
-                return;
-              }
-
-              // 1) Guardar user_onboarding.
-              await saveSelfOnboarding(uid, name, answers);
-
-              // 2) Consolidar modalidad self_learning (crítico).
-              await experience.setMode("self_learning");
-
-              // 3) profiles.name: no crítico. El nombre ya vive en user_onboarding.answers.
-              try {
-                await updateProfileName(uid, name);
-              } catch (profError) {
-                console.warn("[onboarding] profiles.name warning (no bloqueante):", profError);
-              }
-
-              // 4) Éxito: hidratar estado local y navegar.
-              setDiagAnswers(answers);
-              setUserName(name);
-              setHasOnboarding(true);
-              setPendingExperienceMode(null);
-              setPendingDiagnosis(null);
-              progress.logEvent("onboarding_completed", { source: "diagnosis" });
-              setScreen("diagnosis-result");
-            } catch (e) {
-              console.error("[onboarding] save failed:", e);
-              setPendingDiagnosis({ answers, name });
-              setDiagnosisSaveError("No pudimos guardar tu viaje musical. Intenta nuevamente.");
-            } finally {
-              setSavingDiagnosis(false);
-            }
-          };
-          return (
-            <>
-              <DiagnosisScreen
-                onComplete={(answers, name) => { void submitDiagnosis(answers, name); }}
-              />
-              {(savingDiagnosis || diagnosisSaveError) && (
-                <div
-                  style={{
-                    position: "fixed", inset: 0, background: "rgba(15,20,25,0.55)",
-                    display: "flex", alignItems: "center", justifyContent: "center",
-                    zIndex: 9000, padding: 24,
+          {screen === "parent-journey-dashboard" &&
+            (() => {
+              const uid = session?.user.id;
+              if (!uid) return null;
+              const initStudent = parentJourneyAnswers?.student.name;
+              const initParent = parentJourneyAnswers?.parent.name;
+              return (
+                <ParentJourneyDashboardHydrator
+                  userId={uid}
+                  initialStudentName={initStudent}
+                  initialParentName={initParent}
+                  onHydrated={({ studentName, parentName, answers }) => {
+                    if (answers) setParentJourneyAnswers(answers);
+                    setRouteStudentName(studentName);
+                    if (parentName) setUserName(parentName);
+                    setJourneyOrigin("parent");
+                    setHasOnboarding(true);
                   }}
-                >
-                  <div style={{
-                    maxWidth: 380, width: "100%", background: B.white, borderRadius: 16,
-                    padding: 20, display: "flex", flexDirection: "column", gap: 12,
-                    fontFamily: "Quicksand, sans-serif", color: B.dark, textAlign: "center",
-                  }}>
-                    {savingDiagnosis && (
-                      <div style={{ fontSize: 14, fontWeight: 700 }}>Guardando tu viaje musical…</div>
-                    )}
-                    {!savingDiagnosis && diagnosisSaveError && (
-                      <>
-                        <div style={{ fontFamily: "Space Grotesk, sans-serif", fontWeight: 800, fontSize: 16 }}>
-                          Algo salió mal
-                        </div>
-                        <div style={{ fontSize: 13, color: B.grayText, lineHeight: 1.5 }}>
-                          {diagnosisSaveError}
-                        </div>
-                        <button
-                          type="button"
-                          disabled={savingDiagnosis}
-                          onClick={() => {
-                            if (!pendingDiagnosis) { setDiagnosisSaveError(null); return; }
-                            void submitDiagnosis(pendingDiagnosis.answers, pendingDiagnosis.name);
-                          }}
-                          style={{
-                            border: "none", background: B.green, color: B.dark,
-                            fontFamily: "Space Grotesk, sans-serif", fontWeight: 800,
-                            fontSize: 14, borderRadius: 12, padding: "10px 18px", cursor: "pointer",
-                          }}
-                        >
-                          Reintentar
-                        </button>
-                      </>
-                    )}
-                  </div>
-                </div>
-              )}
-            </>
-          );
-        })()}
+                  onMissing={() => {
+                    // Solo Supabase confirmó que NO existe fila → recién ahora al onboarding.
+                    setHasOnboarding(false);
+                    setScreen("parent-journey-intro");
+                  }}
+                  onOpenJourney={(studentName) => {
+                    setJourneyOrigin("parent");
+                    setRouteStudentName(studentName);
+                    setScreen("route");
+                  }}
+                />
+              );
+            })()}
 
-        {screen === "diagnosis-result" && (
-          <DiagnosisResultScreen
-            answers={diagAnswers}
-            userName={userName}
-            onEnter={goToRoute}
-          />
-        )}
+          {screen === "welcome" && <WelcomeScreen onStart={() => setScreen("onboarding")} />}
 
+          {screen === "onboarding" &&
+            (() => {
+              // Protección: si la cuenta ya tiene modalidad consolidada, no permitir
+              // que se muestre el selector de experiencia. Redirigir al destino real.
+              if (experience.mode === "accompanied_learning") {
+                setTimeout(() => setScreen("parent-journey-dashboard"), 0);
+                return null;
+              }
+              if (experience.mode === "self_learning") {
+                setTimeout(() => setScreen("return-welcome"), 0);
+                return null;
+              }
+              return (
+                <OnboardingScreen
+                  onStart={() => setScreen("diagnosis")}
+                  onSelectProfile={(id) => {
+                    if (id === "empezar") {
+                      // Selección temporal — NO consolida modalidad hasta guardar user_onboarding.
+                      setPendingExperienceMode("self_learning");
+                      setJourneyOrigin("student");
+                      setScreen("diagnosis");
+                    } else if (id === "acompanar") {
+                      // Selección temporal — NO consolida modalidad hasta guardar parent_journeys.
+                      setPendingExperienceMode("accompanied_learning");
+                      setJourneyOrigin("parent");
+                      setScreen("parent-journey-intro");
+                    }
+                  }}
+                />
+              );
+            })()}
 
+          {screen === "diagnosis" &&
+            (() => {
+              // Protección: el diagnóstico de Alejandra no debe ejecutarse ni
+              // sobrescribir profiles.name cuando la cuenta ya está en modalidad
+              // acompañada. Redirigir al panel de acompañamiento.
+              if (experience.mode === "accompanied_learning") {
+                progress.logEvent("diagnosis_blocked_by_mode", {
+                  persisted_mode: "accompanied_learning",
+                });
+                setTimeout(() => setScreen("parent-journey-dashboard"), 0);
+                return null;
+              }
+              const submitDiagnosis = async (answers: DiagAnswers, name: string) => {
+                if (savingDiagnosis) return;
+                setSavingDiagnosis(true);
+                setDiagnosisSaveError(null);
+                try {
+                  const { data: sess } = await supabase.auth.getSession();
+                  const uid = sess.session?.user.id;
+                  if (!uid) throw new Error("No hay sesión activa.");
 
-        {screen === "self-journey" && (() => {
-          // Solo para Alejandra. María José tiene su propio dashboard.
-          if (experience.mode === "accompanied_learning") {
-            setTimeout(() => setScreen("parent-journey-dashboard"), 0);
-            return null;
-          }
-          return (
-            <SelfJourneyDashboardScreen
+                  // Doble verificación server-side: cuenta acompañada no debe escribir onboarding/name.
+                  const [prof, cfg] = await Promise.all([
+                    loadProfile(uid),
+                    getJourneyConfiguration(uid),
+                  ]);
+                  if (prof?.experience_mode === "accompanied_learning" || cfg.hasParentJourney) {
+                    progress.logEvent("diagnosis_blocked_by_mode", {
+                      persisted_mode: prof?.experience_mode ?? null,
+                      has_parent_journey: cfg.hasParentJourney,
+                    });
+                    setPendingDiagnosis(null);
+                    setScreen("parent-journey-dashboard");
+                    return;
+                  }
+
+                  // 1) Guardar user_onboarding.
+                  await saveSelfOnboarding(uid, name, answers);
+
+                  // 2) Consolidar modalidad self_learning (crítico).
+                  await experience.setMode("self_learning");
+
+                  // 3) profiles.name: no crítico. El nombre ya vive en user_onboarding.answers.
+                  try {
+                    await updateProfileName(uid, name);
+                  } catch (profError) {
+                    console.warn("[onboarding] profiles.name warning (no bloqueante):", profError);
+                  }
+
+                  // 4) Éxito: hidratar estado local y navegar.
+                  setDiagAnswers(answers);
+                  setUserName(name);
+                  setHasOnboarding(true);
+                  setPendingExperienceMode(null);
+                  setPendingDiagnosis(null);
+                  progress.logEvent("onboarding_completed", { source: "diagnosis" });
+                  setScreen("diagnosis-result");
+                } catch (e) {
+                  console.error("[onboarding] save failed:", e);
+                  setPendingDiagnosis({ answers, name });
+                  setDiagnosisSaveError("No pudimos guardar tu viaje musical. Intenta nuevamente.");
+                } finally {
+                  setSavingDiagnosis(false);
+                }
+              };
+              return (
+                <>
+                  <DiagnosisScreen
+                    onComplete={(answers, name) => {
+                      void submitDiagnosis(answers, name);
+                    }}
+                  />
+                  {(savingDiagnosis || diagnosisSaveError) && (
+                    <div
+                      style={{
+                        position: "fixed",
+                        inset: 0,
+                        background: "rgba(15,20,25,0.55)",
+                        display: "flex",
+                        alignItems: "center",
+                        justifyContent: "center",
+                        zIndex: 9000,
+                        padding: 24,
+                      }}
+                    >
+                      <div
+                        style={{
+                          maxWidth: 380,
+                          width: "100%",
+                          background: B.white,
+                          borderRadius: 16,
+                          padding: 20,
+                          display: "flex",
+                          flexDirection: "column",
+                          gap: 12,
+                          fontFamily: "Quicksand, sans-serif",
+                          color: B.dark,
+                          textAlign: "center",
+                        }}
+                      >
+                        {savingDiagnosis && (
+                          <div style={{ fontSize: 14, fontWeight: 700 }}>
+                            Guardando tu viaje musical…
+                          </div>
+                        )}
+                        {!savingDiagnosis && diagnosisSaveError && (
+                          <>
+                            <div
+                              style={{
+                                fontFamily: "Space Grotesk, sans-serif",
+                                fontWeight: 800,
+                                fontSize: 16,
+                              }}
+                            >
+                              Algo salió mal
+                            </div>
+                            <div style={{ fontSize: 13, color: B.grayText, lineHeight: 1.5 }}>
+                              {diagnosisSaveError}
+                            </div>
+                            <button
+                              type="button"
+                              disabled={savingDiagnosis}
+                              onClick={() => {
+                                if (!pendingDiagnosis) {
+                                  setDiagnosisSaveError(null);
+                                  return;
+                                }
+                                void submitDiagnosis(
+                                  pendingDiagnosis.answers,
+                                  pendingDiagnosis.name,
+                                );
+                              }}
+                              style={{
+                                border: "none",
+                                background: B.green,
+                                color: B.dark,
+                                fontFamily: "Space Grotesk, sans-serif",
+                                fontWeight: 800,
+                                fontSize: 14,
+                                borderRadius: 12,
+                                padding: "10px 18px",
+                                cursor: "pointer",
+                              }}
+                            >
+                              Reintentar
+                            </button>
+                          </>
+                        )}
+                      </div>
+                    </div>
+                  )}
+                </>
+              );
+            })()}
+
+          {screen === "diagnosis-result" && (
+            <DiagnosisResultScreen answers={diagAnswers} userName={userName} onEnter={goToRoute} />
+          )}
+
+          {screen === "self-journey" &&
+            (() => {
+              // Solo para Alejandra. María José tiene su propio dashboard.
+              if (experience.mode === "accompanied_learning") {
+                setTimeout(() => setScreen("parent-journey-dashboard"), 0);
+                return null;
+              }
+              return (
+                <SelfJourneyDashboardScreen
+                  userName={userName}
+                  onContinue={(lessonId) => continueJourney(lessonId)}
+                  onReview={() => setScreen("route")}
+                />
+              );
+            })()}
+
+          {screen === "route" && (
+            <RouteScreen
               userName={userName}
-              onContinue={(lessonId) => continueJourney(lessonId)}
-              onReview={() => setScreen("route")}
+              onStartMission={(id) => openMission(id)}
+              onReviewMission={(id) => openMission(id)}
+              onOpenFirstMelodiesIsland={() => setScreen("first-melodies-island")}
+              onOpenPulseIsland={() => setScreen("pulse-island")}
+              onOpenRhythmIsland={() => openLockedIsland("rhythm")}
+              onOpenMusicIsland={() => openLockedIsland("music")}
+              onOpenJoyIsland={() => openLockedIsland("joy")}
+              onOpenChordsIsland={() => openLockedIsland("chords")}
+              onOpenStrummingIsland={() => openLockedIsland("strumming")}
+              onOpenSongsIsland={() => openLockedIsland("songs")}
+              journeyOrigin={journeyOrigin}
+              studentName={routeStudentName}
+              onBackToParentDashboard={
+                journeyOrigin === "parent" ? () => setScreen("parent-journey-dashboard") : undefined
+              }
             />
-          );
-        })()}
+          )}
 
-        {screen === "route" && (
-          <RouteScreen
-            userName={userName}
-            onStartMission={(id) => openMission(id)}
-            onReviewMission={(id) => openMission(id)}
-            onOpenFirstMelodiesIsland={() => setScreen("first-melodies-island")}
-            onOpenPulseIsland={() => setScreen("pulse-island")}
-            onOpenRhythmIsland={() => openLockedIsland("rhythm")}
-            onOpenMusicIsland={() => openLockedIsland("music")}
-            onOpenJoyIsland={() => openLockedIsland("joy")}
-            onOpenChordsIsland={() => openLockedIsland("chords")}
-            onOpenStrummingIsland={() => openLockedIsland("strumming")}
-            onOpenSongsIsland={() => openLockedIsland("songs")}
-            journeyOrigin={journeyOrigin}
-            studentName={routeStudentName}
-            onBackToParentDashboard={
-              journeyOrigin === "parent"
-                ? () => setScreen("parent-journey-dashboard")
-                : undefined
-            }
-          />
-        )}
+          {screen === "mission" && <MissionScreen onBack={() => setScreen("route")} />}
 
-        {screen === "mission" && (
-          <MissionScreen onBack={() => setScreen("route")} />
-        )}
+          {screen === "mission-two" && (
+            <MissionTwoScreen
+              userName={userName}
+              learnerName={learnerName}
+              onBack={() => setScreen("route")}
+              onNext={() => setScreen("mission-three")}
+            />
+          )}
 
-        {screen === "mission-two" && (
-          <MissionTwoScreen
-            userName={userName}
-            learnerName={learnerName}
-            onBack={() => setScreen("route")}
-            onNext={() => setScreen("mission-three")}
-          />
-        )}
+          {screen === "mission-three" && <MissionThreeScreen onBack={() => setScreen("route")} />}
+          {screen === "mission-four" && <MissionFourScreen onBack={() => setScreen("route")} />}
+          {screen === "mission-six" && <MissionSixScreen onBack={() => setScreen("route")} />}
+          {screen === "mission-seven" && <MissionSevenScreen onBack={() => setScreen("route")} />}
+          {screen === "mission-eight" && <MissionEightScreen onBack={() => setScreen("route")} />}
+          {screen === "mission-nine" && <MissionNineScreen onBack={() => setScreen("route")} />}
+          {screen === "first-melodies-island" && (
+            <FirstMelodiesIslandScreen
+              onBack={() => setScreen("route")}
+              onOpenLesson={(lessonId) => openLesson(lessonId)}
+              onOpenPulseIsland={() => setScreen("pulse-island")}
+              onOpenRhythmIsland={() => openLockedIsland("rhythm")}
+              onOpenMusicIsland={() => openLockedIsland("music")}
+              onOpenJoyIsland={() => openLockedIsland("joy")}
+              onOpenChordsIsland={() => openLockedIsland("chords")}
+              onOpenStrummingIsland={() => openLockedIsland("strumming")}
+              onOpenSongsIsland={() => openLockedIsland("songs")}
+            />
+          )}
+          {screen === "pulse-island" && (
+            <PulseIslandScreen
+              onOpenStartPort={() => setScreen("route")}
+              onOpenFirstMelodiesIsland={() => setScreen("first-melodies-island")}
+              onOpenRhythmIsland={() => openLockedIsland("rhythm")}
+              onOpenMusicIsland={() => openLockedIsland("music")}
+              onOpenJoyIsland={() => openLockedIsland("joy")}
+              onOpenChordsIsland={() => openLockedIsland("chords")}
+              onOpenStrummingIsland={() => openLockedIsland("strumming")}
+              onOpenSongsIsland={() => openLockedIsland("songs")}
+              onOpenLesson={(lessonId) => openLesson(lessonId)}
+            />
+          )}
+          {screen === "rhythm-island" && (
+            <RhythmIslandScreen
+              onOpenStartPort={() => setScreen("route")}
+              onOpenFirstMelodiesIsland={() => setScreen("first-melodies-island")}
+              onOpenPulseIsland={() => setScreen("pulse-island")}
+              onOpenMusicIsland={() => setScreen("music-island")}
+              onOpenJoyIsland={() => setScreen("joy-island")}
+              onOpenChordsIsland={() => setScreen("chords-island")}
+              onOpenStrummingIsland={() => setScreen("strumming-island")}
+              onOpenSongsIsland={() => setScreen("songs-island")}
+              onOpenLesson={(lessonId) => {
+                setRhythmLessonId(lessonId);
+                setScreen("rhythm-lesson");
+              }}
+            />
+          )}
+          {screen === "music-island" && (
+            <MusicIslandScreen
+              onOpenStartPort={() => setScreen("route")}
+              onOpenFirstMelodiesIsland={() => setScreen("first-melodies-island")}
+              onOpenPulseIsland={() => setScreen("pulse-island")}
+              onOpenRhythmIsland={() => setScreen("rhythm-island")}
+              onOpenJoyIsland={() => setScreen("joy-island")}
+              onOpenChordsIsland={() => setScreen("chords-island")}
+              onOpenStrummingIsland={() => setScreen("strumming-island")}
+              onOpenSongsIsland={() => setScreen("songs-island")}
+              onOpenLesson={(lessonId) => {
+                setMusicLessonId(lessonId);
+                setScreen("music-lesson");
+              }}
+            />
+          )}
+          {screen === "joy-island" && (
+            <JoyIslandScreen
+              onOpenStartPort={() => setScreen("route")}
+              onOpenFirstMelodiesIsland={() => setScreen("first-melodies-island")}
+              onOpenPulseIsland={() => setScreen("pulse-island")}
+              onOpenRhythmIsland={() => setScreen("rhythm-island")}
+              onOpenMusicIsland={() => setScreen("music-island")}
+              onOpenChordsIsland={() => setScreen("chords-island")}
+              onOpenStrummingIsland={() => setScreen("strumming-island")}
+              onOpenSongsIsland={() => setScreen("songs-island")}
+              onOpenLesson={(lessonId) => {
+                setJoyLessonId(lessonId);
+                setScreen("joy-lesson");
+              }}
+            />
+          )}
+          {screen === "chords-island" && (
+            <ChordsIslandScreen
+              onOpenStartPort={() => setScreen("route")}
+              onOpenFirstMelodiesIsland={() => setScreen("first-melodies-island")}
+              onOpenPulseIsland={() => setScreen("pulse-island")}
+              onOpenRhythmIsland={() => setScreen("rhythm-island")}
+              onOpenMusicIsland={() => setScreen("music-island")}
+              onOpenJoyIsland={() => setScreen("joy-island")}
+              onOpenStrummingIsland={() => setScreen("strumming-island")}
+              onOpenSongsIsland={() => setScreen("songs-island")}
+              onOpenLesson={(lessonId) => {
+                setChordsLessonId(lessonId);
+                setScreen("chords-lesson");
+              }}
+            />
+          )}
+          {screen === "strumming-island" && (
+            <StrummingIslandScreen
+              onOpenStartPort={() => setScreen("route")}
+              onOpenFirstMelodiesIsland={() => setScreen("first-melodies-island")}
+              onOpenPulseIsland={() => setScreen("pulse-island")}
+              onOpenRhythmIsland={() => setScreen("rhythm-island")}
+              onOpenMusicIsland={() => setScreen("music-island")}
+              onOpenJoyIsland={() => setScreen("joy-island")}
+              onOpenChordsIsland={() => setScreen("chords-island")}
+              onOpenSongsIsland={() => setScreen("songs-island")}
+              onOpenLesson={(lessonId) => {
+                setStrummingLessonId(lessonId);
+                setScreen("strumming-lesson");
+              }}
+            />
+          )}
+          {screen === "songs-island" && (
+            <SongsIslandScreen
+              onOpenStartPort={() => setScreen("route")}
+              onOpenFirstMelodiesIsland={() => setScreen("first-melodies-island")}
+              onOpenPulseIsland={() => setScreen("pulse-island")}
+              onOpenRhythmIsland={() => setScreen("rhythm-island")}
+              onOpenMusicIsland={() => setScreen("music-island")}
+              onOpenJoyIsland={() => setScreen("joy-island")}
+              onOpenChordsIsland={() => setScreen("chords-island")}
+              onOpenStrummingIsland={() => setScreen("strumming-island")}
+              onOpenLesson={(lessonId) => {
+                setSongsLessonId(lessonId);
+                setScreen("songs-lesson");
+              }}
+            />
+          )}
+          {screen === "chords-lesson" && (
+            <ChordsLessonScreen
+              lessonId={chordsLessonId}
+              onBackToIsland={() => setScreen("chords-island")}
+            />
+          )}
+          {screen === "strumming-lesson" && (
+            <StrummingLessonScreen
+              lessonId={strummingLessonId}
+              onBackToIsland={() => setScreen("strumming-island")}
+            />
+          )}
+          {screen === "songs-lesson" && (
+            <SongsLessonScreen
+              lessonId={songsLessonId}
+              onBackToIsland={() => setScreen("songs-island")}
+            />
+          )}
+          {screen === "joy-lesson" && (
+            <JoyLessonScreen
+              lessonId={joyLessonId}
+              onBackToIsland={() => setScreen("joy-island")}
+            />
+          )}
+          {screen === "music-lesson" && (
+            <MusicLessonScreen
+              lessonId={musicLessonId}
+              onBackToIsland={() => setScreen("music-island")}
+            />
+          )}
+          {screen === "rhythm-lesson" && (
+            <RhythmLessonScreen
+              lessonId={rhythmLessonId}
+              onBackToIsland={() => setScreen("rhythm-island")}
+            />
+          )}
+          {screen === "pulse-lesson" && (
+            <PulseLessonScreen
+              lessonId={pulseLessonId}
+              onBackToIsland={() => setScreen("pulse-island")}
+            />
+          )}
+          {screen === "first-melodies-lesson" && (
+            <FirstMelodiesLessonScreen
+              lessonId={firstMelodiesLessonId}
+              onBackToIsland={() => setScreen("first-melodies-island")}
+            />
+          )}
+          {screen === "mission-guide" && (
+            <MissionGuideScreen
+              userName={userName}
+              learnerName={learnerName}
+              onBack={() => setScreen("route")}
+            />
+          )}
 
-        {screen === "mission-three" && <MissionThreeScreen onBack={() => setScreen("route")} />}
-        {screen === "mission-four" && <MissionFourScreen onBack={() => setScreen("route")} />}
-        {screen === "mission-six" && <MissionSixScreen onBack={() => setScreen("route")} />}
-        {screen === "mission-seven" && <MissionSevenScreen onBack={() => setScreen("route")} />}
-        {screen === "mission-eight" && <MissionEightScreen onBack={() => setScreen("route")} />}
-        {screen === "mission-nine" && <MissionNineScreen onBack={() => setScreen("route")} />}
-        {screen === "first-melodies-island" && (
-          <FirstMelodiesIslandScreen
-            onBack={() => setScreen("route")}
-            onOpenLesson={(lessonId) =>
-              openLesson(lessonId)
-            }
-            onOpenPulseIsland={() => setScreen("pulse-island")}
-            onOpenRhythmIsland={() => openLockedIsland("rhythm")}
-            onOpenMusicIsland={() => openLockedIsland("music")}
-            onOpenJoyIsland={() => openLockedIsland("joy")}
-            onOpenChordsIsland={() => openLockedIsland("chords")}
-            onOpenStrummingIsland={() => openLockedIsland("strumming")}
-            onOpenSongsIsland={() => openLockedIsland("songs")}
-          />
-        )}
-        {screen === "pulse-island" && (
-          <PulseIslandScreen
-            onOpenStartPort={() => setScreen("route")}
-            onOpenFirstMelodiesIsland={() => setScreen("first-melodies-island")}
-            onOpenRhythmIsland={() => openLockedIsland("rhythm")}
-            onOpenMusicIsland={() => openLockedIsland("music")}
-            onOpenJoyIsland={() => openLockedIsland("joy")}
-            onOpenChordsIsland={() => openLockedIsland("chords")}
-            onOpenStrummingIsland={() => openLockedIsland("strumming")}
-            onOpenSongsIsland={() => openLockedIsland("songs")}
-            onOpenLesson={(lessonId) =>
-              openLesson(lessonId)
-            }
-          />
-        )}
-        {screen === "rhythm-island" && (
-          <RhythmIslandScreen
-            onOpenStartPort={() => setScreen("route")}
-            onOpenFirstMelodiesIsland={() => setScreen("first-melodies-island")}
-            onOpenPulseIsland={() => setScreen("pulse-island")}
-            onOpenMusicIsland={() => setScreen("music-island")}
-            onOpenJoyIsland={() => setScreen("joy-island")}
-            onOpenChordsIsland={() => setScreen("chords-island")}
-            onOpenStrummingIsland={() => setScreen("strumming-island")}
-            onOpenSongsIsland={() => setScreen("songs-island")}
-            onOpenLesson={(lessonId) => {
-              setRhythmLessonId(lessonId);
-              setScreen("rhythm-lesson");
-            }}
-          />
-        )}
-        {screen === "music-island" && (
-          <MusicIslandScreen
-            onOpenStartPort={() => setScreen("route")}
-            onOpenFirstMelodiesIsland={() => setScreen("first-melodies-island")}
-            onOpenPulseIsland={() => setScreen("pulse-island")}
-            onOpenRhythmIsland={() => setScreen("rhythm-island")}
-            onOpenJoyIsland={() => setScreen("joy-island")}
-            onOpenChordsIsland={() => setScreen("chords-island")}
-            onOpenStrummingIsland={() => setScreen("strumming-island")}
-            onOpenSongsIsland={() => setScreen("songs-island")}
-            onOpenLesson={(lessonId) => {
-              setMusicLessonId(lessonId);
-              setScreen("music-lesson");
-            }}
-          />
-        )}
-        {screen === "joy-island" && (
-          <JoyIslandScreen
-            onOpenStartPort={() => setScreen("route")}
-            onOpenFirstMelodiesIsland={() => setScreen("first-melodies-island")}
-            onOpenPulseIsland={() => setScreen("pulse-island")}
-            onOpenRhythmIsland={() => setScreen("rhythm-island")}
-            onOpenMusicIsland={() => setScreen("music-island")}
-            onOpenChordsIsland={() => setScreen("chords-island")}
-            onOpenStrummingIsland={() => setScreen("strumming-island")}
-            onOpenSongsIsland={() => setScreen("songs-island")}
-            onOpenLesson={(lessonId) => {
-              setJoyLessonId(lessonId);
-              setScreen("joy-lesson");
-            }}
-          />
-        )}
-        {screen === "chords-island" && (
-          <ChordsIslandScreen
-            onOpenStartPort={() => setScreen("route")}
-            onOpenFirstMelodiesIsland={() => setScreen("first-melodies-island")}
-            onOpenPulseIsland={() => setScreen("pulse-island")}
-            onOpenRhythmIsland={() => setScreen("rhythm-island")}
-            onOpenMusicIsland={() => setScreen("music-island")}
-            onOpenJoyIsland={() => setScreen("joy-island")}
-            onOpenStrummingIsland={() => setScreen("strumming-island")}
-            onOpenSongsIsland={() => setScreen("songs-island")}
-            onOpenLesson={(lessonId) => {
-              setChordsLessonId(lessonId);
-              setScreen("chords-lesson");
-            }}
-          />
-        )}
-        {screen === "strumming-island" && (
-          <StrummingIslandScreen
-            onOpenStartPort={() => setScreen("route")}
-            onOpenFirstMelodiesIsland={() => setScreen("first-melodies-island")}
-            onOpenPulseIsland={() => setScreen("pulse-island")}
-            onOpenRhythmIsland={() => setScreen("rhythm-island")}
-            onOpenMusicIsland={() => setScreen("music-island")}
-            onOpenJoyIsland={() => setScreen("joy-island")}
-            onOpenChordsIsland={() => setScreen("chords-island")}
-            onOpenSongsIsland={() => setScreen("songs-island")}
-            onOpenLesson={(lessonId) => {
-              setStrummingLessonId(lessonId);
-              setScreen("strumming-lesson");
-            }}
-          />
-        )}
-        {screen === "songs-island" && (
-          <SongsIslandScreen
-            onOpenStartPort={() => setScreen("route")}
-            onOpenFirstMelodiesIsland={() => setScreen("first-melodies-island")}
-            onOpenPulseIsland={() => setScreen("pulse-island")}
-            onOpenRhythmIsland={() => setScreen("rhythm-island")}
-            onOpenMusicIsland={() => setScreen("music-island")}
-            onOpenJoyIsland={() => setScreen("joy-island")}
-            onOpenChordsIsland={() => setScreen("chords-island")}
-            onOpenStrummingIsland={() => setScreen("strumming-island")}
-            onOpenLesson={(lessonId) => {
-              setSongsLessonId(lessonId);
-              setScreen("songs-lesson");
-            }}
-          />
-        )}
-        {screen === "chords-lesson" && (
-          <ChordsLessonScreen
-            lessonId={chordsLessonId}
-            onBackToIsland={() => setScreen("chords-island")}
-          />
-        )}
-        {screen === "strumming-lesson" && (
-          <StrummingLessonScreen
-            lessonId={strummingLessonId}
-            onBackToIsland={() => setScreen("strumming-island")}
-          />
-        )}
-        {screen === "songs-lesson" && (
-          <SongsLessonScreen
-            lessonId={songsLessonId}
-            onBackToIsland={() => setScreen("songs-island")}
-          />
-        )}
-        {screen === "joy-lesson" && (
-          <JoyLessonScreen
-            lessonId={joyLessonId}
-            onBackToIsland={() => setScreen("joy-island")}
-          />
-        )}
-        {screen === "music-lesson" && (
-          <MusicLessonScreen
-            lessonId={musicLessonId}
-            onBackToIsland={() => setScreen("music-island")}
-          />
-        )}
-        {screen === "rhythm-lesson" && (
-          <RhythmLessonScreen
-            lessonId={rhythmLessonId}
-            onBackToIsland={() => setScreen("rhythm-island")}
-          />
-        )}
-        {screen === "pulse-lesson" && (
-          <PulseLessonScreen
-            lessonId={pulseLessonId}
-            onBackToIsland={() => setScreen("pulse-island")}
-          />
-        )}
-        {screen === "first-melodies-lesson" && (
-          <FirstMelodiesLessonScreen
-            lessonId={firstMelodiesLessonId}
-            onBackToIsland={() => setScreen("first-melodies-island")}
-          />
-        )}
-        {screen === "mission-guide" && <MissionGuideScreen userName={userName} learnerName={learnerName} onBack={() => setScreen("route")} />}
+          {screen === "celebration" && <CelebrationScreen onHome={goToRoute} />}
 
-        {screen === "celebration" && <CelebrationScreen onHome={goToRoute} />}
+          {screen === "my-profile" && (
+            <MyProfileScreen
+              mode={experience.mode}
+              userName={userName}
+              userEmail={session?.user.email ?? null}
+              studentName={routeStudentName}
+              parentAnswers={parentJourneyAnswers}
+              onBack={goHome}
+            />
+          )}
 
-        {screen === "my-profile" && (
-          <MyProfileScreen
-            mode={experience.mode}
-            userName={userName}
-            userEmail={session?.user.email ?? null}
-            studentName={routeStudentName}
-            parentAnswers={parentJourneyAnswers}
-            onBack={goHome}
-          />
-        )}
+          {screen === "help-center" && (
+            <HelpCenterScreen
+              mode={experience.mode}
+              onBack={goHome}
+              onOpenPrivacy={() => setScreen("privacy")}
+            />
+          )}
 
-        {screen === "help-center" && (
-          <HelpCenterScreen
-            mode={experience.mode}
-            onBack={goHome}
-            onOpenPrivacy={() => setScreen("privacy")}
-          />
-        )}
+          {screen === "privacy" && <PrivacyScreen onBack={goHome} />}
 
-        {screen === "privacy" && <PrivacyScreen onBack={goHome} />}
-
-        {screen === "settings" && (
-          <SettingsScreen userEmail={session?.user.email ?? null} onBack={goHome} />
-        )}
-
+          {screen === "settings" && (
+            <SettingsScreen userEmail={session?.user.email ?? null} onBack={goHome} />
+          )}
+        </Suspense>
       </div>
+
       <BlockedIslandModal
         open={blockedModal !== null}
         variant={blockedModal === "lesson" ? "lesson" : "island"}
