@@ -24,7 +24,7 @@
  *   - Ampliar los hooks/servicios correspondientes en su lugar.
  *   - Este archivo debe seguir siendo "vista + coordinación", no negocio.
  */
-import { useEffect, useRef, useState } from "react";
+import { lazy, Suspense, useEffect, useRef, useState } from "react";
 import type { Session } from "@supabase/supabase-js";
 
 import { supabase } from "@/integrations/supabase/client";
@@ -51,53 +51,149 @@ import { AppHeader } from "./components/AppHeader";
 import { DevNav, SHOW_DEV_NAV } from "./components/DevNav";
 import { SplashScreen } from "./components/SplashScreen";
 
-import { CelebrationScreen } from "./screens/CelebrationScreen";
-import { DiagnosisResultScreen } from "./screens/DiagnosisResultScreen";
-import { DiagnosisScreen } from "./screens/DiagnosisScreen";
-
-import { MissionEightScreen } from "./screens/MissionEightScreen";
-import { FirstMelodiesIslandScreen } from "./screens/FirstMelodiesIslandScreen";
-import { FirstMelodiesLessonScreen } from "./screens/FirstMelodiesLessonScreen";
-import { PulseIslandScreen } from "./screens/PulseIslandScreen";
-import { RhythmIslandScreen } from "./screens/RhythmIslandScreen";
-import { MusicIslandScreen } from "./screens/MusicIslandScreen";
-import { JoyIslandScreen } from "./screens/JoyIslandScreen";
-import { JoyLessonScreen } from "./screens/JoyLessonScreen";
-import { PulseLessonScreen } from "./screens/PulseLessonScreen";
-import { RhythmLessonScreen } from "./screens/RhythmLessonScreen";
-import { MusicLessonScreen } from "./screens/MusicLessonScreen";
-import { ChordsIslandScreen } from "./screens/ChordsIslandScreen";
-import { ChordsLessonScreen } from "./screens/ChordsLessonScreen";
-import { StrummingIslandScreen } from "./screens/StrummingIslandScreen";
-import { StrummingLessonScreen } from "./screens/StrummingLessonScreen";
-import { SongsIslandScreen } from "./screens/SongsIslandScreen";
-import { SongsLessonScreen } from "./screens/SongsLessonScreen";
-import { MissionNineScreen } from "./screens/MissionNineScreen";
-import { MissionFourScreen } from "./screens/MissionFourScreen";
-import { MissionGuideScreen } from "./screens/MissionGuideScreen";
-import { MissionScreen } from "./screens/MissionScreen";
-import { MissionSevenScreen } from "./screens/MissionSevenScreen";
-import { MissionSixScreen } from "./screens/MissionSixScreen";
-import { MissionThreeScreen } from "./screens/MissionThreeScreen";
-import { MissionTwoScreen } from "./screens/MissionTwoScreen";
+// ── Pantallas eager: participan en el bootstrap o en la primera pintura ────
+// (Auth, Splash, Welcome/ReturnWelcome, Onboarding, Route y los dashboards
+// iniciales de cada modalidad). Todo lo demás se carga bajo demanda con
+// React.lazy() para reducir el JS del bundle inicial.
 import { OnboardingScreen } from "./screens/OnboardingScreen";
 import { RouteScreen } from "./screens/RouteScreen";
 import { WelcomeScreen } from "./screens/WelcomeScreen";
 import { ReturnWelcomeScreen } from "./screens/ReturnWelcomeScreen";
 import { SelfJourneyDashboardScreen } from "./screens/SelfJourneyDashboardScreen";
 import { getJourneyLearnerName } from "./utils/learnerName";
-import { MyProfileScreen } from "./screens/MyProfileScreen";
-import { HelpCenterScreen } from "./screens/HelpCenterScreen";
-import { PrivacyScreen } from "./screens/PrivacyScreen";
-import { SettingsScreen } from "@/features/settings/screens/SettingsScreen";
-import { settingsRepository } from "@/features/settings/services/settingsRepository";
-
-
-import { ParentJourneyIntroScreen } from "./screens/ParentJourneyIntroScreen";
-import { ParentJourneyCreatedScreen } from "./screens/ParentJourneyCreatedScreen";
-import { ParentOnboardingScreen } from "@/features/parent-journey/screens/ParentOnboardingScreen";
-import type { ParentOnboardingAnswers } from "@/features/parent-journey/types";
 import { ParentJourneyDashboardHydrator } from "@/features/parent-journey/screens/ParentJourneyDashboardHydrator";
+import { settingsRepository } from "@/features/settings/services/settingsRepository";
+import type { ParentOnboardingAnswers } from "@/features/parent-journey/types";
+
+// ── Pantallas lazy: se cargan al navegar hacia ellas. Cada import() genera
+// un chunk propio; las utilidades/datos que sólo estas pantallas usan
+// (lecciones, formularios largos, screens de menú) viajan con su chunk.
+const CelebrationScreen = lazy(() =>
+  import("./screens/CelebrationScreen").then((m) => ({ default: m.CelebrationScreen })),
+);
+const DiagnosisResultScreen = lazy(() =>
+  import("./screens/DiagnosisResultScreen").then((m) => ({ default: m.DiagnosisResultScreen })),
+);
+const DiagnosisScreen = lazy(() =>
+  import("./screens/DiagnosisScreen").then((m) => ({ default: m.DiagnosisScreen })),
+);
+const MissionEightScreen = lazy(() =>
+  import("./screens/MissionEightScreen").then((m) => ({ default: m.MissionEightScreen })),
+);
+const FirstMelodiesIslandScreen = lazy(() =>
+  import("./screens/FirstMelodiesIslandScreen").then((m) => ({ default: m.FirstMelodiesIslandScreen })),
+);
+const FirstMelodiesLessonScreen = lazy(() =>
+  import("./screens/FirstMelodiesLessonScreen").then((m) => ({ default: m.FirstMelodiesLessonScreen })),
+);
+const PulseIslandScreen = lazy(() =>
+  import("./screens/PulseIslandScreen").then((m) => ({ default: m.PulseIslandScreen })),
+);
+const RhythmIslandScreen = lazy(() =>
+  import("./screens/RhythmIslandScreen").then((m) => ({ default: m.RhythmIslandScreen })),
+);
+const MusicIslandScreen = lazy(() =>
+  import("./screens/MusicIslandScreen").then((m) => ({ default: m.MusicIslandScreen })),
+);
+const JoyIslandScreen = lazy(() =>
+  import("./screens/JoyIslandScreen").then((m) => ({ default: m.JoyIslandScreen })),
+);
+const JoyLessonScreen = lazy(() =>
+  import("./screens/JoyLessonScreen").then((m) => ({ default: m.JoyLessonScreen })),
+);
+const PulseLessonScreen = lazy(() =>
+  import("./screens/PulseLessonScreen").then((m) => ({ default: m.PulseLessonScreen })),
+);
+const RhythmLessonScreen = lazy(() =>
+  import("./screens/RhythmLessonScreen").then((m) => ({ default: m.RhythmLessonScreen })),
+);
+const MusicLessonScreen = lazy(() =>
+  import("./screens/MusicLessonScreen").then((m) => ({ default: m.MusicLessonScreen })),
+);
+const ChordsIslandScreen = lazy(() =>
+  import("./screens/ChordsIslandScreen").then((m) => ({ default: m.ChordsIslandScreen })),
+);
+const ChordsLessonScreen = lazy(() =>
+  import("./screens/ChordsLessonScreen").then((m) => ({ default: m.ChordsLessonScreen })),
+);
+const StrummingIslandScreen = lazy(() =>
+  import("./screens/StrummingIslandScreen").then((m) => ({ default: m.StrummingIslandScreen })),
+);
+const StrummingLessonScreen = lazy(() =>
+  import("./screens/StrummingLessonScreen").then((m) => ({ default: m.StrummingLessonScreen })),
+);
+const SongsIslandScreen = lazy(() =>
+  import("./screens/SongsIslandScreen").then((m) => ({ default: m.SongsIslandScreen })),
+);
+const SongsLessonScreen = lazy(() =>
+  import("./screens/SongsLessonScreen").then((m) => ({ default: m.SongsLessonScreen })),
+);
+const MissionNineScreen = lazy(() =>
+  import("./screens/MissionNineScreen").then((m) => ({ default: m.MissionNineScreen })),
+);
+const MissionFourScreen = lazy(() =>
+  import("./screens/MissionFourScreen").then((m) => ({ default: m.MissionFourScreen })),
+);
+const MissionGuideScreen = lazy(() =>
+  import("./screens/MissionGuideScreen").then((m) => ({ default: m.MissionGuideScreen })),
+);
+const MissionScreen = lazy(() =>
+  import("./screens/MissionScreen").then((m) => ({ default: m.MissionScreen })),
+);
+const MissionSevenScreen = lazy(() =>
+  import("./screens/MissionSevenScreen").then((m) => ({ default: m.MissionSevenScreen })),
+);
+const MissionSixScreen = lazy(() =>
+  import("./screens/MissionSixScreen").then((m) => ({ default: m.MissionSixScreen })),
+);
+const MissionThreeScreen = lazy(() =>
+  import("./screens/MissionThreeScreen").then((m) => ({ default: m.MissionThreeScreen })),
+);
+const MissionTwoScreen = lazy(() =>
+  import("./screens/MissionTwoScreen").then((m) => ({ default: m.MissionTwoScreen })),
+);
+const MyProfileScreen = lazy(() =>
+  import("./screens/MyProfileScreen").then((m) => ({ default: m.MyProfileScreen })),
+);
+const HelpCenterScreen = lazy(() =>
+  import("./screens/HelpCenterScreen").then((m) => ({ default: m.HelpCenterScreen })),
+);
+const PrivacyScreen = lazy(() =>
+  import("./screens/PrivacyScreen").then((m) => ({ default: m.PrivacyScreen })),
+);
+const SettingsScreen = lazy(() =>
+  import("@/features/settings/screens/SettingsScreen").then((m) => ({ default: m.SettingsScreen })),
+);
+const ParentJourneyIntroScreen = lazy(() =>
+  import("./screens/ParentJourneyIntroScreen").then((m) => ({ default: m.ParentJourneyIntroScreen })),
+);
+const ParentJourneyCreatedScreen = lazy(() =>
+  import("./screens/ParentJourneyCreatedScreen").then((m) => ({ default: m.ParentJourneyCreatedScreen })),
+);
+const ParentOnboardingScreen = lazy(() =>
+  import("@/features/parent-journey/screens/ParentOnboardingScreen").then((m) => ({ default: m.ParentOnboardingScreen })),
+);
+
+// Fallback compartido durante la carga de un chunk de pantalla lazy.
+// Reutiliza los tokens de marca — sin crear un nuevo loader visual.
+function LazyScreenFallback() {
+  return (
+    <div
+      style={{
+        minHeight: 240,
+        display: "flex",
+        alignItems: "center",
+        justifyContent: "center",
+        fontFamily: "Quicksand, Arial, sans-serif",
+        fontSize: 14,
+        color: B.grayText,
+      }}
+    >
+      Cargando…
+    </div>
+  );
+}
+
 
 const SPLASH_FADE_MS = 1050;
 const SPLASH_HIDE_MS = 1350;
