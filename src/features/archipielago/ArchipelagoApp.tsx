@@ -661,7 +661,9 @@ export function ArchipelagoApp() {
           </div>
         )}
 
+        <Suspense fallback={<LazyScreenFallback />}>
         {screen === "return-welcome" && (
+
           <ReturnWelcomeScreen
             userName={userName}
             loading={progress.loading}
