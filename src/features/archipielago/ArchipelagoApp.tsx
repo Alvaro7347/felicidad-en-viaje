@@ -1207,8 +1207,10 @@ export function ArchipelagoApp() {
         {screen === "settings" && (
           <SettingsScreen userEmail={session?.user.email ?? null} onBack={goHome} />
         )}
+        </Suspense>
 
       </div>
+
       <BlockedIslandModal
         open={blockedModal !== null}
         variant={blockedModal === "lesson" ? "lesson" : "island"}
