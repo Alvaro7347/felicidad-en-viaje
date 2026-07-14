@@ -2,6 +2,18 @@
 @source "../src";
 @import "tw-animate-css";
 
+/* Hide Lovable badge on published site (belt-and-suspenders; also toggled via publish settings) */
+#lovable-badge,
+[id^="lovable-badge"],
+a[href*="lovable.dev"][href*="utm_source=lovable-badge"],
+a[aria-label*="Edit with Lovable" i],
+iframe[src*="lovable-badge"] {
+  display: none !important;
+  visibility: hidden !important;
+  opacity: 0 !important;
+  pointer-events: none !important;
+}
+
 @custom-variant dark (&:is(.dark *));
 
 /*
