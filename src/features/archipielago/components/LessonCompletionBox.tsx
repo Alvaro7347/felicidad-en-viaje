@@ -24,6 +24,90 @@ const NEEDS_REPEAT_ANSWERS = new Set([
   "Todavía no",
 ]);
 
+// Mensajes narrativos que preparan al alumno para el encuentro en vivo.
+// Se muestran UNA sola vez, justo después de completar la clase indicada.
+// Si la clase ya estaba completada, no se muestran (ver `alreadyDone` abajo).
+interface Milestone {
+  emoji: string;
+  title: string;
+  body: React.ReactNode;
+  cta: string;
+}
+const MILESTONES: Record<string, Milestone> = {
+  // Hito 1 — última clase de Puerto de Inicio
+  n9: {
+    emoji: "🎁",
+    title: "Hay algo que quiero contarte...",
+    body: (
+      <>
+        Cuando completes la Isla del Pulso tendremos nuestro primer encuentro en vivo.
+        <br /><br />
+        Ese día podremos conocernos, responder tus dudas y celebrar todo lo que ya habrás conseguido.
+        <br /><br />
+        Pero por ahora... disfruta el viaje.
+      </>
+    ),
+    cta: "Continuar",
+  },
+  // Hito 2 — Envía tu primer desafío
+  m8: {
+    emoji: "💚",
+    title: "Ya comenzamos a conocernos.",
+    body: (
+      <>
+        Acabo de recibir tu primer desafío.
+        <br /><br />
+        Sigue avanzando y, cuando completes la Isla del Pulso, tendremos nuestro encuentro en vivo.
+      </>
+    ),
+    cta: "Continuar",
+  },
+  // Hito 3 — última clase de Primeras Melodías
+  m10: {
+    emoji: "🏝",
+    title: "Mira todo lo que has logrado.",
+    body: (
+      <>
+        Hace muy poco no conocías ningún acorde.
+        <br /><br />
+        Hoy ya eres parte del Archipiélago.
+        <br /><br />
+        Ahora comienza la Isla del Pulso. Cuando la completes podrás reservar un encuentro en vivo conmigo.
+      </>
+    ),
+    cta: "Comenzar la Isla del Pulso",
+  },
+  // Hito 4 — mitad de Isla del Pulso (p1..p11 → mitad = p6)
+  p6: {
+    emoji: "🎁",
+    title: "Ya casi llegas.",
+    body: (
+      <>
+        Cada clase te acerca un poco más.
+        <br /><br />
+        Muy pronto podrás desbloquear tu encuentro en vivo conmigo.
+      </>
+    ),
+    cta: "Seguir avanzando",
+  },
+  // Hito 5 — última clase de Isla del Pulso
+  p11: {
+    emoji: "🎉",
+    title: "¡Lo lograste!",
+    body: (
+      <>
+        Completaste la Isla del Pulso.
+        <br /><br />
+        Estoy muy feliz por todo lo que avanzaste. Ahora llegó el momento de conocernos.
+        <br /><br />
+        Muy pronto podrás agendar tu encuentro en vivo conmigo.
+      </>
+    ),
+    cta: "Continuar",
+  },
+};
+
+
 export function LessonCompletionBox({
   lessonId,
   islandId,
