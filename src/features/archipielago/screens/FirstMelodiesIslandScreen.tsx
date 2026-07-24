@@ -172,13 +172,26 @@ export function FirstMelodiesIslandScreen({ onBack, onOpenLesson, onOpenPulseIsl
             const pressScale = isPress ? 0.97 : 1;
             const scale = `scale(${(focusScale * pressScale).toFixed(3)})`;
             const opacity = isFocused ? (isActive ? 1 : 0.85) : (isActive ? 0.78 : 0.55);
-            const border = isActive
-              ? '1px solid rgba(46,230,174,0.6)'
+            const shadow = isFocused && !isPress
+              ? isActive
+                ? '0 6px 20px rgba(46,230,174,0.22)'
+                : '0 4px 14px rgba(0,0,0,0.22)'
+              : 'none';
+            const border = isFocused
+              ? isActive
+                ? '1px solid rgba(46,230,174,0.6)'
+                : isDone
+                ? '1px solid rgba(46,230,174,0.35)'
+                : '1px solid rgba(255,255,255,0.28)'
+              : isActive
+              ? '1px solid rgba(46,230,174,0.25)'
               : isDone
-              ? '1px solid rgba(46,230,174,0.35)'
-              : '1px solid rgba(255,255,255,0.18)';
-            const bg = isActive
+              ? '1px solid rgba(46,230,174,0.2)'
+              : '1px solid rgba(255,255,255,0.1)';
+            const bg = isFocused && isActive
               ? 'rgba(46,230,174,0.14)'
+              : isActive
+              ? 'rgba(46,230,174,0.08)'
               : isDone
               ? 'rgba(46,230,174,0.05)'
               : 'rgba(255,255,255,0.02)';
@@ -200,7 +213,8 @@ export function FirstMelodiesIslandScreen({ onBack, onOpenLesson, onOpenPulseIsl
                       minWidth: 168, minHeight: 62, boxSizing: 'border-box',
                       display: 'flex', flexDirection: 'column', justifyContent: 'center',
                       transform: scale, transformOrigin: 'center center', opacity,
-                      transition: 'transform 0.22s ease, opacity 0.22s ease, border-color 0.22s ease, background 0.22s ease',
+                      boxShadow: shadow,
+                      transition: 'transform 0.22s ease, opacity 0.22s ease, box-shadow 0.22s ease, border-color 0.22s ease, background 0.22s ease',
                       cursor: 'pointer', userSelect: 'none', WebkitUserSelect: 'none',
                     }}
                   >
