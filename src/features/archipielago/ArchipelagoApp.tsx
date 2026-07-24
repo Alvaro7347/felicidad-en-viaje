@@ -141,9 +141,6 @@ const MissionFourScreen = lazy(() =>
 const MissionGuideScreen = lazy(() =>
   import("./screens/MissionGuideScreen").then((m) => ({ default: m.MissionGuideScreen })),
 );
-const MissionScreen = lazy(() =>
-  import("./screens/MissionScreen").then((m) => ({ default: m.MissionScreen })),
-);
 const MissionSevenScreen = lazy(() =>
   import("./screens/MissionSevenScreen").then((m) => ({ default: m.MissionSevenScreen })),
 );
@@ -1072,7 +1069,6 @@ export function ArchipelagoApp() {
             />
           )}
 
-          {screen === "mission" && <MissionScreen onBack={() => setScreen("route")} />}
 
           {screen === "mission-two" && (
             <MissionTwoScreen

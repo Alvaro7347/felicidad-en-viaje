@@ -42,7 +42,7 @@ export const ISLAND_TITLES: Record<IslandId, string> = {
 // el título y el porcentaje que se muestran en la barra superior).
 export const SCREEN_TO_ISLAND: Partial<Record<Screen, IslandId>> = {
   route: "start-port",
-  mission: "start-port",
+  
   "mission-guide": "start-port",
   "mission-two": "start-port",
   "mission-three": "start-port",
