@@ -35,20 +35,13 @@ export function MissionGuideScreen({ onBack, userName, learnerName }: { onBack: 
     setShowVideoModal(false);
   }
 
-  function openWhatsApp() {
-    const encodedMessage = encodeURIComponent(WHATSAPP_MESSAGE);
-    const isMobile = typeof navigator !== 'undefined' &&
-      /Android|iPhone|iPad|iPod|Mobile/i.test(navigator.userAgent);
-    if (isMobile) {
-      window.location.href = `whatsapp://send?phone=${WHATSAPP_PHONE}&text=${encodedMessage}`;
-      return;
-    }
-    window.open(
-      `https://web.whatsapp.com/send?phone=${WHATSAPP_PHONE}&text=${encodedMessage}`,
-      '_blank',
-      'noopener,noreferrer'
-    );
-  }
+  const encodedMessage = encodeURIComponent(WHATSAPP_MESSAGE);
+  const isMobile = typeof navigator !== 'undefined' &&
+    /Android|iPhone|iPad|iPod/i.test(navigator.userAgent);
+  const whatsappUrl = isMobile
+    ? `https://wa.me/${WHATSAPP_PHONE}?text=${encodedMessage}`
+    : `https://web.whatsapp.com/send?phone=${WHATSAPP_PHONE}&text=${encodedMessage}`;
+
 
 
 
@@ -205,20 +198,23 @@ export function MissionGuideScreen({ onBack, userName, learnerName }: { onBack: 
         <p style={{ fontSize: 13, color: '#4a5a54', lineHeight: 1.6, margin: '0 0 14px', fontStyle: 'italic' }}>
           Nos encanta acompañar a nuestros alumnos desde el primer día ❤️
         </p>
-        <button
-          type="button"
-          onClick={openWhatsApp}
+        <a
+          href={whatsappUrl}
+          target="_blank"
+          rel="noopener noreferrer"
           style={{
             display: 'flex', alignItems: 'center', justifyContent: 'center', gap: 8,
             background: '#25D366', color: '#FFFFFF', border: 'none', cursor: 'pointer',
             fontFamily: 'Space Grotesk, sans-serif', fontWeight: 800, fontSize: 14,
             padding: '12px 16px', borderRadius: 12, width: '100%',
             boxShadow: '0 4px 14px rgba(37,211,102,0.28)',
+            textDecoration: 'none',
           }}
         >
           <span aria-hidden="true" style={{ fontSize: 16 }}>💚</span>
-          Escribir a mi profe por WhatsApp
-        </button>
+          Escribirle a mi profesor
+        </a>
+
       </Card>
       <LessonCompletionBox lessonId="n1" islandId="start-port" onCompleted={onBack} />
       <LessonDiscussionSection lessonId="n1" />
