@@ -59,6 +59,7 @@ export function MissionNineScreen({ onBack }: { onBack: () => void }) {
   const [emotionBeforeNextIsland, setEmotion] = useState<string | null>(null);
   const [mainFriction, setMainFriction] = useState<string | null>(null);
   const [closed, setClosed] = useState(false);
+  const [showEncounterMilestone, setShowEncounterMilestone] = useState(false);
 
   const canClose =
     readinessScore !== null && emotionBeforeNextIsland !== null && mainFriction !== null;
