@@ -191,7 +191,7 @@ export function MissionTwoScreen({
             <Btn onClick={onNext}>Continuar mi viaje</Btn>
           </div>
         </Card>
-        <LessonDiscussionSection lessonId="n2" />
+        
       </div>
     );
   }
