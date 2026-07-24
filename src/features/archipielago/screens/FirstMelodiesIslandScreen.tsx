@@ -17,7 +17,6 @@ const MELODIES_NODES_BASE: Omit<RouteNode, 'status'>[] = [
   { id: 'm6', title: 'Stay With Me en acordes', subtitle: 'Consolida tus primeros acordes en una canción conocida.', icon: '🎵', type: 'Video práctica', time: '5 min' },
   { id: 'm7', title: 'Karaoke Stay With Me', subtitle: 'Practica cambios de acordes con guía temporal.', icon: '🎤', type: 'Karaoke', time: '6 min' },
   { id: 'm8', title: 'Envía tu primer desafío', subtitle: 'Graba y envía tu video al profesor por WhatsApp para recibir feedback.', icon: '📱', type: 'Desafío', time: '5 min' },
-  { id: 'm9', title: 'Dedos despiertos', subtitle: 'Entrena coordinación y digitación desde cero.', icon: '🤲', type: 'Práctica', time: '4 min' },
   { id: 'm10', title: 'Lo que ya conquistaste', subtitle: 'Resumen, medición breve y premio de cierre.', icon: '🏆', type: 'Resumen', time: '3 min' },
 ];
 

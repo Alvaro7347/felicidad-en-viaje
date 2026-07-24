@@ -34,7 +34,7 @@ export const DEV_SCREENS: DevScreenEntry[] = [
   { label: 'M6 · Stay With Me',           screen: 'first-melodies-lesson', lessonId: 'm6', lessonGroup: 'first-melodies' },
   { label: 'M7 · Karaoke Stay',           screen: 'first-melodies-lesson', lessonId: 'm7', lessonGroup: 'first-melodies' },
   { label: 'M8 · Comunidad',              screen: 'first-melodies-lesson', lessonId: 'm8', lessonGroup: 'first-melodies' },
-  { label: 'M9 · Digitación',             screen: 'first-melodies-lesson', lessonId: 'm9', lessonGroup: 'first-melodies' },
+  
   { label: 'M10 · Cierre Melodías',       screen: 'first-melodies-lesson', lessonId: 'm10', lessonGroup: 'first-melodies' },
   { label: 'Isla · Pulso',                screen: 'pulse-island' },
   { label: 'P1 · Acorde SOL',             screen: 'pulse-lesson', lessonId: 'p1', lessonGroup: 'pulse' },
