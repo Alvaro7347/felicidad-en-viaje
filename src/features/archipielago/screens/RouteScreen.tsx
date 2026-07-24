@@ -334,6 +334,10 @@ export function RouteScreen({ onStartMission, onReviewMission, onOpenFirstMelodi
         </div>
       </div>
 
+      <TeacherEncounterProgress />
+
+
+
       {showLockedNode && (
         <div
           onClick={() => setShowLockedNode(false)}
