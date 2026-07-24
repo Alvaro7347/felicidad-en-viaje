@@ -396,6 +396,44 @@ export function MissionGuideScreen({ onBack, userName, learnerName }: { onBack: 
           </div>
         </div>
       )}
+      <Card style={{
+        padding: '18px 20px',
+        background: 'linear-gradient(135deg, #F2FBF7 0%, #E8F7F1 100%)',
+        border: `1.5px solid ${B.green}`,
+      }}>
+        <div style={{ display: 'flex', alignItems: 'center', gap: 10, marginBottom: 8 }}>
+          <span aria-hidden="true" style={{ fontSize: 22 }}>💬</span>
+          <div style={{
+            fontFamily: 'Space Grotesk, sans-serif', fontWeight: 800,
+            fontSize: 16, color: B.dark, lineHeight: 1.3,
+          }}>
+            ¿Tienes alguna duda? Escríbele a tu profe
+          </div>
+        </div>
+        <p style={{ fontSize: 13.5, color: '#4a5a54', lineHeight: 1.6, margin: '0 0 8px' }}>
+          Durante todo este viaje no estarás solo. Si tienes alguna duda, si necesitas ayuda para afinar tu ukelele, si algo no te resulta o simplemente quieres saludarnos, puedes escribirnos directamente por WhatsApp.
+        </p>
+        <p style={{ fontSize: 13, color: '#4a5a54', lineHeight: 1.6, margin: '0 0 14px', fontStyle: 'italic' }}>
+          Nos encanta acompañar a nuestros alumnos desde el primer día ❤️
+        </p>
+        <a
+          href={`https://wa.me/56935927518?text=${encodeURIComponent(
+            'Hola 👋\n\nAcabo de comenzar mi viaje en Soundkeleles.\n\nEstoy en la primera clase de Puerto de Inicio y quería presentarme.\n\nMi nombre es:\n\nMuchas gracias.'
+          )}`}
+          target="_blank"
+          rel="noopener noreferrer"
+          style={{
+            display: 'flex', alignItems: 'center', justifyContent: 'center', gap: 8,
+            background: '#25D366', color: '#FFFFFF', textDecoration: 'none',
+            fontFamily: 'Space Grotesk, sans-serif', fontWeight: 800, fontSize: 14,
+            padding: '12px 16px', borderRadius: 12,
+            boxShadow: '0 4px 14px rgba(37,211,102,0.28)',
+          }}
+        >
+          <span aria-hidden="true" style={{ fontSize: 16 }}>💚</span>
+          Escribir a mi profe por WhatsApp
+        </a>
+      </Card>
       <LessonCompletionBox lessonId="n1" islandId="start-port" onCompleted={onBack} />
       <LessonDiscussionSection lessonId="n1" />
     </div>
