@@ -3,6 +3,7 @@ import { B } from "../data/brand";
 import type { NodeStatus, RouteNode } from "../types";
 import { Btn } from "../components/Btn";
 import { Card } from "../components/Card";
+import { TeacherEncounterProgress } from "../components/TeacherEncounterProgress";
 import { useMvp1ProgressContext } from "../context/Mvp1ProgressContext";
 import { MVP1_LESSON_SEQUENCE, MVP1_LOCKED_ISLANDS, findMvp1Lesson, type IslandId } from "../data/mvp1Progress";
 import { STAGE_TO_ISLAND } from "../data/islands";
@@ -266,6 +267,10 @@ export function FirstMelodiesIslandScreen({ onBack, onOpenLesson, onOpenPulseIsl
           </div>
         </div>
       </div>
+
+      <TeacherEncounterProgress />
+
+
 
       {/* Título de sección */}
       <div style={{ display: 'flex', alignItems: 'center', gap: 8, marginTop: 4, marginBottom: 6 }}>

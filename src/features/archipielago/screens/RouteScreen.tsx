@@ -7,6 +7,7 @@ import { useMvp1ProgressContext } from "../context/Mvp1ProgressContext";
 import type { NodeStatus } from "../types";
 import { Btn } from "../components/Btn";
 import { Card } from "../components/Card";
+import { TeacherEncounterProgress } from "../components/TeacherEncounterProgress";
 import { touchLastVisit } from "../data/musicalFuel";
 
 export function RouteScreen({ onStartMission, onReviewMission, onOpenFirstMelodiesIsland, onOpenPulseIsland, onOpenRhythmIsland, onOpenMusicIsland, onOpenJoyIsland, onOpenChordsIsland, onOpenStrummingIsland, onOpenSongsIsland, userName, journeyOrigin = "student", studentName, onBackToParentDashboard }: { onStartMission: (lessonId: string) => void; onReviewMission: (id: string) => void; onOpenFirstMelodiesIsland: () => void; onOpenPulseIsland: () => void; onOpenRhythmIsland: () => void; onOpenMusicIsland: () => void; onOpenJoyIsland: () => void; onOpenChordsIsland: () => void; onOpenStrummingIsland: () => void; onOpenSongsIsland: () => void; userName: string; journeyOrigin?: "student" | "parent"; studentName?: string; onBackToParentDashboard?: () => void }) {
@@ -332,6 +333,10 @@ export function RouteScreen({ onStartMission, onReviewMission, onOpenFirstMelodi
           </div>
         </div>
       </div>
+
+      <TeacherEncounterProgress />
+
+
 
       {showLockedNode && (
         <div
