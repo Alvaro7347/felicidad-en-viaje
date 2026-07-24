@@ -6,6 +6,7 @@ import { BackBtn } from "../components/BackBtn";
 import { MissionIntroHeader } from "../components/MissionIntroHeader";
 import { LessonCompletionBox } from "../components/LessonCompletionBox";
 import { LessonDiscussionSection } from "@/features/discussions/components/LessonDiscussionSection";
+import { TeacherEncounterScreen } from "./TeacherEncounterScreen";
 import { MVP1_LAST_UNLOCKED_LESSON_ID } from "../data/mvp1Progress";
 import {
   findPulseLesson,
