@@ -16,12 +16,6 @@ export function MissionGuideScreen({ onBack, userName, learnerName }: { onBack: 
   // learnerName ya viene resuelto por getJourneyLearnerName en el contenedor.
   const safeName = (learnerName ?? userName)?.trim();
   const firstName = safeName ? safeName.split(' ')[0] : 'Navegante';
-  const [showContactModal, setShowContactModal] = useState(false);
-  const [contactEmail, setContactEmail] = useState('');
-  const [contactMessage, setContactMessage] = useState('');
-  const [contactError, setContactError] = useState<string | null>(null);
-  const [contactSent, setContactSent] = useState(false);
-  const [isSendingContactMessage, setIsSendingContactMessage] = useState(false);
   const [showVideoModal, setShowVideoModal] = useState(false);
   const guidePhoto = alvaroAsset.url;
 
@@ -33,51 +27,12 @@ export function MissionGuideScreen({ onBack, userName, learnerName }: { onBack: 
     setShowVideoModal(false);
   }
 
-  function openContactModal() {
-    setContactError(null);
-    setContactSent(false);
-    setShowContactModal(true);
+  function openWhatsApp() {
+    const url = `https://wa.me/${WHATSAPP_PHONE}?text=${encodeURIComponent(WHATSAPP_MESSAGE)}`;
+    window.open(url, '_blank', 'noopener,noreferrer');
   }
 
-  function closeContactModal() {
-    if (isSendingContactMessage) return;
-    setShowContactModal(false);
-    setContactError(null);
-    setContactSent(false);
-    setContactEmail('');
-    setContactMessage('');
-  }
 
-  async function handleSendGuideMessage() {
-    if (isSendingContactMessage) return;
-    const email = contactEmail.trim();
-    const message = contactMessage.trim();
-    if (!message) {
-      setContactError('Escribe un mensaje antes de enviarlo.');
-      return;
-    }
-    const emailOk = /^[^\s@]+@[^\s@]+\.[^\s@]+$/.test(email);
-    if (!emailOk) {
-      setContactError('Ingresa un correo válido para que podamos responderte.');
-      return;
-    }
-    const payload = buildGuideMessagePayload({
-      studentName: safeName || 'Navegante',
-      studentEmail: email,
-      message,
-    });
-    setContactError(null);
-    setIsSendingContactMessage(true);
-    try {
-      await saveGuideMessage(payload);
-      setContactSent(true);
-    } catch (err) {
-      console.error('[MissionGuideScreen] Error guardando mensaje al guía:', err);
-      setContactError('No pudimos enviar tu mensaje. Intenta nuevamente.');
-    } finally {
-      setIsSendingContactMessage(false);
-    }
-  }
 
 
 
