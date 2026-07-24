@@ -1,4 +1,4 @@
-import { useMemo, useState } from "react";
+import { useMemo, useState, type ReactNode } from "react";
 import { B } from "../data/brand";
 import { Card } from "./Card";
 import { Btn } from "./Btn";
@@ -30,7 +30,7 @@ const NEEDS_REPEAT_ANSWERS = new Set([
 interface Milestone {
   emoji: string;
   title: string;
-  body: React.ReactNode;
+  body: ReactNode;
   cta: string;
 }
 const MILESTONES: Record<string, Milestone> = {
