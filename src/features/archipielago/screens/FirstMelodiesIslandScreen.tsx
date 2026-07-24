@@ -152,6 +152,7 @@ export function FirstMelodiesIslandScreen({ onBack, onOpenLesson, onOpenPulseIsl
         background: 'linear-gradient(135deg, #252b29 0%, #1c2220 100%)',
         borderRadius: 18,
         padding: '12px 0',
+        marginBottom: 20,
         overflow: 'hidden',
         minHeight: 108,
       }}>
@@ -159,9 +160,15 @@ export function FirstMelodiesIslandScreen({ onBack, onOpenLesson, onOpenPulseIsl
           ref={stripRef}
           onScroll={recomputeFocus}
           style={{
-            display: 'flex', alignItems: 'center', overflowX: 'auto',
-            scrollSnapType: 'x mandatory', WebkitOverflowScrolling: 'touch',
-            padding: '2px 16px', scrollbarWidth: 'none', gap: 0, minHeight: 84,
+            display: 'flex',
+            alignItems: 'center',
+            overflowX: 'auto',
+            scrollSnapType: 'x mandatory',
+            WebkitOverflowScrolling: 'touch',
+            padding: '2px 16px',
+            scrollbarWidth: 'none',
+            gap: 0,
+            minHeight: 84,
           }}
         >
           {TERRITORIES.map((t, i) => {
@@ -169,10 +176,13 @@ export function FirstMelodiesIslandScreen({ onBack, onOpenLesson, onOpenPulseIsl
             const isDone = t.state === 'done';
             const isFocused = focusedStageId === t.id;
             const isPress = pressedIsland === t.id;
+
             const focusScale = isFocused ? 1 : 0.96;
             const pressScale = isPress ? 0.97 : 1;
             const scale = `scale(${(focusScale * pressScale).toFixed(3)})`;
-            const opacity = isFocused ? (isActive ? 1 : 0.85) : (isActive ? 0.78 : 0.55);
+            const opacity = isFocused
+              ? (isActive ? 1 : 0.85)
+              : (isActive ? 0.78 : 0.55);
             const shadow = isFocused && !isPress
               ? isActive
                 ? '0 6px 20px rgba(46,230,174,0.22)'
@@ -181,25 +191,25 @@ export function FirstMelodiesIslandScreen({ onBack, onOpenLesson, onOpenPulseIsl
             const border = isFocused
               ? isActive
                 ? '1px solid rgba(46,230,174,0.6)'
-                : isDone
-                ? '1px solid rgba(46,230,174,0.35)'
                 : '1px solid rgba(255,255,255,0.28)'
               : isActive
               ? '1px solid rgba(46,230,174,0.25)'
-              : isDone
-              ? '1px solid rgba(46,230,174,0.2)'
               : '1px solid rgba(255,255,255,0.1)';
             const bg = isFocused && isActive
               ? 'rgba(46,230,174,0.14)'
               : isActive
               ? 'rgba(46,230,174,0.08)'
-              : isDone
-              ? 'rgba(46,230,174,0.05)'
               : 'rgba(255,255,255,0.02)';
 
             return (
               <div key={t.id} style={{ display: 'flex', alignItems: 'center', flexShrink: 0 }}>
-                <div style={{ flexShrink: 0, minHeight: 76, display: 'flex', alignItems: 'center', scrollSnapAlign: 'center' }}>
+                <div style={{
+                  flexShrink: 0,
+                  minHeight: 76,
+                  display: 'flex',
+                  alignItems: 'center',
+                  scrollSnapAlign: 'center',
+                }}>
                   <div
                     ref={(el) => { stageRefs.current[t.id] = el; }}
                     onMouseDown={() => setPressedIsland(t.id)}
@@ -210,30 +220,51 @@ export function FirstMelodiesIslandScreen({ onBack, onOpenLesson, onOpenPulseIsl
                     onTouchCancel={() => setPressedIsland(null)}
                     onClick={() => handleTerritory(t.id)}
                     style={{
-                      background: bg, border, borderRadius: 13, padding: '8px 12px',
-                      minWidth: 168, minHeight: 62, boxSizing: 'border-box',
-                      display: 'flex', flexDirection: 'column', justifyContent: 'center',
-                      transform: scale, transformOrigin: 'center center', opacity,
+                      background: bg,
+                      border,
+                      borderRadius: 13,
+                      padding: '8px 12px',
+                      minWidth: 168,
+                      minHeight: 62,
+                      boxSizing: 'border-box',
+                      display: 'flex',
+                      flexDirection: 'column',
+                      justifyContent: 'center',
+                      transform: scale,
+                      transformOrigin: 'center center',
+                      opacity,
                       boxShadow: shadow,
                       transition: 'transform 0.22s ease, opacity 0.22s ease, box-shadow 0.22s ease, border-color 0.22s ease, background 0.22s ease',
-                      cursor: 'pointer', userSelect: 'none', WebkitUserSelect: 'none',
+                      cursor: 'pointer',
+                      userSelect: 'none',
+                      WebkitUserSelect: 'none',
                     }}
                   >
                     <div style={{ display: 'flex', alignItems: 'center', gap: 8 }}>
-                      <span style={{ fontSize: 18, opacity: isActive || isDone ? 1 : 0.55 }}>
+                      <span style={{
+                        fontSize: 18,
+                        opacity: isActive ? 1 : 0.55,
+                        filter: isActive ? 'none' : 'grayscale(0.4)',
+                      }}>
                         {'🏝'}
                       </span>
                       <div>
                         <div style={{
-                          fontFamily: 'Space Grotesk, sans-serif', fontWeight: 800, fontSize: 12,
-                          color: isActive ? B.white : isDone ? 'rgba(255,255,255,0.9)' : 'rgba(255,255,255,0.55)',
-                          lineHeight: 1.2, whiteSpace: 'nowrap',
+                          fontFamily: 'Space Grotesk, sans-serif',
+                          fontWeight: 800,
+                          fontSize: 12,
+                          color: isActive ? B.white : (isFocused ? 'rgba(255,255,255,0.78)' : 'rgba(255,255,255,0.45)'),
+                          lineHeight: 1.2,
+                          whiteSpace: 'nowrap',
+                          transition: 'color 0.22s ease',
                         }}>
                           {t.title}
                         </div>
                         <div style={{
-                          fontSize: 9, marginTop: 2, letterSpacing: '0.02em',
-                          color: isActive ? 'rgba(46,230,174,0.85)' : isDone ? 'rgba(46,230,174,0.75)' : 'rgba(255,255,255,0.35)',
+                          fontSize: 9,
+                          marginTop: 2,
+                          letterSpacing: '0.02em',
+                          color: isActive ? 'rgba(46,230,174,0.85)' : isDone ? 'rgba(46,230,174,0.75)' : (isFocused ? 'rgba(255,255,255,0.45)' : 'rgba(255,255,255,0.25)'),
                         }}>
                           {isActive ? 'aquí estás' : isDone ? 'completado' : 'bloqueada'}
                         </div>
