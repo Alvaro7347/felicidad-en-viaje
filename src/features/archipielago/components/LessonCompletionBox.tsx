@@ -141,6 +141,7 @@ export function LessonCompletionBox({
   const [saving, setSaving] = useState(false);
   const [error, setError] = useState<string | null>(null);
   const [answer, setAnswer] = useState<string | null>(null);
+  const [milestone, setMilestone] = useState<Milestone | null>(null);
 
   const handleComplete = async () => {
     setError(null);
@@ -157,7 +158,6 @@ export function LessonCompletionBox({
         answer,
       });
       if (!cr.ok) {
-        // No bloqueamos el avance por fallo de check-in, pero avisamos.
         logEvent("checkin_save_error", {
           lesson_id: lessonId,
           island_id: islandId,
@@ -171,12 +171,40 @@ export function LessonCompletionBox({
       setError(res.error ?? "No pudimos guardar tu avance. Intenta nuevamente.");
       return;
     }
+    // Si esta clase tiene un mensaje narrativo, se muestra una única vez aquí
+    // (esta rama sólo se ejecuta cuando la clase NO estaba completada antes,
+    // porque el early-return de `alreadyDone` cubre las re-visitas).
+    const m = MILESTONES[lessonId];
+    if (m) {
+      setMilestone(m);
+      return;
+    }
     onCompleted?.();
   };
 
   const showRepeatMessage = !!(answer && NEEDS_REPEAT_ANSWERS.has(answer));
 
+  if (milestone) {
+    return (
+      <Card style={{ background: B.greenLight, border: `1.5px solid ${B.green}` }}>
+        <div style={{ display: "flex", alignItems: "center", gap: 10, marginBottom: 10 }}>
+          <span style={{ fontSize: 22 }}>{milestone.emoji}</span>
+          <div style={{ fontFamily: "Space Grotesk, sans-serif", fontWeight: 800, fontSize: 16, color: B.dark, lineHeight: 1.25 }}>
+            {milestone.title}
+          </div>
+        </div>
+        <div style={{ fontSize: 13.5, color: B.dark, lineHeight: 1.6, marginBottom: 14 }}>
+          {milestone.body}
+        </div>
+        <Btn fullWidth onClick={() => { setMilestone(null); onCompleted?.(); }}>
+          {milestone.cta}
+        </Btn>
+      </Card>
+    );
+  }
+
   if (alreadyDone) {
+
     return (
       <Card style={{ background: B.greenLight, border: `1.5px solid ${B.green}` }}>
         <div style={{ display: "flex", alignItems: "center", gap: 10, marginBottom: 8 }}>
