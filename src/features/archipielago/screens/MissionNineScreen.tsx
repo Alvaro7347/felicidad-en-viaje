@@ -383,7 +383,7 @@ export function MissionNineScreen({ onBack }: { onBack: () => void }) {
       <Btn variant="primary" fullWidth disabled={!canClose} onClick={handleClose}>
         {canClose ? "Cerrar Puerto de Inicio" : "Responde estas 3 preguntas para cerrar el puerto"}
       </Btn>
-      <LessonCompletionBox lessonId="n9" islandId="start-port" onCompleted={onBack} />
+      <LessonCompletionBox lessonId="n9" islandId="start-port" onCompleted={() => setShowEncounterMilestone(true)} />
       <LessonDiscussionSection lessonId="n9" />
     </div>
   );
