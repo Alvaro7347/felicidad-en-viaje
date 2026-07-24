@@ -8,7 +8,15 @@ import { LessonDiscussionSection } from "@/features/discussions/components/Lesso
 import alvaroAsset from "../../../assets/alvaro-campos.jpeg.asset.json";
 
 const WHATSAPP_PHONE = '56935927518';
-const WHATSAPP_MESSAGE = 'Hola 👋\n\nAcabo de comenzar mi viaje en Soundkeleles.\n\nEstoy en la primera clase de Puerto de Inicio y quería presentarme.\n\nMi nombre es:\n\nMuchas gracias.';
+const WHATSAPP_MESSAGE = `Hola,
+
+Acabo de comenzar mi viaje en Soundkeleles.
+
+Estoy en la primera clase de Puerto de Inicio y quería presentarme.
+
+Mi nombre es:
+
+Muchas gracias.`;
 
 
 export function MissionGuideScreen({ onBack, userName, learnerName }: { onBack: () => void; userName?: string; learnerName?: string }) {
@@ -28,8 +36,18 @@ export function MissionGuideScreen({ onBack, userName, learnerName }: { onBack: 
   }
 
   function openWhatsApp() {
-    const url = `https://wa.me/${WHATSAPP_PHONE}?text=${encodeURIComponent(WHATSAPP_MESSAGE)}`;
-    window.open(url, '_blank', 'noopener,noreferrer');
+    const encodedMessage = encodeURIComponent(WHATSAPP_MESSAGE);
+    const isMobile = typeof navigator !== 'undefined' &&
+      /Android|iPhone|iPad|iPod|Mobile/i.test(navigator.userAgent);
+    if (isMobile) {
+      window.location.href = `whatsapp://send?phone=${WHATSAPP_PHONE}&text=${encodedMessage}`;
+      return;
+    }
+    window.open(
+      `https://web.whatsapp.com/send?phone=${WHATSAPP_PHONE}&text=${encodedMessage}`,
+      '_blank',
+      'noopener,noreferrer'
+    );
   }
 
 
