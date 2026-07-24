@@ -3,6 +3,7 @@ import { B } from "../data/brand";
 import type { NodeStatus, RouteNode } from "../types";
 import { Btn } from "../components/Btn";
 import { Card } from "../components/Card";
+import { TeacherEncounterProgress } from "../components/TeacherEncounterProgress";
 import { useMvp1ProgressContext } from "../context/Mvp1ProgressContext";
 
 const PULSE_NODES_BASE: Omit<RouteNode, 'status'>[] = [
@@ -241,6 +242,10 @@ export function PulseIslandScreen({
           </div>
         </div>
       </div>
+
+      <TeacherEncounterProgress />
+
+
 
       {/* Título de sección */}
       <div style={{ display: 'flex', alignItems: 'center', gap: 8, marginTop: 4, marginBottom: 6 }}>
