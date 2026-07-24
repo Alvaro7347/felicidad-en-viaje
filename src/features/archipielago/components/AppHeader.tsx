@@ -259,7 +259,7 @@ export function AppHeader({
   const modernHeaderScreens: Screen[] = [
     "route",
     "self-journey",
-    "mission",
+    
     "mission-guide",
     "mission-two",
     "mission-three",
