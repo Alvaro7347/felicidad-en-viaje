@@ -187,7 +187,6 @@ export const FIRST_MELODIES_SUMMARY_CHIPS = [
   'Lectura de diagramas',
   'Primera estrofa guiada',
   'Stay With Me',
-  'Digitación inicial',
   'Compartir logro opcional',
 ];
 
