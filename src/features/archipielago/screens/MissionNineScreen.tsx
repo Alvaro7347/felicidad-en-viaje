@@ -154,6 +154,37 @@ export function MissionNineScreen({ onBack }: { onBack: () => void }) {
     );
   }
 
+  // ─────────── Hito narrativo: descubrimiento de la promesa del encuentro ───────────
+  if (showEncounterMilestone) {
+    return (
+      <div style={{ display: "flex", flexDirection: "column", gap: 16 }}>
+        <BackBtn label="Puerto de Inicio" onClick={onBack} />
+        <MissionIntroHeader
+          title="Listo para zarpar"
+          subtitle="Antes de entrar a tu primera melodía, revisemos lo que ya lograste."
+        />
+        <Card style={{ background: B.greenLight, border: `1.5px solid ${B.green}` }}>
+          <div style={{ display: "flex", alignItems: "center", gap: 10, marginBottom: 10 }}>
+            <span style={{ fontSize: 22 }} aria-hidden="true">🎁</span>
+            <div style={{ fontFamily: "Space Grotesk, sans-serif", fontWeight: 800, fontSize: 16, color: B.dark, lineHeight: 1.25 }}>
+              Hay algo que quiero contarte...
+            </div>
+          </div>
+          <div style={{ fontSize: 13.5, color: B.dark, lineHeight: 1.6, marginBottom: 14 }}>
+            Cuando completes la Isla del Pulso tendremos nuestro primer encuentro en vivo.
+            <br /><br />
+            Ese día podremos conocernos, responder tus dudas y celebrar todo lo que ya habrás conseguido.
+            <br /><br />
+            Pero por ahora... disfruta el viaje.
+          </div>
+          <Btn fullWidth onClick={onBack}>
+            Continuar
+          </Btn>
+        </Card>
+      </div>
+    );
+  }
+
   // ─────────── Estado principal ───────────
   return (
     <div style={{ display: "flex", flexDirection: "column", gap: 16 }}>
