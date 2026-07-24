@@ -36,8 +36,18 @@ export function MissionGuideScreen({ onBack, userName, learnerName }: { onBack: 
   }
 
   function openWhatsApp() {
-    const url = `https://wa.me/${WHATSAPP_PHONE}?text=${encodeURIComponent(WHATSAPP_MESSAGE)}`;
-    window.open(url, '_blank', 'noopener,noreferrer');
+    const encodedMessage = encodeURIComponent(WHATSAPP_MESSAGE);
+    const isMobile = typeof navigator !== 'undefined' &&
+      /Android|iPhone|iPad|iPod|Mobile/i.test(navigator.userAgent);
+    if (isMobile) {
+      window.location.href = `whatsapp://send?phone=${WHATSAPP_PHONE}&text=${encodedMessage}`;
+      return;
+    }
+    window.open(
+      `https://web.whatsapp.com/send?phone=${WHATSAPP_PHONE}&text=${encodedMessage}`,
+      '_blank',
+      'noopener,noreferrer'
+    );
   }
 
 
