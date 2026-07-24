@@ -20,7 +20,7 @@ export const LEARNING_OUTCOMES: Record<string, string> = {
   m5: "Tocaste tu primera estrofa: Tren al Sur.",
   m6: "Practicaste Stay With Me en acordes.",
   m7: "Cantaste el karaoke de Stay With Me.",
-  m8: "Compartiste tu primer logro.",
+  m8: "Enviaste tu primer desafío al profesor.",
   m9: "Despertaste tus dedos con ejercicios.",
   m10: "Recorriste todo lo que ya conquistaste.",
   // Isla del Pulso

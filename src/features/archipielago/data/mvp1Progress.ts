@@ -50,7 +50,7 @@ export const MVP1_LESSON_SEQUENCE: Mvp1LessonEntry[] = [
   { lessonId: "m5", islandId: "first-melodies", screen: "first-melodies-lesson", label: "Tu primera estrofa: Tren al Sur", order: 14, isMvp1Enabled: true },
   { lessonId: "m6", islandId: "first-melodies", screen: "first-melodies-lesson", label: "Stay With Me en acordes", order: 15, isMvp1Enabled: true },
   { lessonId: "m7", islandId: "first-melodies", screen: "first-melodies-lesson", label: "Karaoke Stay With Me", order: 16, isMvp1Enabled: true },
-  { lessonId: "m8", islandId: "first-melodies", screen: "first-melodies-lesson", label: "Comparte tu primer logro", order: 17, isMvp1Enabled: true },
+  { lessonId: "m8", islandId: "first-melodies", screen: "first-melodies-lesson", label: "Envía tu primer desafío", order: 17, isMvp1Enabled: true },
   { lessonId: "m9", islandId: "first-melodies", screen: "first-melodies-lesson", label: "Dedos despiertos", order: 18, isMvp1Enabled: true },
   { lessonId: "m10", islandId: "first-melodies", screen: "first-melodies-lesson", label: "Lo que ya conquistaste", order: 19, isMvp1Enabled: true },
   // Isla del Pulso

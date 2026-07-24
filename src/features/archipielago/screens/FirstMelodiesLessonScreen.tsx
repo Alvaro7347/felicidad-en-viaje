@@ -227,72 +227,66 @@ function DiagramBlock({ lesson }: { lesson: Lesson }) {
 }
 
 // ─────────────────────────────────────────────────────────────
-// Bloque: Comunidad (upload prototipo, sin backend)
+// Bloque: Envía tu primer desafío por WhatsApp
 // ─────────────────────────────────────────────────────────────
 function CommunityBlock() {
-  const [fileName, setFileName] = useState<string | null>(null);
-  const [ready, setReady] = useState(false);
-  const [later, setLater] = useState(false);
+  const whatsappMessage = encodeURIComponent(
+    'Hola 👋.\nSoy alumno(a) de Soundkeleles.\n\nQuiero enviar mi primer desafío musical para recibir feedback.\n\nAdjuntaré mi video en este chat.\n\nMuchas gracias.'
+  );
+  const whatsappUrl = `https://wa.me/56935927518?text=${whatsappMessage}`;
 
   return (
-    <Card>
-      <div style={{ fontSize: 11, fontWeight: 800, color: B.pink, letterSpacing: '1.2px', textTransform: 'uppercase', marginBottom: 10 }}>
-        Comunidad · Opcional
-      </div>
-      <p style={{ margin: '0 0 12px', color: '#666', fontSize: 13, lineHeight: 1.6 }}>
-        Comparte tu práctica cuando quieras. Aquí prepararás tu video; en esta versión prototipo aún no se sube realmente.
-      </p>
-
-      <label
-        style={{
-          display: 'block', border: `1.5px dashed ${B.grayBorder}`, background: B.gray,
-          borderRadius: 12, padding: 14, textAlign: 'center', cursor: 'pointer', marginBottom: 10,
-        }}
-      >
-        <input
-          type="file"
-          accept="video/*"
-          style={{ display: 'none' }}
-          onChange={(e) => {
-            const f = e.target.files?.[0];
-            if (f) { setFileName(f.name); setLater(false); setReady(false); }
-          }}
-        />
-        <div style={{ fontWeight: 800, fontSize: 13, color: B.dark }}>
-          {fileName ? '📹 Cambiar video' : '📹 Seleccionar video local'}
+    <div style={{ display: 'flex', flexDirection: 'column', gap: 14 }}>
+      <Card>
+        <div style={{ fontSize: 11, fontWeight: 800, color: B.pink, letterSpacing: '1.2px', textTransform: 'uppercase', marginBottom: 10 }}>
+          Tu primer desafío
         </div>
-        <div style={{ fontSize: 11, color: B.grayText, marginTop: 4 }}>
-          {fileName ? fileName : 'Ningún archivo seleccionado'}
-        </div>
-      </label>
-
-      {fileName && !ready && (
-        <Btn onClick={() => setReady(true)} fullWidth size="sm">Dejar listo para enviar</Btn>
-      )}
-      {ready && (
-        <div style={{ background: B.greenLight, borderRadius: 12, padding: 12, fontSize: 12.5, color: B.dark, lineHeight: 1.5 }}>
-          Listo. Cuando activemos la comunidad, este video estará preparado para enviarse. Por ahora nada se sube.
-        </div>
-      )}
-
-      <div style={{ marginTop: 10 }}>
-        <button
-          type="button"
-          onClick={() => { setLater(true); setFileName(null); setReady(false); }}
-          style={{
-            background: 'transparent', border: 'none', color: B.grayText,
-            fontWeight: 700, fontSize: 12.5, cursor: 'pointer', padding: 0,
-          }}
-        >
-          Lo haré más adelante
-        </button>
-        {later && (
-          <div style={{ marginTop: 6, fontSize: 11.5, color: B.grayText }}>
-            Sin problema. Esta lección quedará disponible para cuando quieras volver.
+        <p style={{ margin: '0 0 10px', color: B.dark, fontSize: 13.5, lineHeight: 1.6 }}>
+          Graba un pequeño video tocando el ejercicio de esta isla. Puede ser corto. Lo importante es que podamos ver cómo vas avanzando para entregarte un feedback personalizado.
+        </p>
+        <div style={{ marginTop: 6 }}>
+          <div style={{ fontSize: 11, fontWeight: 800, color: B.greenDark, letterSpacing: '1.2px', textTransform: 'uppercase', marginBottom: 8 }}>
+            Qué debes hacer
           </div>
-        )}
-      </div>
-    </Card>
+          <ul style={{ margin: 0, paddingLeft: 18, color: B.dark, fontSize: 13, lineHeight: 1.7 }}>
+            <li>Prepara tu ukelele.</li>
+            <li>Graba un video corto.</li>
+            <li>Toca el ejercicio aprendido.</li>
+            <li>Envíalo por WhatsApp.</li>
+          </ul>
+        </div>
+      </Card>
+
+      <a
+        href={whatsappUrl}
+        target="_blank"
+        rel="noopener noreferrer"
+        style={{ textDecoration: 'none' }}
+      >
+        <Btn fullWidth>Enviar mi desafío por WhatsApp</Btn>
+      </a>
+
+      <Card style={{ background: B.greenLight, border: `1px solid ${B.green}` }}>
+        <div style={{ display: 'flex', alignItems: 'flex-start', gap: 10 }}>
+          <div style={{ fontSize: 22, lineHeight: 1 }}>💬</div>
+          <p style={{ margin: 0, fontSize: 13.5, lineHeight: 1.6, color: B.dark }}>
+            Cada alumno recibe feedback personalizado del profesor. No importa si todavía estás comenzando: lo importante es seguir avanzando.
+          </p>
+        </div>
+      </Card>
+
+      <Card style={{ background: B.pinkLight, border: `1px solid ${B.pink}` }}>
+        <div style={{ fontSize: 11, fontWeight: 800, color: B.pink, letterSpacing: '1.2px', textTransform: 'uppercase', marginBottom: 8 }}>
+          ¿Qué viene después?
+        </div>
+        <div style={{ fontFamily: 'Space Grotesk, sans-serif', fontWeight: 800, fontSize: 16, color: B.dark, marginBottom: 6 }}>
+          Clase online gratuita con tu profesor
+        </div>
+        <p style={{ margin: 0, fontSize: 13.5, lineHeight: 1.6, color: B.dark }}>
+          Cuando completes la Isla del Pulso podrás acceder a una clase online gratuita con uno de nuestros profesores, donde revisaremos tu avance, resolveremos dudas y seguiremos avanzando juntos.
+        </p>
+      </Card>
+    </div>
   );
 }
 
