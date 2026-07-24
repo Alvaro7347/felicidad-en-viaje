@@ -5,7 +5,7 @@ import { Card } from "../components/Card";
 import { BackBtn } from "../components/BackBtn";
 import { MissionIntroHeader } from "../components/MissionIntroHeader";
 import { useMvp1ProgressContext } from "../context/Mvp1ProgressContext";
-import { LessonDiscussionSection } from "@/features/discussions/components/LessonDiscussionSection";
+
 
 const LS = {
   motivation: "archipielago_user_motivation",
@@ -191,7 +191,7 @@ export function MissionTwoScreen({
             <Btn onClick={onNext}>Continuar mi viaje</Btn>
           </div>
         </Card>
-        <LessonDiscussionSection lessonId="n2" />
+        
       </div>
     );
   }
@@ -317,7 +317,6 @@ export function MissionTwoScreen({
         {saveError && <div style={{ ...errStyle, marginTop: 10 }}>{saveError}</div>}
       </Card>
 
-      <LessonDiscussionSection lessonId="n2" />
     </div>
   );
 }

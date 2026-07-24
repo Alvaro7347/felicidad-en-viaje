@@ -5,7 +5,7 @@ import { Card } from "../components/Card";
 import { BackBtn } from "../components/BackBtn";
 import { MissionIntroHeader } from "../components/MissionIntroHeader";
 import { LessonCompletionBox } from "../components/LessonCompletionBox";
-import { LessonDiscussionSection } from "@/features/discussions/components/LessonDiscussionSection";
+
 
 type Step = { icon: string; title: string; text: string };
 
@@ -250,7 +250,7 @@ export function MissionThreeScreen({ onBack }: { onBack: () => void }) {
         </Card>
       )}
       <LessonCompletionBox lessonId="n3" islandId="start-port" onCompleted={onBack} />
-      <LessonDiscussionSection lessonId="n3" />
+      
     </div>
   );
 }
