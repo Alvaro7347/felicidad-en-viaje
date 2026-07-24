@@ -1,4 +1,4 @@
-import { useMemo, useState } from "react";
+import { useMemo, useState, type ReactNode } from "react";
 import { B } from "../data/brand";
 import { Card } from "./Card";
 import { Btn } from "./Btn";
@@ -23,6 +23,90 @@ const NEEDS_REPEAT_ANSWERS = new Set([
   "Más o menos, quiero repetir",
   "Todavía no",
 ]);
+
+// Mensajes narrativos que preparan al alumno para el encuentro en vivo.
+// Se muestran UNA sola vez, justo después de completar la clase indicada.
+// Si la clase ya estaba completada, no se muestran (ver `alreadyDone` abajo).
+interface Milestone {
+  emoji: string;
+  title: string;
+  body: ReactNode;
+  cta: string;
+}
+const MILESTONES: Record<string, Milestone> = {
+  // Hito 1 — última clase de Puerto de Inicio
+  n9: {
+    emoji: "🎁",
+    title: "Hay algo que quiero contarte...",
+    body: (
+      <>
+        Cuando completes la Isla del Pulso tendremos nuestro primer encuentro en vivo.
+        <br /><br />
+        Ese día podremos conocernos, responder tus dudas y celebrar todo lo que ya habrás conseguido.
+        <br /><br />
+        Pero por ahora... disfruta el viaje.
+      </>
+    ),
+    cta: "Continuar",
+  },
+  // Hito 2 — Envía tu primer desafío
+  m8: {
+    emoji: "💚",
+    title: "Ya comenzamos a conocernos.",
+    body: (
+      <>
+        Acabo de recibir tu primer desafío.
+        <br /><br />
+        Sigue avanzando y, cuando completes la Isla del Pulso, tendremos nuestro encuentro en vivo.
+      </>
+    ),
+    cta: "Continuar",
+  },
+  // Hito 3 — última clase de Primeras Melodías
+  m10: {
+    emoji: "🏝",
+    title: "Mira todo lo que has logrado.",
+    body: (
+      <>
+        Hace muy poco no conocías ningún acorde.
+        <br /><br />
+        Hoy ya eres parte del Archipiélago.
+        <br /><br />
+        Ahora comienza la Isla del Pulso. Cuando la completes podrás reservar un encuentro en vivo conmigo.
+      </>
+    ),
+    cta: "Comenzar la Isla del Pulso",
+  },
+  // Hito 4 — mitad de Isla del Pulso (p1..p11 → mitad = p6)
+  p6: {
+    emoji: "🎁",
+    title: "Ya casi llegas.",
+    body: (
+      <>
+        Cada clase te acerca un poco más.
+        <br /><br />
+        Muy pronto podrás desbloquear tu encuentro en vivo conmigo.
+      </>
+    ),
+    cta: "Seguir avanzando",
+  },
+  // Hito 5 — última clase de Isla del Pulso
+  p11: {
+    emoji: "🎉",
+    title: "¡Lo lograste!",
+    body: (
+      <>
+        Completaste la Isla del Pulso.
+        <br /><br />
+        Estoy muy feliz por todo lo que avanzaste. Ahora llegó el momento de conocernos.
+        <br /><br />
+        Muy pronto podrás agendar tu encuentro en vivo conmigo.
+      </>
+    ),
+    cta: "Continuar",
+  },
+};
+
 
 export function LessonCompletionBox({
   lessonId,
@@ -57,6 +141,7 @@ export function LessonCompletionBox({
   const [saving, setSaving] = useState(false);
   const [error, setError] = useState<string | null>(null);
   const [answer, setAnswer] = useState<string | null>(null);
+  const [milestone, setMilestone] = useState<Milestone | null>(null);
 
   const handleComplete = async () => {
     setError(null);
@@ -73,7 +158,6 @@ export function LessonCompletionBox({
         answer,
       });
       if (!cr.ok) {
-        // No bloqueamos el avance por fallo de check-in, pero avisamos.
         logEvent("checkin_save_error", {
           lesson_id: lessonId,
           island_id: islandId,
@@ -87,12 +171,40 @@ export function LessonCompletionBox({
       setError(res.error ?? "No pudimos guardar tu avance. Intenta nuevamente.");
       return;
     }
+    // Si esta clase tiene un mensaje narrativo, se muestra una única vez aquí
+    // (esta rama sólo se ejecuta cuando la clase NO estaba completada antes,
+    // porque el early-return de `alreadyDone` cubre las re-visitas).
+    const m = MILESTONES[lessonId];
+    if (m) {
+      setMilestone(m);
+      return;
+    }
     onCompleted?.();
   };
 
   const showRepeatMessage = !!(answer && NEEDS_REPEAT_ANSWERS.has(answer));
 
+  if (milestone) {
+    return (
+      <Card style={{ background: B.greenLight, border: `1.5px solid ${B.green}` }}>
+        <div style={{ display: "flex", alignItems: "center", gap: 10, marginBottom: 10 }}>
+          <span style={{ fontSize: 22 }}>{milestone.emoji}</span>
+          <div style={{ fontFamily: "Space Grotesk, sans-serif", fontWeight: 800, fontSize: 16, color: B.dark, lineHeight: 1.25 }}>
+            {milestone.title}
+          </div>
+        </div>
+        <div style={{ fontSize: 13.5, color: B.dark, lineHeight: 1.6, marginBottom: 14 }}>
+          {milestone.body}
+        </div>
+        <Btn fullWidth onClick={() => { setMilestone(null); onCompleted?.(); }}>
+          {milestone.cta}
+        </Btn>
+      </Card>
+    );
+  }
+
   if (alreadyDone) {
+
     return (
       <Card style={{ background: B.greenLight, border: `1.5px solid ${B.green}` }}>
         <div style={{ display: "flex", alignItems: "center", gap: 10, marginBottom: 8 }}>
