@@ -1,75 +1,15 @@
 import { useState } from "react";
 import { B } from "../data/brand";
-import { Btn } from "../components/Btn";
 import { Card } from "../components/Card";
 import { BackBtn } from "../components/BackBtn";
 import { MissionIntroHeader } from "../components/MissionIntroHeader";
 import { LessonCompletionBox } from "../components/LessonCompletionBox";
 import { LessonDiscussionSection } from "@/features/discussions/components/LessonDiscussionSection";
 import alvaroAsset from "../../../assets/alvaro-campos.jpeg.asset.json";
-import { supabase } from "@/integrations/supabase/client";
 
-const GUIDE_CONTACT_CONTEXT = {
-  guideName: 'Álvaro Campos',
-  guideRole: 'Fundador y profesor guía de SoundKeleles',
-  // TODO: definir email real del guía cuando se active el envío por Supabase Edge Function.
-  stageId: 'puerto-inicio',
-  stageTitle: 'Puerto de Inicio',
-  missionId: 'n1',
-  missionTitle: 'Conoce a tu guía',
-  source: 'mission-guide',
-} as const;
+const WHATSAPP_PHONE = '56935927518';
+const WHATSAPP_MESSAGE = 'Hola 👋\n\nAcabo de comenzar mi viaje en Soundkeleles.\n\nEstoy en la primera clase de Puerto de Inicio y quería presentarme.\n\nMi nombre es:\n\nMuchas gracias.';
 
-type GuideMessagePayload = {
-  studentName: string;
-  studentEmail: string;
-  guideName: string;
-  guideRole: string;
-  stageId: string;
-  stageTitle: string;
-  missionId: string;
-  missionTitle: string;
-  source: string;
-  message: string;
-  createdAt: string;
-};
-
-function buildGuideMessagePayload(params: {
-  studentName: string;
-  studentEmail: string;
-  message: string;
-}): GuideMessagePayload {
-  return {
-    studentName: params.studentName,
-    studentEmail: params.studentEmail,
-    guideName: GUIDE_CONTACT_CONTEXT.guideName,
-    guideRole: GUIDE_CONTACT_CONTEXT.guideRole,
-    stageId: GUIDE_CONTACT_CONTEXT.stageId,
-    stageTitle: GUIDE_CONTACT_CONTEXT.stageTitle,
-    missionId: GUIDE_CONTACT_CONTEXT.missionId,
-    missionTitle: GUIDE_CONTACT_CONTEXT.missionTitle,
-    source: GUIDE_CONTACT_CONTEXT.source,
-    message: params.message,
-    createdAt: new Date().toISOString(),
-  };
-}
-
-async function saveGuideMessage(payload: GuideMessagePayload) {
-  const { error } = await supabase.from('support_messages').insert({
-    student_name: payload.studentName,
-    student_email: payload.studentEmail,
-    guide_name: payload.guideName,
-    guide_role: payload.guideRole,
-    stage_id: payload.stageId,
-    stage_title: payload.stageTitle,
-    mission_id: payload.missionId,
-    mission_title: payload.missionTitle,
-    source: payload.source,
-    message: payload.message,
-    status: 'pending',
-  });
-  if (error) throw error;
-}
 
 export function MissionGuideScreen({ onBack, userName, learnerName }: { onBack: () => void; userName?: string; learnerName?: string }) {
   // El contenido de la lección se dirige al ESTUDIANTE. En accompanied_learning,
