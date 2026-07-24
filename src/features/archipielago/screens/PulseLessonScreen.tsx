@@ -365,6 +365,10 @@ export function PulseLessonScreen({
   lessonId: string;
   onBackToIsland: () => void;
 }) {
+  if (lessonId === 'p11') {
+    return <TeacherEncounterScreen onBackToIsland={onBackToIsland} />;
+  }
+
   const lesson = findPulseLesson(lessonId);
 
   if (!lesson) {
